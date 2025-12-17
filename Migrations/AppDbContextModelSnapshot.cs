@@ -35,7 +35,7 @@ namespace WebbSystem.NET.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
