@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebbSystem.NET", "WebbSystem.NET.csproj", "{EEF8CBFC-8E84-D016-018A-BD07ABC84FF9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{316133D3-8768-4D7D-942F-8B7F330131E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVC", "MVC", "{CB69B98E-96E7-C360-5784-DBE29CFD4E36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebbSystem.NET", "MVC\WebbSystem.NET.csproj", "{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,9 +43,24 @@ Global
 		{316133D3-8768-4D7D-942F-8B7F330131E0}.Release|x64.Build.0 = Release|Any CPU
 		{316133D3-8768-4D7D-942F-8B7F330131E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{316133D3-8768-4D7D-942F-8B7F330131E0}.Release|x86.Build.0 = Release|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Debug|x64.Build.0 = Debug|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Debug|x86.Build.0 = Debug|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Release|x64.ActiveCfg = Release|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Release|x64.Build.0 = Release|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Release|x86.ActiveCfg = Release|Any CPU
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{00FBA930-7EEB-44DB-A35E-46BCF5B222ED} = {CB69B98E-96E7-C360-5784-DBE29CFD4E36}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CBDFAED-BC03-4B40-81B6-6167429B0FB1}
