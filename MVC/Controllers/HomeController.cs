@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebbSystem.NET.Models;
+using MVC.Models;
+using DAL;
 
-namespace WebbSystem.NET.Controllers;
+namespace MVC;
 
 public class HomeController : Controller
 {
