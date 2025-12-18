@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
+﻿
 namespace Models
 {
     public class Message
@@ -19,6 +18,5 @@ namespace Models
         public bool IsRead { get; set; }
 
         public DateTime SendDateTime { get; set; }
-
     }
 }
