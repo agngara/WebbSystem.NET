@@ -7,8 +7,8 @@
     width: 90%;
     height: 600px;
     max-width: 1000px;
-    justify-items: flex-end;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
 
     display: flex;
 
