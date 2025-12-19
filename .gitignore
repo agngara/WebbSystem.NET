@@ -134,3 +134,4 @@ Desktop.ini
 *.pubxml
 *.pubxml.user
 *.publishproj
+MVC/appsettings.json
