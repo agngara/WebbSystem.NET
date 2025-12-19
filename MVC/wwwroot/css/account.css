@@ -7,10 +7,10 @@
     width: 90%;
     height: 600px;
     max-width: 1000px;
+    justify-items: flex-end;
+    align-items: flex-end;
 
     display: flex;
-    justify-content: center;
-    align-items: center;
 
 }
 
@@ -27,7 +27,7 @@
     min-width: 340px;
 
 
-    background-color: var(--bg-darker-color);
+    background-color: var(--bg-lighter-color);
 
     display: flex;
     justify-content: center;
@@ -163,7 +163,7 @@ input[type="checkbox"]:checked {
     .login-left-box {}
 
     .login-wrapper {
-        animation: shadow-in 4s;
+        animation: shadow-in 5s;
 
         box-shadow: 0px 4px 6px 3px rgba(0, 0, 0, 0.1),
             0 1px 3px rgba(0, 0, 0, 0.06);
@@ -185,16 +185,30 @@ input[type="checkbox"]:checked {
     flex-direction: column;
     gap: 14px;
 
-    background-color: var(--bg-darker-color);
+    opacity: 0;
+
+    animation: fade-in 1s forwards;
+
+    background-color: var(--bg-lighter-color);
     box-shadow: 0px 4px 6px 3px rgba(0, 0, 0, 0.1),
         0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 100%;
+    }
 }
 
 @keyframes shadow-in {
 
     0% {
-        box-shadow: 0px 4px 6px 3px rgba(255, 255, 255, 1),
-            0 1px 3px rgba(255, 255, 255, 1);
+        box-shadow: 0px 4px 6px 3px rgba(255, 255, 255, 0),
+            0 1px 3px rgba(255, 255, 255, 0);
     }
 
     100% {

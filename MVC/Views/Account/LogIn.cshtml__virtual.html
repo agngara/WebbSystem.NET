@@ -1,0 +1,98 @@
+/*~~*/ /*~~~~~~~~~~*/
+
+/*~~~~*/ /*~~*/ ~
+    <link rel="stylesheet" href="~/css/account.css" />
+~
+
+<div class="login-wrapper">
+    <div class="login-left-box">
+        <h1>Pinked Out</h1>
+        <p>We make your CV <span>out</span>shine the compitition</p>
+    </div>
+
+    <form class="login-form" method="post" asp-action="LogIn">
+
+
+        <div class="login">
+            <h2 class="login-header">USER LOGIN</h2>
+
+            <div class="input-wrapper">
+                <img src="~/icons/User.svg" alt="User Logo">
+                <input asp-for="/*~~~~*/" type="text" placeholder="Username...">
+            </div>
+
+            <div class="input-wrapper">
+                <img src="~/icons/Password.svg" alt="Password Logo">
+                <input asp-for="/*~~~~*/" type="password" placeholder="Password123...">
+            </div>
+
+            <div class="remember-register-wrapper">
+                <div class="rememberme-wrapper">
+                    <input class="form-check-input" type="checkbox" asp-for="/*~~~~~~*/" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">
+                        Remember Me
+                    </label>
+                </div>
+
+                <a asp-action="Register">Register Account</a>
+            </div>
+
+
+            <button type="submit" class="login-btn">LOGIN</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    let animIn = null;
+    let animOut = null;
+    let isSmall = true;
+    const element = document.querySelector(".login-left-box");
+
+    const animateIn = () => {
+        if (!element) return;
+        if (!isSmall) return;
+        if (animOut) animOut.cancel();
+
+        isSmall = false;
+        animIn = element.animate([
+            {opacity: 0, width: "0%", offset: 0},
+            {opacity: 0, width: "35%", offset: 0.2},
+            {opacity: 1, width: "100%", offset: 1}
+        ], {
+            duration: 1708,
+            fill: "forwards",
+            easing: "cubic-bezier(.22,.57,.6,.93)"
+        });
+    };
+
+    const animateOut = () => {
+        if (!element) return;
+        if (isSmall) return;
+        if (animIn) animIn.cancel();
+
+        isSmall = true;
+        element.opacity = 0;
+        element.width = 0;
+    };
+
+    window.addEventListener("load", () => {
+        if (window.innerWidth >= 900) {
+            animateIn();
+        } else if (element) {
+            element.style.opacity = 0;
+            element.style.width = "0%";
+        }
+    });
+
+    window.addEventListener("resize", () => {
+        if (!element) return;
+        if (window.innerWidth >= 900) {
+            animateIn();
+        } else {
+            animateOut();
+        }
+    });
+</script>
+

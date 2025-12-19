@@ -67,7 +67,7 @@ body {
     flex-direction: column;
     align-items: center;
 
-    background-color: var(--bg-lighter-color);
+    background-color: var(--bg-color);
 }
 
 .form-floating>.form-control-plaintext::placeholder,
