@@ -4,3 +4,13 @@
 {
     <p>Databas: @ViewBag.DatabaseName</p>
 }
+
+
+<form method="post" asp-controller="Account" asp-action="Logout">
+    <AuthorizeView>
+        <Authorize>
+            <h2>Logged in as @User.Identity.Name</h2>
+            <input type="submit" value="Logout" />
+        </Authorize>
+    </AuthorizeView>
+</form>

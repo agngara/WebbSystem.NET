@@ -355,7 +355,7 @@ namespace DAL.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsPrivate")
+                    b.Property<bool?>("IsPrivate")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -642,8 +642,7 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Models.User", b =>
                 {
-                    b.Navigation("Cv")
-                        .IsRequired();
+                    b.Navigation("Cv");
 
                     b.Navigation("ProjectUsers");
 

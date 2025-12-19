@@ -1,0 +1,38 @@
+@model RegisterViewModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/account.css" />
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form class="login-form" method="post" asp-action="Register">
+    <div class="create-account-wrapper">
+        <h2 class="login-header">Register Account</h2>
+
+        <div class="input-wrapper">
+            <img src="~/icons/User.svg" alt="User Logo">
+            <input asp-for="UserName" type="text" placeholder="Username...">
+        </div>
+        <div class="input-wrapper">
+            <img src="~/icons/Name.svg" alt="User Logo">
+            <input asp-for="Name" type="text" placeholder="Name...">
+        </div>
+
+        <div class="input-wrapper">
+            <img src="~/icons/Location.svg" alt="User Logo">
+            <input asp-for="Address" type="text" placeholder="My Street 123...">
+        </div>
+
+        <div class="input-wrapper">
+            <img src="~/icons/Password.svg" alt="Password Logo">
+            <input asp-for="Password" type="password" placeholder="Password123...">
+        </div>
+        <div class="input-wrapper">
+            <img src="~/icons/Password.svg" alt="Password Logo">
+            <input asp-for="ConfirmPassword" type="password" placeholder="Confirm password...">
+        </div>
+
+        <button type="submit" class="login-btn">Regsiter</button>
+    </div>
+</form>
