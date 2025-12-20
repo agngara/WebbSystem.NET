@@ -1,4 +1,5 @@
 
+using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories;
@@ -7,11 +8,11 @@ namespace DAL.Repositories;
 //Works on Models with id as either int or string
 //U get free CRUD here
 
-public class SqlServerRepository<T> where T : class
+public class SqlServerRepository<T> : IRepository<T> where T : class
 {
     protected DbContext _context;
 
-    public SqlServerRepository(DbContext dbContext)
+    public SqlServerRepository(AppDbContext dbContext)
     {
         _context = dbContext;
     }
