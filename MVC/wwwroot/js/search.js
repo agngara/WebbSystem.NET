@@ -25,6 +25,8 @@ class Search {
         document.addEventListener("DOMContentLoaded", () => {
             let debounceTimer;
             this.#searchInput.addEventListener("input", (e) => {
+                if (e.target.length === 1) this.displayResults();
+
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
                     const query = e.target.value.trim();
