@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 using DAL;
+using Models;
 
 namespace MVC;
 
@@ -13,6 +14,12 @@ public class HomeController : Controller
     public HomeController(AppDbContext context)
     {
         _context = context;
+    }
+    public async Task<IActionResult> Homepage()
+    {
+        CVRepository repo = new CVRepository(_context);
+        List<CV> allCvs = await repo.GetAllExtendedCVs();
+        return View(allCvs);
     }
 
     public async Task<IActionResult> Index()

@@ -1,0 +1,57 @@
+﻿h2 {
+    display: block;
+    text-align: left;
+    margin: 3rem 5rem 2rem 3rem;
+}
+
+.homepage-landing {
+    background-image: url(../Assets/UI-Images/3d-rendered-abstract-design-elements-composition.jpg);
+    background-size: cover;
+    height: 500px;
+    display: flex;
+    align-items: center;
+
+    
+}
+
+.content-wrapper {
+    display: block;
+}
+
+.homepage-component-wrapper {
+    display: block;
+
+}
+
+
+.scroll-container {
+    scroll-behavior: smooth;
+    display: flex;
+    overflow-x: scroll;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.slider-window {
+    position: relative;
+    width: 100%;
+}
+
+.arrow-left, .arrow-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.arrow-right {
+    right: 0;
+}
+
+
+.scroll-card {
+    margin: 20px;
+}

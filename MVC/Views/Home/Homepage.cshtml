@@ -1,0 +1,65 @@
+﻿@model List<Models.CV>;
+@{
+    ViewData["title"] = "LinkedOut";
+}
+<link rel="stylesheet" href="~/css/homepage.css" />
+
+<section class="homepage-landing container-fluid">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-12 col-md-6">
+                <h1 class="text-start">Let your next employer see you!</h1>
+            </div>
+            <div class="col-12 col-md-6 text-center">Some text</div>
+            <div class="col-12 col-md-6">
+                <button class="btn btn-primary ">Register</button>
+            </div>
+            <div class="col-12 col-md-6"></div>
+        </div>
+    </div>
+</section>
+
+<h2>Populära profiler</h2>
+
+<section class="slider-window">
+    <div class="arrow-left" id="slide-1-arrow-left">
+        <img src="~/Assets/UI-Images/left_arrow_big.png" alt="Left arrow">
+    </div>
+    <div class="arrow-right" id="slide-1-arrow-right">
+        <img src="~/Assets/UI-Images/right_arrow_big.png" alt="Right arrow">
+    </div>
+    <section class="scroll-container">
+        @foreach (Models.CV cv in Model)
+        {
+            <div class="card mx-3" style="width: 20rem; min-width: 20rem;">
+                <img src="~/Assets/UserUploads/stanprofilepic.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">@cv.User.Name</h5>
+                    <p class="card-text">En beskrivning av personen, som ännu inte hanteras av databasen... fuuck!</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">@cv.Educations.Last()</li>
+                    <li class="list-group-item">@cv.WorkExperiences.Last()</li>
+                </ul>
+                <div class="card-body">
+                    <a href="#" class="btn btn-primary">Se profil</a>
+                </div>
+            </div>
+        }
+
+    </section>
+</section>
+
+<script>
+    var scrollContainerCv = document.getElementsByClassName("scroll-container").item(0);
+    var rightArrow = document.getElementById("slide-1-arrow-right");
+
+    rightArrow.addEventListener("click", () => {
+        scrollContainerCv.scrollBy(700,0);
+
+    })
+
+    document.getElementById("slide-1-arrow-left").addEventListener("click", () => {
+        scrollContainerCv.scrollBy(-700,0);
+    })
+</script>
