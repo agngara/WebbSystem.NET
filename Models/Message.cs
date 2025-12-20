@@ -5,18 +5,21 @@ namespace Models
     {
         public int Id { get; set; }
 
-        public string? SenderId { get; set; }  // string because references User.Id
+        //string cuz Userid
+        public string? SenderId { get; set; }
         public User? Sender { get; set; }
 
-        public string ReceiverId { get; set; } // string because references User.Id
-        public User Receiver { get; set; }
+        //string cuz Userid
+        public required string ReceiverId { get; set; }
+        public required User Receiver { get; set; }
 
-        public string? SenderName { get; set; }
+        public required string SenderName { get; set; }
 
-        public string Content { get; set; }
+        public required string Content { get; set; }
 
+        //default value is false so no ? or required
         public bool IsRead { get; set; }
 
-        public DateTime SendDateTime { get; set; }
+        public DateTime? SendDateTime { get; set; }
     }
 }

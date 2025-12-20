@@ -19,8 +19,7 @@ namespace MVC.Controllers
         [HttpGet]
         public IActionResult LogIn()
         {
-            LoginViewModel loginViewModel = new();
-            return View(loginViewModel);
+            return View();
         }
 
         [HttpPost]
@@ -52,10 +51,9 @@ namespace MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                User user = new();
+                User user = new() { Name = registerViewModel.Name };
                 user.UserName = registerViewModel.UserName;
-                user.Adress = registerViewModel.Address;
-                user.Name = registerViewModel.Name;
+                user.Address = registerViewModel.Address;
 
                 var result = await userManager.CreateAsync(user, registerViewModel.Password);
 

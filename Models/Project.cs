@@ -6,16 +6,17 @@ namespace Models
     {
         public int Id { get; set; }
 
-        public string CreatorId { get; set; }
+        //Required just change it to someone else if needed
+        public required string CreatorId { get; set; }
 
         [ForeignKey(nameof(CreatorId))]
-        public User Creator { get; set; }
+        public required User Creator { get; set; }
 
-        public string Titel { get; set; }
+        public required string Titel { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public virtual List<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
+        public virtual List<ProjectUser> ProjectUsers { get; set; } = [];
 
     }
 }

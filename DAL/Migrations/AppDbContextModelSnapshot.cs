@@ -214,17 +214,16 @@ namespace DAL.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("EndDate")
+                    b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("InstitutionId")
+                    b.Property<int?>("InstitutionId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProgramOrCourseName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("StartDate")
+                    b.Property<DateOnly?>("StartDate")
                         .HasColumnType("date");
 
                     b.HasKey("Id");
@@ -272,13 +271,14 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("SendDateTime")
+                    b.Property<DateTime?>("SendDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SenderId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SenderName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -303,7 +303,6 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Titel")
@@ -340,8 +339,7 @@ namespace DAL.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("Adress")
-                        .IsRequired()
+                    b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -420,20 +418,19 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("EndDate")
+                    b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly>("StartDate")
+                    b.Property<DateOnly?>("StartDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WorkPlaceId")
+                    b.Property<int?>("WorkPlaceId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -545,9 +542,7 @@ namespace DAL.Migrations
 
                     b.HasOne("Models.Institution", "Institution")
                         .WithMany("Educations")
-                        .HasForeignKey("InstitutionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InstitutionId");
 
                     b.Navigation("Cv");
 
@@ -612,9 +607,7 @@ namespace DAL.Migrations
 
                     b.HasOne("Models.WorkPlace", "WorkPlace")
                         .WithMany("WorkExperiences")
-                        .HasForeignKey("WorkPlaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WorkPlaceId");
 
                     b.Navigation("Cv");
 

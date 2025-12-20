@@ -5,8 +5,8 @@ namespace Models
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
-        public List<WorkExperience> WorkExperiences { get; set; } = new List<WorkExperience>();
+        public List<WorkExperience> WorkExperiences { get; set; } = [];
     }
 }

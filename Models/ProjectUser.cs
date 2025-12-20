@@ -4,16 +4,14 @@ namespace Models
 {
     public class ProjectUser
     {
-        public int ProjectId { get; set; }
+        public required int ProjectId { get; set; }
 
         [ForeignKey(nameof(ProjectId))]
-        public Project Project { get; set; }
+        public required Project Project { get; set; }
 
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public User User { get; set; }
-
-
+        public required User User { get; set; }
     }
 }
