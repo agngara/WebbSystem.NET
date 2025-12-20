@@ -1,0 +1,450 @@
+﻿@model Models.CV
+@{
+    ViewData["Title"] = "Mitt CV";
+    // Hjälpmetod för att få bild-URL
+    string GetProfileImageUrl()
+    {
+        if (Model.ProfileImage != null && Model.ProfileImage.Length > 0 && Model.ProfileImageType != null)
+        {
+            return $"data:{Model.ProfileImageType};base64,{Convert.ToBase64String(Model.ProfileImage)}";
+        }
+        return "/images/default-avatar.png";
+    }
+}
+
+<div class="cv-container">
+    <!-- CV-header med profilinfo -->
+    <div class="cv-header">
+        <img src="@GetProfileImageUrl()" alt="Profilbild"
+             class="cv-profile-img rounded-circle" id="profileImagePreview" />
+
+        <div class="cv-header-info ms-3">
+            <h1 class="mb-1">@Model.User.Name</h1>
+            <p class="text-muted mb-0">@Model.User.Address</p>
+        </div>
+        <button class="btn btn-outline-primary ms-auto" data-bs-toggle="modal" data-bs-target="#editCvModal">
+            <i class="bi bi-pencil"></i> Redigera CV
+        </button>
+    </div>
+
+    <!-- Arbetserfarenheter -->
+    <section class="cv-section mt-4">
+        <h2 class="border-bottom pb-2">
+            <i class="bi bi-briefcase"></i> Arbetserfarenhet
+        </h2>
+        @if (Model.WorkExperiences?.Any() == true)
+        {
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                @foreach (var exp in Model.WorkExperiences)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title mb-1">@exp.Title</h5>
+                                    <span class="badge bg-light text-dark">
+                                        @exp.StartDate?.ToString("MMM yyyy") -
+                                        @(exp.EndDate?.ToString("MMM yyyy") ?? "Nuvarande")
+                                    </span>
+                                </div>
+                                <h6 class="card-subtitle mb-2 text-muted">@exp.WorkPlace?.Name</h6>
+                                <p class="card-text">@exp.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted fst-italic">Ingen arbetserfarenhet tillagd</p>
+        }
+    </section>
+
+    <!-- Utbildning -->
+    <section class="cv-section mt-4">
+        <h2 class="border-bottom pb-2">
+            <i class="bi bi-mortarboard"></i> Utbildning
+        </h2>
+        @if (Model.Educations?.Any() == true)
+        {
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                @foreach (var edu in Model.Educations)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">@edu.ProgramOrCourseName</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@edu.Institution?.Name</h6>
+                                <div class="mt-3">
+                                    <span class="badge bg-primary">
+                                        @edu.StartDate?.ToString("yyyy") - @(edu.EndDate?.ToString("yyyy") ?? "Nuvarande")
+                                    </span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(edu.Description))
+                                {
+                                    <p class="card-text mt-2">@edu.Description</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted fst-italic">Ingen utbildning tillagd</p>
+        }
+    </section>
+
+    <!-- Kompetenser -->
+    <section class="cv-section mt-4">
+        <h2 class="border-bottom pb-2">
+            <i class="bi bi-star"></i> Kompetenser
+        </h2>
+        @if (Model.Competences?.Any() == true)
+        {
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var comp in Model.Competences)
+                {
+                    <span class="badge bg-light text-dark border p-2">@comp.Name</span>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted fst-italic">Inga kompetenser tillagda</p>
+        }
+    </section>
+</div>
+
+<!-- Bootstrap Modal för redigering -->
+<div class="modal fade" id="editCvModal" tabindex="-1" aria-labelledby="editCvModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCvModalLabel">Redigera CV</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulär för CV-redigering med filuppladdning -->
+                <form id="editCvForm" method="post" asp-action="Edit" enctype="multipart/form-data">
+                    <!-- Profilbildssektion -->
+                    <div class="mb-4">
+                        <h6 class="mb-3">Profilbild</h6>
+
+                        <!-- Bildförhandsvisning -->
+                        <div class="text-center mb-3">
+                            <img src="@GetProfileImageUrl()"
+                                 alt="Förhandsvisning"
+                                 class="img-thumbnail"
+                                 id="imagePreview"
+                                 style="max-width: 200px; max-height: 200px;">
+                        </div>
+
+                        <!-- Filuppladdning -->
+                        <div class="mb-3">
+                            <label for="newProfileImage" class="form-label">Välj en profilbild</label>
+                            <input type="file"
+                                   class="form-control"
+                                   id="newProfileImage"
+                                   name="newProfileImage"
+                                   accept=".jpg,.jpeg,.png,.gif"
+                                   onchange="previewImage(this)">
+                            <div class="form-text">
+                                Endast JPG, PNG eller GIF. Max 5MB.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arbetserfarenheter -->
+                    <div class="mb-4">
+                        <h6 class="mb-3">Arbetserfarenheter</h6>
+                        <div id="workExperiencesContainer">
+                            @if (Model.WorkExperiences?.Any() == true)
+                            {
+                                for (int i = 0; i < Model.WorkExperiences.Count; i++)
+                                {
+                                    var exp = Model.WorkExperiences[i];
+                                    <div class="work-experience-entry border p-3 mb-3 rounded">
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control"
+                                                       name="WorkExperiences[@i].Title"
+                                                       value="@exp.Title" placeholder="Titel" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control"
+                                                       name="WorkExperiences[@i].WorkPlace.Name"
+                                                       value="@exp.WorkPlace?.Name" placeholder="Företag">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="date" class="form-control"
+                                                       name="WorkExperiences[@i].StartDate"
+                                                       value="@exp.StartDate?.ToString("yyyy-MM-dd")">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="date" class="form-control"
+                                                       name="WorkExperiences[@i].EndDate"
+                                                       value="@exp.EndDate?.ToString("yyyy-MM-dd")">
+                                            </div>
+                                            <div class="col-12">
+                                                <textarea class="form-control" rows="2"
+                                                  name="WorkExperiences[@i].Description"
+                                                  placeholder="Beskrivning">@exp.Description</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="addWorkExperience()">
+                            <i class="bi bi-plus"></i> Lägg till erfarenhet
+                        </button>
+                    </div>
+
+                    <!-- Utbildningar -->
+                    <div class="mb-4">
+                        <h6 class="mb-3">Utbildningar</h6>
+                        <div id="educationsContainer">
+                            @if (Model.Educations?.Any() == true)
+                            {
+                                for (int i = 0; i < Model.Educations.Count; i++)
+                                {
+                                    var edu = Model.Educations[i];
+                                    <div class="education-entry border p-3 mb-3 rounded">
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control"
+                                                       name="Educations[@i].ProgramOrCourseName"
+                                                       value="@edu.ProgramOrCourseName" placeholder="Program/Kursnamn" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control"
+                                                       name="Educations[@i].Institution.Name"
+                                                       value="@edu.Institution?.Name" placeholder="Skola/Universitet">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="date" class="form-control"
+                                                       name="Educations[@i].StartDate"
+                                                       value="@edu.StartDate?.ToString("yyyy-MM-dd")">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="date" class="form-control"
+                                                       name="Educations[@i].EndDate"
+                                                       value="@edu.EndDate?.ToString("yyyy-MM-dd")">
+                                            </div>
+                                            <div class="col-12">
+                                                <textarea class="form-control" rows="2"
+                                                  name="Educations[@i].Description"
+                                                  placeholder="Beskrivning">@edu.Description</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="addEducation()">
+                            <i class="bi bi-plus"></i> Lägg till utbildning
+                        </button>
+                    </div>
+
+                    <!-- Kompetenser -->
+                    <div class="mb-4">
+                        <h6 class="mb-3">Kompetenser</h6>
+                        <div id="competencesContainer">
+                            @if (Model.Competences?.Any() == true)
+                            {
+                                for (int i = 0; i < Model.Competences.Count; i++)
+                                {
+                                    var comp = Model.Competences[i];
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control"
+                                               name="Competences[@i].Name"
+                                               value="@comp.Name" placeholder="Kompetens" required>
+                                        <button type="button" class="btn btn-outline-danger"
+                                                onclick="removeCompetence(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="addCompetence()">
+                            <i class="bi bi-plus"></i> Lägg till kompetens
+                        </button>
+                    </div>
+
+                    <!-- Dolda fält för CV ID och bilddata -->
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="UserId" value="@Model.UserId" />
+                    <input type="hidden" name="ProfileImage" id="profileImageData"
+                           value="@Convert.ToBase64String(Model.ProfileImage ?? new byte[0])" />
+                    <input type="hidden" name="ProfileImageType" id="profileImageType"
+                           value="@Model.ProfileImageType" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                <button type="submit" form="editCvForm" class="btn btn-primary">Spara ändringar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dold element för att skicka data till JavaScript -->
+<div id="cvData"
+     data-work-exp-count="@(Model.WorkExperiences?.Count ?? 0)"
+     data-education-count="@(Model.Educations?.Count ?? 0)"
+     data-competence-count="@(Model.Competences?.Count ?? 0)"
+     style="display: none;">
+</div>
+
+@section Scripts {
+    <script>
+        // Globala räknare
+        let workExpCount = @(Model.WorkExperiences?.Count ?? 0);
+        let educationCount = @(Model.Educations?.Count ?? 0);
+        let competenceCount = @(Model.Competences?.Count ?? 0);
+
+        // Funktion för att förhandsvisa bild
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('profileImagePreview').src = e.target.result;
+
+                    // Spara base64-data i dolda fält
+                    const base64Data = e.target.result.split(',')[1];
+                    document.getElementById('profileImageData').value = base64Data;
+                    document.getElementById('profileImageType').value = input.files[0].type;
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Lägg till arbetserfarenhet
+        function addWorkExperience() {
+            const container = document.getElementById('workExperiencesContainer');
+            if (!container) return;
+
+            const html = `
+                <div class="work-experience-entry border p-3 mb-3 rounded">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control"
+                                   name="WorkExperiences[${workExpCount}].Title"
+                                   placeholder="Titel" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control"
+                                   name="WorkExperiences[${workExpCount}].WorkPlace.Name"
+                                   placeholder="Företag">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="date" class="form-control"
+                                   name="WorkExperiences[${workExpCount}].StartDate">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="date" class="form-control"
+                                   name="WorkExperiences[${workExpCount}].EndDate">
+                        </div>
+                        <div class="col-12">
+                            <textarea class="form-control" rows="2"
+                                      name="WorkExperiences[${workExpCount}].Description"
+                                      placeholder="Beskrivning"></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+            workExpCount++;
+        }
+
+        // Lägg till utbildning
+        function addEducation() {
+            const container = document.getElementById('educationsContainer');
+            if (!container) return;
+
+            const html = `
+                <div class="education-entry border p-3 mb-3 rounded">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control"
+                                   name="Educations[${educationCount}].ProgramOrCourseName"
+                                   placeholder="Program/Kursnamn" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control"
+                                   name="Educations[${educationCount}].Institution.Name"
+                                   placeholder="Skola/Universitet">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="date" class="form-control"
+                                   name="Educations[${educationCount}].StartDate">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="date" class="form-control"
+                                   name="Educations[${educationCount}].EndDate">
+                        </div>
+                        <div class="col-12">
+                            <textarea class="form-control" rows="2"
+                                      name="Educations[${educationCount}].Description"
+                                      placeholder="Beskrivning"></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+            educationCount++;
+        }
+
+        // Lägg till kompetens
+        function addCompetence() {
+            const container = document.getElementById('competencesContainer');
+            if (!container) return;
+
+            const html = `
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control"
+                           name="Competences[${competenceCount}].Name"
+                           placeholder="Kompetens" required>
+                    <button type="button" class="btn btn-outline-danger"
+                            onclick="removeCompetence(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+            competenceCount++;
+        }
+
+        // Ta bort kompetens
+        function removeCompetence(button) {
+            const inputGroup = button.closest('.input-group');
+            if (inputGroup) {
+                inputGroup.remove();
+            }
+        }
+
+        // Event listener för när modalen stängs
+        document.getElementById('editCvModal')?.addEventListener('hidden.bs.modal', function() {
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
+        });
+
+        // Gör funktionerna globalt tillgängliga
+        window.addWorkExperience = addWorkExperience;
+        window.addEducation = addEducation;
+        window.addCompetence = addCompetence;
+        window.removeCompetence = removeCompetence;
+        window.previewImage = previewImage;
+    </script>
+}

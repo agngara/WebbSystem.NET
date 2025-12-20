@@ -1,0 +1,465 @@
+﻿/* cv.css - CV-specifika stilar */
+.cv-container {
+    max-width: 1000px;
+    width: 100%;
+    padding: 2rem;
+    background-color: var(--bg-lighter-color);
+    border-radius: 10px;
+    margin: 2rem auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.cv-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.cv-profile-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 3px solid var(--accent-color);
+}
+
+.cv-header-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.cv-section {
+    margin-bottom: 2.5rem;
+}
+
+    .cv-section h2 {
+        color: var(--text-color);
+        border-color: var(--accent-color) !important;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+
+/* Kort-stilar */
+.card {
+    background-color: var(--bg-darker-color);
+    border: 1px solid var(--border-color) !important;
+    transition: transform 0.2s, border-color 0.2s;
+    border-radius: 8px !important;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+        border-color: var(--accent-color) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+.card-title {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.card-subtitle {
+    color: var(--text-lighter-color);
+    font-size: 0.95rem;
+}
+
+.card-text {
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+/* Badge-stilar */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 4px;
+}
+
+.bg-light {
+    background-color: var(--bg-darker-color) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+}
+
+.bg-primary {
+    background-color: var(--accent-color) !important;
+    color: #000 !important;
+    border: none;
+}
+
+/* Modal-anpassningar */
+.modal-content {
+    background-color: var(--bg-lighter-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color);
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.modal-title {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top-color: var(--border-color);
+    padding: 1rem 1.5rem;
+}
+
+/* Formulär-stilar */
+.form-label {
+    color: var(--text-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    background-color: var(--bg-darker-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+    .form-control:focus {
+        background-color: var(--bg-darker-color);
+        border-color: var(--accent-color);
+        color: var(--text-color);
+        box-shadow: 0 0 0 0.25rem rgba(255, 182, 193, 0.25);
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: var(--text-lighter-color);
+        opacity: 0.7;
+    }
+
+/* Knapp-stilar */
+.btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #000;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+    .btn-primary:hover {
+        background-color: #ffb6c1;
+        border-color: #ffb6c1;
+        color: #000;
+    }
+
+.btn-outline-primary {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    background-color: transparent;
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: #000;
+    }
+
+.btn-outline-secondary {
+    color: var(--text-lighter-color);
+    border-color: var(--border-color);
+}
+
+    .btn-outline-secondary:hover {
+        background-color: var(--bg-darker-color);
+        border-color: var(--accent-color);
+        color: var(--text-color);
+    }
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+/* Modal-inmatningssektioner */
+.work-experience-entry,
+.education-entry {
+    background-color: var(--bg-darker-color);
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+    .work-experience-entry:hover,
+    .education-entry:hover {
+        border-color: var(--accent-color) !important;
+    }
+
+/* Kompetens-taggar */
+.input-group {
+    background-color: var(--bg-darker-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+    .input-group .form-control {
+        border-right: none;
+        border-color: var(--border-color);
+    }
+
+    .input-group .btn {
+        border-left: none;
+        border-color: var(--border-color);
+    }
+
+/* Ikoner */
+.bi {
+    font-size: 1.1em;
+    vertical-align: middle;
+}
+
+/* Responsiv design */
+@media (max-width: 768px) {
+    .cv-container {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+
+    .cv-header {
+        flex-direction: column;
+        text-align: center;
+        padding-bottom: 1.5rem;
+    }
+
+    .cv-header-info {
+        text-align: center;
+    }
+
+    .cv-profile-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .cv-section h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .cv-section {
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+    }
+}
+
+/* Tomt meddelande-stilar */
+.text-muted.fst-italic {
+    color: var(--text-lighter-color) !important;
+    font-style: italic;
+    padding: 1rem;
+    text-align: center;
+    background-color: var(--bg-darker-color);
+    border-radius: 6px;
+    border: 1px dashed var(--border-color);
+}
+
+/* Grid-layout för kort */
+.row-cols-md-2 .col {
+    margin-bottom: 1rem;
+}
+
+/* Snygga hover-effekter för kompetens-taggar */
+.d-flex.flex-wrap.gap-2 .badge {
+    transition: transform 0.2s, background-color 0.2s;
+    cursor: default;
+}
+
+    .d-flex.flex-wrap.gap-2 .badge:hover {
+        transform: scale(1.05);
+        background-color: var(--accent-color) !important;
+        color: #000 !important;
+    }
+
+/* Färgtema för olika sektioner */
+.cv-section:nth-child(1) h2 {
+    border-left: 4px solid #4CAF50;
+    padding-left: 1rem;
+}
+
+.cv-section:nth-child(2) h2 {
+    border-left: 4px solid #2196F3;
+    padding-left: 1rem;
+}
+
+.cv-section:nth-child(3) h2 {
+    border-left: 4px solid #FF9800;
+    padding-left: 1rem;
+}
+
+/* Skuggor för djup */
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+/* Custom scrollbar för modal */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: var(--bg-darker-color);
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+
+/* Animation för när modal öppnas */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Lägg till i slutet av din cv.css-fil */
+
+/* Alert-stilar för CV-modal */
+.cv-alert {
+    position: relative;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Laddningsanimation */
+.spinner-border {
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* Bättre knapp-stilar för ta bort-knappar */
+.btn-outline-danger {
+    transition: all 0.2s;
+}
+
+    .btn-outline-danger:hover {
+        transform: scale(1.05);
+    }
+
+/* Snyggare input-grupper för kompetenser */
+.input-group {
+    transition: border-color 0.2s;
+}
+
+    .input-group:focus-within {
+        border-color: var(--accent-color);
+        border-radius: 6px;
+    }
+
+/* Bilduppladdning-stilar */
+.img-thumbnail {
+    border: 2px solid var(--border-color);
+    padding: 5px;
+    background-color: var(--bg-darker-color);
+    transition: border-color 0.3s;
+}
+
+    .img-thumbnail:hover {
+        border-color: var(--accent-color);
+    }
+
+/* File input styling */
+.form-control[type="file"] {
+    padding: 0.5rem;
+    background-color: var(--bg-darker-color);
+    border: 2px dashed var(--border-color);
+    cursor: pointer;
+}
+
+    .form-control[type="file"]:hover {
+        border-color: var(--accent-color);
+        background-color: var(--bg-lighter-color);
+    }
+
+/* Progress bar styling */
+#uploadProgress {
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--bg-darker-color);
+}
+
+.progress-bar {
+    background-color: var(--accent-color);
+    transition: width 0.3s;
+}
+
+/* Bildförhandsvisning container */
+.text-center.mb-3 {
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-darker-color);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
