@@ -135,7 +135,7 @@ input[type="checkbox"]:checked {
     flex-direction: column;
 
     transform-origin: right;
-    background: linear-gradient(180deg, rgba(245, 118, 151, 1) 0%, rgba(235, 209, 225, 1) 61%, rgba(255, 255, 255, 1) 100%);
+    background: linear-gradient(180deg, var(--accent-color) 0%, var(--card-middle-color) 61%, var(--card-end-color) 100%);
 
 
     transition:
@@ -154,25 +154,24 @@ input[type="checkbox"]:checked {
 }
 
 
-.login-btn {
+#login-btn {
     margin-top: 14px;
 
     border: none;
     width: 70%;
     height: 40px;
-    background-color: var(--bg-lighter-color);
-    background-color: var(--text-color);
-    color: var(--bg-lighter-color);
-    color: var(--bg-color);
+    background-color: var(--btn-primary-bg-color);
+    color: var(--btn-primary-text-color);
+    border: 0;
 
     outline: none;
 
     transition: background-color 0.3s, color 0.3s;
 }
 
-.login-btn:focus-visible,
-.login-btn:hover {
-    box-shadow: 0 0 0 2px var(--accent-color);
+#login-btn:focus-visible,
+#login-btn:hover {
+    box-shadow: 0 0 0 3px var(--accent-color);
 }
 
 .shadow-in {

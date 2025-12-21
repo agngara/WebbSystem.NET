@@ -19,6 +19,34 @@
 }
 
 :root {
+    --error-color: red;
+    --link-color: #73a7eb;
+
+    --bg-lighter-color: #171717;
+    --bg-color: #0a0a0a;
+    --bg-darker-color: #000000;
+
+    --text-color: #f0f0f0;
+    --text-lighter-color: #a1a1a1;
+
+    --accent-color: #ed4c9d;
+    --accent-lighter-color: #230c12;
+
+    --border-color: #424242;
+
+    --btn-bg-color: var(--bg-color);
+    --btn-text-color: var(--text-color);
+    --btn-border-color: var(--border-color);
+
+    --btn-primary-bg-color: var(--text-color);
+    --btn-primary-text-color: var(--bg-color);
+    --btn-primary-border-color: var(--bg-color);
+
+    --card-middle-color: #230c12;
+    --card-end-color: var(--bg-color);
+}
+
+.light-mode {
     --bg-lighter-color: #ffffff;
     --bg-color: #f0f0f0;
     --bg-darker-color: #f0f0f0;
@@ -29,35 +57,35 @@
     --accent-color: #dc2376;
     --accent-lighter-color: #fef2f5;
 
-    --error-color: red;
-
-    --link-color: #5555FF;
-
     --border-color: #e7e7e7;
 
-}
+    --btn-bg-color: var(--bg-color);
+    --btn-text-color: var(--text-color);
+    --btn-border-color: var(--border-color);
 
-.dark-mode {
-    --bg-lighter-color: #171717;
-    --bg-color: #0a0a0a;
-    --bg-darker-color: #000000;
+    --btn-primary-bg-color: var(--text-color);
+    --btn-primary-text-color: var(--bg-color);
+    --btn-primary-border-color: var(--bg-color);
 
-    --text-color: #fafafa;
-    --text-lighter-color: #a1a1a1;
-
-    --accent-color: #ed4c9d;
-    --accent-lighter-color: #230c12;
-
-    --error-color: red;
-
-    --link-color: #5555FF;
-
-    --border-color: #424242;
+    --card-middle-color: #edcadd;
+    --card-end-color: var(--bg-color);
 }
 
 
 * {
     color: var(--text-lighter-color);
+}
+
+#color-theme {
+    cursor: pointer;
+}
+
+img {
+    user-drag: none;
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 h1,
@@ -79,8 +107,13 @@ a {
     color: var(--link-color);
 }
 
-a .nav-link {
-    color: var(--text-color);
+.nav-link {
+    color: var(--text-color) !important;
+}
+
+nav * {
+    color: var(--text-color) !important;
+    transition: color 0;
 }
 
 html {
@@ -99,6 +132,23 @@ html {
 .form-control:focus,
 .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+button,
+input[type="submit"] {
+    color: var(--btn-text-color);
+    background-color: var(--btn-bg-color);
+    border: 1px solid var(--btn-border-color);
+    border-radius: 0;
+
+    padding: 4px 8px;
+}
+
+button:hover,
+button:focus,
+input[type="submit"]:hover,
+input[type="submit"]:focus {
+    border-color: var(--text-color);
 }
 
 body {
@@ -128,7 +178,10 @@ body {
 
 nav {
     width: 100vw !important;
+    background-color: var(--bg-lighter-color) !important;
     min-width: 300px;
+
+    border-bottom: 1px solid var(--border-color);
 
 }
 
@@ -185,6 +238,7 @@ nav {
 .search-input {
     outline: none;
     border: none;
+    background: none;
 
     width: 100%;
     height: 100%;

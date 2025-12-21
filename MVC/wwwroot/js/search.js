@@ -1,4 +1,3 @@
-console.log("js binded");
 
 class Search {
     #searchContainer;
@@ -103,14 +102,13 @@ class Search {
     }
 }
 
-
-const init = () => {
+(() => {
     const searchContainer = document.querySelector(".search-container");
     const searchInput = document.querySelector(".search-input");
     const resultsContainer = document.querySelector(".search-results");
 
     const search = new Search(searchContainer, searchInput, resultsContainer);
     search.HookupEvents();
-}
 
-init();
+})()
+
