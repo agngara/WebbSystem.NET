@@ -10,7 +10,7 @@
         <p>We make your CV <span>out</span>shine the compitition</p>
     </div>
 
-    <form class="login-form" method="post" asp-action="LogIn">
+    <form id="registerForm" class="login-form" method="post" asp-action="LogIn">
         <div class="login">
             <h2 class="login-header">USER LOGIN</h2>
 
@@ -20,6 +20,7 @@
                     <input id="username" asp-for="UserName" type="text" placeholder="">
                     <img src="~/icons/User.svg" alt="User Logo">
                 </div>
+                <p id="error-UserName" class="error-text"></p>
             </div>
 
             <div class="input-outer">
@@ -28,6 +29,7 @@
                     <input id="password" asp-for="Password" type="password" placeholder="">
                     <img src="~/icons/Password.svg" alt="Password Logo">
                 </div>
+                <p id="error-Password" class="error-text"></p>
             </div>
 
             <div class="remember-register-wrapper">

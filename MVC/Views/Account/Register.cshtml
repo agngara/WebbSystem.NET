@@ -1,11 +1,9 @@
 @model RegisterViewModel
-
 @section Styles {
     <link rel="stylesheet" href="~/css/account.css" />
 }
 
-<div asp-validation-summary="All" class="text-danger"></div>
-
+<div id="errorMessages" class="text-danger"></div>
 
 <div class="login-wrapper">
     <div class="login-left-box">
@@ -13,8 +11,7 @@
         <p class="reg-wrap">Create your <span>CV</span>, showcase <span>projects</span>, and <span>connect</span> with
             opportunities</p>
     </div>
-
-    <form class="login-form" method="post" asp-action="Register">
+    <form id="registerForm" class="login-form" method="post" asp-action="Register">
         <div class="create-account-wrapper">
             <h2 class="login-header">Register Account</h2>
 
@@ -23,44 +20,40 @@
                 <div class="input-wrapper">
                     <input id="username" asp-for="UserName" type="text" placeholder="">
                 </div>
+                <p id="error-UserName" class="error-text"></p>
             </div>
             <div class="input-outer">
                 <label for="name">Name</label>
                 <div class="input-wrapper">
                     <input id="name" asp-for="Name" type="text" placeholder="">
                 </div>
-
+                <p id="error-Name" class="error-text"></p>
             </div>
             <div class="input-outer">
                 <label for="address">Address</label>
                 <div class="input-wrapper">
                     <input id="address" asp-for="Address" type="text" placeholder="My Street 123...">
                 </div>
-
+                <p id="error-Address" class="error-text"></p>
             </div>
-
             <div class="input-outer">
                 <label for="password">Password</label>
                 <div class="input-wrapper">
                     <input id="password" asp-for="Password" type="password" placeholder="">
                     <img src="~/icons/Password.svg" alt="Password Logo">
                 </div>
-
+                <p id="error-Password" class="error-text"></p>
             </div>
-
             <div class="input-outer">
                 <label for="confirm-password">Confirm Password</label>
                 <div class="input-wrapper">
                     <input id="confirm-password" asp-for="ConfirmPassword" type="password" placeholder="">
                     <img src="~/icons/Password.svg" alt="Password Logo">
                 </div>
-
+                <p id="error-ConfirmPassword" class="error-text"></p>
             </div>
-
             <input type="submit" value="REGISTER" class="login-btn">
         </div>
     </form>
 </div>
-
-
 <script src="~/js/account.js"></script>

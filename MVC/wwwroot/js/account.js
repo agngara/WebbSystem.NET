@@ -49,3 +49,38 @@ window.addEventListener("resize", () => {
     }
 });
 
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch(this.action, {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            window.location.href = result.redirectUrl;
+        } else {
+
+            const errTexts = document.querySelectorAll(".error-text");
+
+            for (const t of errTexts) {
+                t.textContent = "";
+            }
+
+            for (let [key, message] of Object.entries(result.errors)) {
+
+                if (key == "password") key = "Password"
+
+                const errElement = document.getElementById(`error-${key}`)
+                errElement.textContent = message;
+            }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+});
+

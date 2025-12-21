@@ -29,6 +29,8 @@
     --accent-color: #dc2376;
     --accent-lighter-color: #fef2f5;
 
+    --error-color: red;
+
     --link-color: #5555FF;
 
     --border-color: #e7e7e7;
@@ -45,6 +47,8 @@
 
     --accent-color: #ed4c9d;
     --accent-lighter-color: #230c12;
+
+    --error-color: red;
 
     --link-color: #5555FF;
 
@@ -194,6 +198,7 @@ nav {
 }
 
 .search-results {
+    z-index: 100;
     margin-top: 4px;
     position: absolute;
     width: 100%;
