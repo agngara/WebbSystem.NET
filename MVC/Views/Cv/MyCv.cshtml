@@ -1,23 +1,15 @@
 ﻿@model Models.CV
 @{
     ViewData["Title"] = "Mitt CV";
-    // Hjälpmetod för att få bild-URL
-    string GetProfileImageUrl()
-    {
-        if (Model.ProfileImage != null && Model.ProfileImage.Length > 0 && Model.ProfileImageType != null)
-        {
-            return $"data:{Model.ProfileImageType};base64,{Convert.ToBase64String(Model.ProfileImage)}";
-        }
-        return "/images/default-avatar.png";
-    }
 }
 
 <div class="cv-container">
     <!-- CV-header med profilinfo -->
     <div class="cv-header">
-        <img src="@GetProfileImageUrl()" alt="Profilbild"
-             class="cv-profile-img rounded-circle" id="profileImagePreview" />
-
+        @if (!string.IsNullOrEmpty(Model.ProfileImage))
+        {
+            <img src="@Model.ProfileImage" alt="Profilbild" class="cv-profile-img rounded-circle" />
+        }
         <div class="cv-header-info ms-3">
             <h1 class="mb-1">@Model.User.Name</h1>
             <p class="text-muted mb-0">@Model.User.Address</p>
@@ -127,33 +119,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
             </div>
             <div class="modal-body">
-                <!-- Formulär för CV-redigering med filuppladdning -->
-                <form id="editCvForm" method="post" asp-action="Edit" enctype="multipart/form-data">
-                    <!-- Profilbildssektion -->
-                    <div class="mb-4">
-                        <h6 class="mb-3">Profilbild</h6>
-
-                        <!-- Bildförhandsvisning -->
-                        <div class="text-center mb-3">
-                            <img src="@GetProfileImageUrl()"
-                                 alt="Förhandsvisning"
-                                 class="img-thumbnail"
-                                 id="imagePreview"
-                                 style="max-width: 200px; max-height: 200px;">
-                        </div>
-
-                        <!-- Filuppladdning -->
-                        <div class="mb-3">
-                            <label for="newProfileImage" class="form-label">Välj en profilbild</label>
-                            <input type="file"
-                                   class="form-control"
-                                   id="newProfileImage"
-                                   name="newProfileImage"
-                                   accept=".jpg,.jpeg,.png,.gif"
-                                   onchange="previewImage(this)">
-                            <div class="form-text">
-                                Endast JPG, PNG eller GIF. Max 5MB.
-                            </div>
+                <!-- Formulär för CV-redigering -->
+                <form id="editCvForm" method="post" asp-action="Edit">
+                    <!-- Profilbild URL -->
+                    <div class="mb-3">
+                        <label for="profileImage" class="form-label">Profilbild URL</label>
+                        <input type="url" class="form-control" id="profileImage"
+                               name="ProfileImage" value="@Model.ProfileImage"
+                               placeholder="https://example.com/bild.jpg">
+                        <div class="form-text">
+                            Ange URL till din profilbild eller ladda upp en bild.
                         </div>
                     </div>
 
@@ -278,13 +253,9 @@
                         </button>
                     </div>
 
-                    <!-- Dolda fält för CV ID och bilddata -->
+                    <!-- Dolda fält -->
                     <input type="hidden" name="Id" value="@Model.Id" />
                     <input type="hidden" name="UserId" value="@Model.UserId" />
-                    <input type="hidden" name="ProfileImage" id="profileImageData"
-                           value="@Convert.ToBase64String(Model.ProfileImage ?? new byte[0])" />
-                    <input type="hidden" name="ProfileImageType" id="profileImageType"
-                           value="@Model.ProfileImageType" />
                 </form>
             </div>
             <div class="modal-footer">
@@ -295,7 +266,6 @@
     </div>
 </div>
 
-<!-- Dold element för att skicka data till JavaScript -->
 <div id="cvData"
      data-work-exp-count="@(Model.WorkExperiences?.Count ?? 0)"
      data-education-count="@(Model.Educations?.Count ?? 0)"
@@ -304,147 +274,5 @@
 </div>
 
 @section Scripts {
-    <script>
-        // Globala räknare
-        let workExpCount = @(Model.WorkExperiences?.Count ?? 0);
-        let educationCount = @(Model.Educations?.Count ?? 0);
-        let competenceCount = @(Model.Competences?.Count ?? 0);
-
-        // Funktion för att förhandsvisa bild
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    document.getElementById('imagePreview').src = e.target.result;
-                    document.getElementById('profileImagePreview').src = e.target.result;
-
-                    // Spara base64-data i dolda fält
-                    const base64Data = e.target.result.split(',')[1];
-                    document.getElementById('profileImageData').value = base64Data;
-                    document.getElementById('profileImageType').value = input.files[0].type;
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // Lägg till arbetserfarenhet
-        function addWorkExperience() {
-            const container = document.getElementById('workExperiencesContainer');
-            if (!container) return;
-
-            const html = `
-                <div class="work-experience-entry border p-3 mb-3 rounded">
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control"
-                                   name="WorkExperiences[${workExpCount}].Title"
-                                   placeholder="Titel" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control"
-                                   name="WorkExperiences[${workExpCount}].WorkPlace.Name"
-                                   placeholder="Företag">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="date" class="form-control"
-                                   name="WorkExperiences[${workExpCount}].StartDate">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="date" class="form-control"
-                                   name="WorkExperiences[${workExpCount}].EndDate">
-                        </div>
-                        <div class="col-12">
-                            <textarea class="form-control" rows="2"
-                                      name="WorkExperiences[${workExpCount}].Description"
-                                      placeholder="Beskrivning"></textarea>
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-            workExpCount++;
-        }
-
-        // Lägg till utbildning
-        function addEducation() {
-            const container = document.getElementById('educationsContainer');
-            if (!container) return;
-
-            const html = `
-                <div class="education-entry border p-3 mb-3 rounded">
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control"
-                                   name="Educations[${educationCount}].ProgramOrCourseName"
-                                   placeholder="Program/Kursnamn" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control"
-                                   name="Educations[${educationCount}].Institution.Name"
-                                   placeholder="Skola/Universitet">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="date" class="form-control"
-                                   name="Educations[${educationCount}].StartDate">
-                        </div>
-                        <div class="col-md-6">
-                            <input type="date" class="form-control"
-                                   name="Educations[${educationCount}].EndDate">
-                        </div>
-                        <div class="col-12">
-                            <textarea class="form-control" rows="2"
-                                      name="Educations[${educationCount}].Description"
-                                      placeholder="Beskrivning"></textarea>
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-            educationCount++;
-        }
-
-        // Lägg till kompetens
-        function addCompetence() {
-            const container = document.getElementById('competencesContainer');
-            if (!container) return;
-
-            const html = `
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control"
-                           name="Competences[${competenceCount}].Name"
-                           placeholder="Kompetens" required>
-                    <button type="button" class="btn btn-outline-danger"
-                            onclick="removeCompetence(this)">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-            competenceCount++;
-        }
-
-        // Ta bort kompetens
-        function removeCompetence(button) {
-            const inputGroup = button.closest('.input-group');
-            if (inputGroup) {
-                inputGroup.remove();
-            }
-        }
-
-        // Event listener för när modalen stängs
-        document.getElementById('editCvModal')?.addEventListener('hidden.bs.modal', function() {
-            setTimeout(() => {
-                window.location.reload();
-            }, 300);
-        });
-
-        // Gör funktionerna globalt tillgängliga
-        window.addWorkExperience = addWorkExperience;
-        window.addEducation = addEducation;
-        window.addCompetence = addCompetence;
-        window.removeCompetence = removeCompetence;
-        window.previewImage = previewImage;
-    </script>
+    <script src="~/js/cv.js" asp-append-version="true"></script>
 }

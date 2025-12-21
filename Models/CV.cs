@@ -11,8 +11,7 @@ namespace Models
         [ForeignKey(nameof(UserId))]
         public required User User { get; set; }
 
-        public byte[]? ProfileImage { get; set; }
-        public string? ProfileImageType { get; set; }
+        public string? ProfileImage { get; set; }
 
         public virtual List<WorkExperience> WorkExperiences { get; set; } = [];
         public virtual List<Competence> Competences { get; set; } = [];

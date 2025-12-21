@@ -1,42 +1,56 @@
-﻿// cv.js - JavaScript för CV-redigering med Bootstrap modal
+﻿// MVC/wwwroot/js/cv.js - JavaScript för CV-sidan
 
-// Globala räknare som håller koll på antal objekt
+// Globala räknare
 let workExpCount = 0;
 let educationCount = 0;
 let competenceCount = 0;
 
 // Initialisering när sidan laddas
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('CV.js laddad!');
+
     // Hämta initiala värden från data-attribut
     const cvData = document.getElementById('cvData');
     if (cvData) {
         workExpCount = parseInt(cvData.dataset.workExpCount || 0);
         educationCount = parseInt(cvData.dataset.educationCount || 0);
         competenceCount = parseInt(cvData.dataset.competenceCount || 0);
+        console.log('Initial counts:', { workExpCount, educationCount, competenceCount });
     }
 
     // Event listener för när modalen stängs
     const editModal = document.getElementById('editCvModal');
     if (editModal) {
         editModal.addEventListener('hidden.bs.modal', function () {
-            // Ladda om sidan för att visa uppdaterat CV
+            console.log('Modal stängd - laddar om sidan');
             setTimeout(() => {
                 window.location.reload();
-            }, 500);
+            }, 300);
         });
     }
 
-    // Event listener för formulärets submit (AJAX)
+    // Event listener för formulärets submit (valfritt - AJAX)
     const editForm = document.getElementById('editCvForm');
     if (editForm) {
-        editForm.addEventListener('submit', handleFormSubmit);
+        editForm.addEventListener('submit', function (e) {
+            console.log('Formulär submit');
+            // Här kan du lägga till AJAX om du vill
+        });
     }
+
+    // Testa att alla knappar fungerar
+    console.log('CV.js initierad klar!');
 });
 
 // Lägg till arbetserfarenhet
 function addWorkExperience() {
+    console.log('Lägger till arbetserfarenhet #' + workExpCount);
+
     const container = document.getElementById('workExperiencesContainer');
-    if (!container) return;
+    if (!container) {
+        console.error('Kunde inte hitta workExperiencesContainer!');
+        return;
+    }
 
     const html = `
         <div class="work-experience-entry border p-3 mb-3 rounded">
@@ -64,31 +78,24 @@ function addWorkExperience() {
                               name="WorkExperiences[${workExpCount}].Description"
                               placeholder="Beskrivning"></textarea>
                 </div>
-                <div class="col-12 text-end">
-                    <button type="button" class="btn btn-sm btn-outline-danger" 
-                            onclick="removeWorkExperience(this)">
-                        <i class="bi bi-trash"></i> Ta bort
-                    </button>
-                </div>
             </div>
         </div>
     `;
+
     container.insertAdjacentHTML('beforeend', html);
     workExpCount++;
-}
-
-// Ta bort arbetserfarenhet
-function removeWorkExperience(button) {
-    const entry = button.closest('.work-experience-entry');
-    if (entry) {
-        entry.remove();
-    }
+    console.log('Arbetserfarenhet tillagd. Nytt count:', workExpCount);
 }
 
 // Lägg till utbildning
 function addEducation() {
+    console.log('Lägger till utbildning #' + educationCount);
+
     const container = document.getElementById('educationsContainer');
-    if (!container) return;
+    if (!container) {
+        console.error('Kunde inte hitta educationsContainer!');
+        return;
+    }
 
     const html = `
         <div class="education-entry border p-3 mb-3 rounded">
@@ -116,31 +123,24 @@ function addEducation() {
                               name="Educations[${educationCount}].Description"
                               placeholder="Beskrivning"></textarea>
                 </div>
-                <div class="col-12 text-end">
-                    <button type="button" class="btn btn-sm btn-outline-danger" 
-                            onclick="removeEducation(this)">
-                        <i class="bi bi-trash"></i> Ta bort
-                    </button>
-                </div>
             </div>
         </div>
     `;
+
     container.insertAdjacentHTML('beforeend', html);
     educationCount++;
-}
-
-// Ta bort utbildning
-function removeEducation(button) {
-    const entry = button.closest('.education-entry');
-    if (entry) {
-        entry.remove();
-    }
+    console.log('Utbildning tillagd. Nytt count:', educationCount);
 }
 
 // Lägg till kompetens
 function addCompetence() {
+    console.log('Lägger till kompetens #' + competenceCount);
+
     const container = document.getElementById('competencesContainer');
-    if (!container) return;
+    if (!container) {
+        console.error('Kunde inte hitta competencesContainer!');
+        return;
+    }
 
     const html = `
         <div class="input-group mb-2">
@@ -153,125 +153,86 @@ function addCompetence() {
             </button>
         </div>
     `;
+
     container.insertAdjacentHTML('beforeend', html);
     competenceCount++;
+    console.log('Kompetens tillagd. Nytt count:', competenceCount);
 }
 
 // Ta bort kompetens
 function removeCompetence(button) {
+    console.log('Tar bort kompetens');
+
     const inputGroup = button.closest('.input-group');
     if (inputGroup) {
         inputGroup.remove();
+        console.log('Kompetens borttagen');
     }
 }
 
-// Hantera formulärets submit (AJAX)
-async function handleFormSubmit(event) {
-    event.preventDefault();
+// Validera formuläret innan submit (valfritt)
+function validateCvForm() {
+    console.log('Validerar CV-formulär...');
 
-    const form = event.target;
-    const formData = new FormData(form);
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton.innerHTML;
+    const form = document.getElementById('editCvForm');
+    if (!form) return true;
 
-    try {
-        // Visa laddningsindikator
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sparar...';
-        submitButton.disabled = true;
-
-        // Skicka AJAX-förfrågan
-        const response = await fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            // Visa framgångsmeddelande
-            showAlert('success', result.message || 'CV uppdaterat framgångsrikt!');
-
-            // Stäng modalen efter kort delay
-            setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('editCvModal'));
-                if (modal) {
-                    modal.hide();
-                }
-            }, 1500);
-        } else {
-            // Visa felmeddelanden
-            if (result.errors) {
-                showAlert('danger', 'Vänligen korrigera felen i formuläret.');
-            } else {
-                showAlert('danger', result.error || 'Ett fel uppstod vid sparandet.');
-            }
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showAlert('danger', 'Ett nätverksfel uppstod. Försök igen.');
-    } finally {
-        // Återställ knappen
-        submitButton.innerHTML = originalButtonText;
-        submitButton.disabled = false;
-    }
-}
-
-// Visa alert-meddelande
-function showAlert(type, message) {
-    // Ta bort tidigare alerts
-    const existingAlert = document.querySelector('.cv-alert');
-    if (existingAlert) {
-        existingAlert.remove();
-    }
-
-    // Skapa ny alert
-    const alertHtml = `
-        <div class="alert alert-${type} alert-dismissible fade show cv-alert" role="alert">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Stäng"></button>
-        </div>
-    `;
-
-    // Lägg till alert i modalen
-    const modalBody = document.querySelector('.modal-body');
-    if (modalBody) {
-        modalBody.insertAdjacentHTML('afterbegin', alertHtml);
-
-        // Ta bort alert automatiskt efter 5 sekunder
-        setTimeout(() => {
-            const alert = document.querySelector('.cv-alert');
-            if (alert) {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }
-        }, 5000);
-    }
-}
-
-// Validera datum (slutdatum ska vara efter startdatum)
-function validateDates(startDateId, endDateId) {
-    const startDate = document.getElementById(startDateId)?.value;
-    const endDate = document.getElementById(endDateId)?.value;
-
-    if (startDate && endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-
-        if (end < start) {
-            showAlert('warning', 'Slutdatum måste vara efter startdatum.');
-            return false;
-        }
-    }
+    // Här kan du lägga till extra validering om du vill
+    console.log('Formulär godkänt!');
     return true;
 }
 
-// Exportera funktioner till global scope
+// Visa alert-meddelande (valfritt - för framtida användning)
+function showCvAlert(type, message) {
+    console.log(`CV Alert [${type}]: ${message}`);
+
+    // Skapa eller uppdatera alert-element
+    let alertDiv = document.getElementById('cvAlert');
+    if (!alertDiv) {
+        alertDiv = document.createElement('div');
+        alertDiv.id = 'cvAlert';
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.role = 'alert';
+
+        const closeButton = document.createElement('button');
+        closeButton.type = 'button';
+        closeButton.className = 'btn-close';
+        closeButton.setAttribute('data-bs-dismiss', 'alert');
+        closeButton.setAttribute('aria-label', 'Close');
+
+        alertDiv.appendChild(document.createTextNode(message + ' '));
+        alertDiv.appendChild(closeButton);
+
+        // Lägg till i modalen
+        const modalBody = document.querySelector('.modal-body');
+        if (modalBody) {
+            modalBody.insertBefore(alertDiv, modalBody.firstChild);
+        }
+    } else {
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.querySelector('.alert-message').textContent = message;
+    }
+}
+
+// Debug-funktion för att lista alla funktioner
+function listCvFunctions() {
+    console.log('=== CV.js Functions ===');
+    console.log('1. addWorkExperience() - Lägger till arbetserfarenhet');
+    console.log('2. addEducation() - Lägger till utbildning');
+    console.log('3. addCompetence() - Lägger till kompetens');
+    console.log('4. removeCompetence(button) - Tar bort kompetens');
+    console.log('5. validateCvForm() - Validerar formulär');
+    console.log('6. showCvAlert(type, message) - Visar alert');
+    console.log('========================');
+}
+
+// Gör funktionerna globalt tillgängliga
 window.addWorkExperience = addWorkExperience;
-window.removeWorkExperience = removeWorkExperience;
 window.addEducation = addEducation;
-window.removeEducation = removeEducation;
 window.addCompetence = addCompetence;
 window.removeCompetence = removeCompetence;
+window.validateCvForm = validateCvForm;
+window.showCvAlert = showCvAlert;
+window.listCvFunctions = listCvFunctions;
+
+console.log('CV.js laddad - Alla funktioner redo!');
