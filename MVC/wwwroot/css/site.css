@@ -46,6 +46,14 @@
     --card-end-color: var(--bg-color);
 }
 
+span.navbar-toggler-icon {
+    background-image: url("/icons/Menu.svg") !important;
+}
+
+.navbar {
+    margin-bottom: 0 !important;
+}
+
 .light-mode {
     --bg-lighter-color: #ffffff;
     --bg-color: #f0f0f0;
@@ -203,6 +211,8 @@ nav {
     display: flex;
     justify-content: start;
     align-items: center;
+
+    padding: 20px 0;
 }
 
 .navbar-grouping {

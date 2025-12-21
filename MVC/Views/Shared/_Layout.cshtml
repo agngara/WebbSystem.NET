@@ -23,7 +23,10 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PinkedOut</a>
+                <div style="display:flex; justify-content: center; align-items: center;">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PinkedOut</a>
+                    <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
+                </div>
 
                 <div class="search-container">
                     <div class="search-input-wrapper">
@@ -40,7 +43,6 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     <ul class="navbar-nav">
                         <div class="navbar-grouping">
-                            <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home"

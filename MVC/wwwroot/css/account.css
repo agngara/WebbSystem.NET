@@ -5,13 +5,24 @@
 
 .login-wrapper {
     width: 90%;
-    height: 600px;
+    height: 500px;
     max-width: 1000px;
     justify-content: center;
     align-items: center;
 
     display: flex;
 
+}
+
+.register-wrapper {
+    height: 600px;
+}
+
+
+@media screen and (min-width: 576px) {
+    .login-wrapper {
+        height: 600px;
+    }
 }
 
 .login-form {
@@ -24,7 +35,7 @@
     flex: 1;
     height: 100%;
     width: 100%;
-    min-width: 340px;
+    min-width: 300px;
 
 
     background-color: var(--bg-lighter-color);
