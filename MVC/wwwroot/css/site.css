@@ -278,10 +278,13 @@ nav {
     cursor: pointer;
     bottom: 0;
     border-radius: 10px;
+    overflow-x: auto;
 }
 
 .search-result-item * {
     color: var(--text-color);
+    font-weight: 500;
+    font-size: 1.05rem;
 }
 
 .search-result-item:hover {
