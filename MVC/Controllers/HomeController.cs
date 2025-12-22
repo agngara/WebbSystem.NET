@@ -17,9 +17,16 @@ public class HomeController : Controller
     }
     public async Task<IActionResult> Homepage()
     {
-        CVRepository repo = new CVRepository(_context);
-        List<CV> allCvs = await repo.GetAllExtendedCVs();
-        return View(allCvs);
+        CVRepository CVrepo = new CVRepository(_context);
+        ProjectRepository ProjectRepo = new ProjectRepository(_context);
+
+        HomepageViewModel viewModel = new HomepageViewModel
+        {
+            TopCVs = await CVrepo.GetAllExtendedCVs(),
+            LatestProjects = ProjectRepo.GetAll()
+        };
+
+        return View(viewModel);
     }
 
     public async Task<IActionResult> Index()

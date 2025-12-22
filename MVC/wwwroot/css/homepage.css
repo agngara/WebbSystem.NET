@@ -55,3 +55,15 @@
 .scroll-card {
     margin: 20px;
 }
+
+.card {
+/*    border: 1.8px solid hotpink;
+*/}
+
+    .card > .list-group {
+        border-top: 1px solid rgba(0,0,0,.125);
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+
+    .card > .card-body {
+    }
