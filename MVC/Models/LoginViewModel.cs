@@ -9,11 +9,11 @@ namespace MVC.Models
 
         [Required(ErrorMessage = "Please Enter a Username")]
         [StringLength(30)]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
 
         [Required(ErrorMessage = "Please Enter a Password")]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
         public bool RememberMe { get; set; }
     }

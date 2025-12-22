@@ -19,25 +19,33 @@ namespace MVC.Controllers
         [HttpGet]
         public IActionResult LogIn()
         {
-            LoginViewModel loginViewModel = new();
-            return View(loginViewModel);
+            return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> LogIn(LoginViewModel loginViewModel)
         {
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(loginViewModel.UserName, loginViewModel.Password,
-                        isPersistent: loginViewModel.RememberMe, lockoutOnFailure: false);
-
-                if (result.Succeeded)
+                var errors = new Dictionary<string, string>();
+                foreach (var entry in ModelState)
                 {
-                    return RedirectToAction("Index", "Home");
+                    if (entry.Value.Errors.Any())
+                    {
+                        errors[entry.Key] = entry.Value.Errors.First().ErrorMessage;
+                    }
                 }
+                return Json(new { success = false, errors = errors });
             }
-            return View();
+
+            var result = await signInManager.PasswordSignInAsync(loginViewModel.UserName, loginViewModel.Password,
+                    isPersistent: loginViewModel.RememberMe, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+            }
+
+            return Json(new { success = false, errors = new { Password = "Invalid username or password" } });
         }
 
         [HttpGet]
@@ -49,27 +57,40 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                User user = new();
-                user.UserName = registerViewModel.UserName;
-                user.Adress = registerViewModel.Address;
-                user.Name = registerViewModel.Name;
-
-                var result = await userManager.CreateAsync(user, registerViewModel.Password);
-
-                if (result.Succeeded)
+                var errors = new Dictionary<string, string>();
+                foreach (var entry in ModelState)
                 {
-                    await signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    if (entry.Value.Errors.Any())
+                    {
+                        errors[entry.Key] = entry.Value.Errors.First().ErrorMessage;
+                    }
                 }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+                return Json(new { success = false, errors = errors });
             }
-            return View(registerViewModel);
+
+            User user = new()
+            {
+                Name = registerViewModel.Name,
+                UserName = registerViewModel.UserName,
+                Address = registerViewModel.Address
+            };
+
+            var result = await userManager.CreateAsync(user, registerViewModel.Password);
+
+            if (result.Succeeded)
+            {
+                await signInManager.SignInAsync(user, isPersistent: false);
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+            }
+
+            var resultErrors = new Dictionary<string, string>();
+            foreach (var error in result.Errors)
+            {
+                resultErrors["General"] = error.Description;
+            }
+            return Json(new { success = false, errors = resultErrors });
         }
 
         [HttpPost]

@@ -2,6 +2,13 @@
 <html lang="en">
 
 <head>
+    <script>
+        //LÅT DENNA VARA HÖGST UPP SÅ DET INTE BLIR FLICKERING 
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "light") {
+            document.documentElement.classList.add("light-mode");
+        }
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PinkedOut</title>
@@ -14,26 +21,38 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PinkedOut</a>
+                <div style="display:flex; justify-content: center; align-items: center;">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PinkedOut</a>
+                    <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
+                </div>
+
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <input class="search-input" type="text" asp-action="Search" asp-controller="Search">
+                        <img src="/icons/Search.svg" alt="Search icon">
+                    </div>
+                    <div class="search-results"></div>
+                </div>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account"
-                                asp-action="LogIn">Login</a>
-                        </li>
+                <div class="navbar-collapse collapse d-sm-inline-flex">
+                    <ul class="navbar-nav">
+                        <div class="navbar-grouping">
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home"
+                                    asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account"
+                                    asp-action="LogIn">Login</a>
+                            </li>
+                        </div>
                     </ul>
                 </div>
             </div>
@@ -51,6 +70,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/search.js"></script>
+    <script src="~/js/colortheme.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

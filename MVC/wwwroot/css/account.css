@@ -5,13 +5,24 @@
 
 .login-wrapper {
     width: 90%;
-    height: 600px;
+    height: 500px;
     max-width: 1000px;
     justify-content: center;
     align-items: center;
 
     display: flex;
 
+}
+
+.register-wrapper {
+    height: 600px;
+}
+
+
+@media screen and (min-width: 576px) {
+    .login-wrapper {
+        height: 600px;
+    }
 }
 
 .login-form {
@@ -24,7 +35,7 @@
     flex: 1;
     height: 100%;
     width: 100%;
-    min-width: 340px;
+    min-width: 300px;
 
 
     background-color: var(--bg-lighter-color);
@@ -33,7 +44,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap: 14px;
+    gap: 0px;
 
     box-shadow: 0px 4px 6px 3px rgba(0, 0, 0, 0.1),
         0 1px 3px rgba(0, 0, 0, 0.06);
@@ -44,8 +55,21 @@
     margin-bottom: 30px;
 }
 
-.input-wrapper {
+.input-outer {
+    display: flex;
+    flex-direction: column;
     width: 70%;
+}
+
+.input-outer label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+
+}
+
+.input-wrapper {
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,13 +77,12 @@
 
     border: 1px solid var(--border-color);
     padding: 6px;
-    border-radius: 20px;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input-wrapper:focus-within {
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 2px var(--accent-color);
+    box-shadow: 0 0 0 1px var(--accent-color);
 }
 
 
@@ -89,6 +112,9 @@ input[type="checkbox"]:checked {
 }
 
 .remember-register-wrapper {
+    margin-top: 4px;
+    margin-bottom: 8px;
+
     width: 70%;
     display: flex;
     justify-content: space-between;
@@ -97,8 +123,6 @@ input[type="checkbox"]:checked {
     padding-right: 8px;
 
     font-size: 0.8rem;
-
-    margin-bottom: 14px;
 }
 
 .rememberme-wrapper {
@@ -115,13 +139,14 @@ input[type="checkbox"]:checked {
     width: 0%;
     max-width: 60%;
 
+
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 
     transform-origin: right;
-    background: linear-gradient(var(--accent-color), var(--bg-color));
+    background: linear-gradient(180deg, var(--accent-color) 0%, var(--card-middle-color) 61%, var(--card-end-color) 100%);
 
 
     transition:
@@ -129,32 +154,50 @@ input[type="checkbox"]:checked {
         opacity 0.2s;
 }
 
+.login-left-box * {
+
+    color: var(--text-color);
+}
+
 .login-left-box span {
     color: var(--text-darker-color);
     font-weight: bold;
 }
 
-.login-btn {
+
+#login-btn {
+    margin-top: 14px;
+
     border: none;
     width: 70%;
     height: 40px;
-    border-radius: 20px;
-    background-color: var(--bg-lighter-color);
+    background-color: var(--btn-primary-bg-color);
+    color: var(--btn-primary-text-color);
+    border: 0;
 
-    border: 2px solid var(--border-color);
     outline: none;
 
     transition: background-color 0.3s, color 0.3s;
 }
 
-.login-btn:hover {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-    color: var(--bg-lighter-color);
+#login-btn:focus-visible,
+#login-btn:hover {
+    box-shadow: 0 0 0 3px var(--accent-color);
 }
 
 .shadow-in {
     animation: shadow-in 2s;
+}
+
+.reg-wrap {
+    text-align: center;
+    width: 350px;
+}
+
+.error-text {
+    font-size: 0.7rem;
+    color: var(--error-color);
+    height: 12px;
 }
 
 
@@ -176,14 +219,14 @@ input[type="checkbox"]:checked {
 
 .create-account-wrapper {
     height: 600px;
-    width: 90%;
     max-width: 600px;
+
 
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap: 14px;
+    gap: 0px;
 
     opacity: 0;
 

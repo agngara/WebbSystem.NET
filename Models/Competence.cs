@@ -6,11 +6,11 @@ namespace Models
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
-        public int CvId { get; set; }
+        public required int CvId { get; set; }
 
         [ForeignKey(nameof(CvId))]
-        public CV Cv { get; set; }
+        public required CV Cv { get; set; }
     }
 }

@@ -5,3 +5,13 @@
     <p>Databas: /*~~~~~~~~~~~~~~~~~*/</p>
 ~
 
+
+<form method="post" asp-controller="Account" asp-action="Logout">
+    <AuthorizeView>
+        <Authorize>
+            <h2>Logged in as /*~~~~~~~~~~~~~~~~*/</h2>
+            <input type="submit" value="Logout" />
+        </Authorize>
+    </AuthorizeView>
+</form>
+
