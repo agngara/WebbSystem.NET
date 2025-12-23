@@ -145,7 +145,26 @@ html {
 
 input[type="submit"] {}
 
-.btn {
+.btn,
+.custom-button {
+    border: none;
+    padding: 5px 7px;
+
+    border-radius: 20px;
+    background-color: var(--bg-lighter-color);
+    border: 2px solid var(--border-color);
+    outline: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.custom-button:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--bg-lighter-color);
+}
+
+button,
+input[type="submit"] {
     color: var(--btn-text-color);
     background-color: var(--btn-bg-color);
     border: 1px solid var(--btn-border-color);
