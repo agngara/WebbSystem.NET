@@ -99,5 +99,13 @@ namespace MVC.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
+
+        [HttpGet]
+        public IActionResult Settings()
+        {
+            return View();
+        }
     }
+
 }
