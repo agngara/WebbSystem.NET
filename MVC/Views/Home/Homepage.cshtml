@@ -3,20 +3,31 @@
     ViewData["title"] = "LinkedOut";
 }
 <link rel="stylesheet" href="~/css/homepage.css" />
+<script src="~/js/homepage.js" defer></script>
 
-<section class="homepage-landing container-fluid">
-    <div class="container">
-        <div class="row g-5">
-            <div class="col-12 col-md-6">
-                <h1 class="text-start">Let your next employer see you!</h1>
-            </div>
-            <div class="col-12 col-md-6 text-center">Some text</div>
-            <div class="col-12 col-md-6">
-                <button class="btn btn-primary ">Register</button>
-            </div>
-            <div class="col-12 col-md-6"></div>
+<section class="homepage-landing">
+
+    <div id="homepage-container">
+        <div class="brandcell">
+            <h2>All spaced out</h2>
+        </div>
+        <div class="textcell">
+            <p>Register and get linked out today!</p>
+        </div>
+        <div class="buttoncell">
+            <button class="custom-button">Register</button>
         </div>
     </div>
+
+    <ul class="parallax-layers">
+        <li class="layer"></li>
+        <li class="layer"></li>
+        <li class="layer"></li>
+        <li class="layer"></li>
+    </ul>
+
+
+
 </section>
 
 <h2>Popular Profiles</h2>
@@ -42,7 +53,7 @@
                     <li class="list-group-item">@cv.WorkExperiences.Last().Title</li>
                 </ul>
                 <div class="card-body">
-                    <a href="#" class="btn btn-primary">Se profil</a>
+                    <button class="custom-button">See profile</button>
                 </div>
             </div>
         }
@@ -50,7 +61,7 @@
     </section>
 </section>
 
-<h2>Latest Projects</h2>
+<h2>Explore latest projects</h2>
 <section class="slider-window">
     <div class="arrow-left" id="slide-1-arrow-left-2">
         <img src="~/Assets/UI-Images/left_arrow_big.png" alt="Left arrow">
@@ -59,20 +70,17 @@
         <img src="~/Assets/UI-Images/right_arrow_big.png" alt="Right arrow">
     </div>
     <section class="scroll-container">
-        @foreach (Models.CV cv in Model.TopCVs)
+        @foreach (Models.Project project in Model.LatestProjects)
         {
             <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
-                <img src="~/Assets/UserUploads/stanprofilepic.png" class="card-img-top" alt="...">
+                <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="...">
                 <div class="card-body">
-                    <h5 class="card-title">@cv.User.Name</h5>
-                    <p class="card-text">En beskrivning av personen, som ännu inte hanteras av databasen... fuuck!</p>
+                    <h5 class="card-title">@project.Titel</h5>
+                    <p class="card-text">@project.Description</p>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">@cv.Educations.Last().ProgramOrCourseName</li>
-                    <li class="list-group-item">@cv.WorkExperiences.Last().Title</li>
-                </ul>
+
                 <div class="card-body">
-                    <button class="custom-button">Utforska profil</button>
+                    <button class="custom-button">Explore project</button>
                 </div>
             </div>
         }
@@ -82,28 +90,4 @@
 
 
 
-<script>
-    var scrollContainerCv = document.getElementsByClassName("scroll-container").item(0);
-    var rightArrow = document.getElementById("slide-1-arrow-right");
 
-    rightArrow.addEventListener("click", () => {
-        scrollContainerCv.scrollBy(700,0);
-
-    })
-
-    document.getElementById("slide-1-arrow-left").addEventListener("click", () => {
-        scrollContainerCv.scrollBy(-700,0);
-    })
-
-    var scrollContainerCv = document.getElementsByClassName("scroll-container").item(1);
-    var rightArrow = document.getElementById("slide-1-arrow-right-2");
-
-    rightArrow.addEventListener("click", () => {
-        scrollContainerCv.scrollBy(700,0);
-
-    })
-
-    document.getElementById("slide-1-arrow-left-2").addEventListener("click", () => {
-        scrollContainerCv.scrollBy(-700,0);
-    })
-</script>
