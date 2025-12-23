@@ -23,8 +23,10 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PinkedOut</a>
-                            <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
+                <div style="display:flex; justify-content: center; align-items: center;">
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">PinkedOut</a>
+                    <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
+                </div>
 
                 <div class="search-container">
                     <div class="search-input-wrapper">
@@ -46,10 +48,20 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home"
                                     asp-action="Index">Home</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account"
-                                    asp-action="LogIn">Login</a>
-                            </li>
+                            ~~~ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                            ~
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account"
+                                        asp-action="Settings">Account Settings</a>
+                                </li>
+                            ~
+                            /**/
+                            ~
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account"
+                                        asp-action="LogIn">Login</a>
+                                </li>
+                            ~
                         </div>
                     </ul>
                 </div>

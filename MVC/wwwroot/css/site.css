@@ -163,15 +163,6 @@ input[type="submit"] {}
     color: var(--bg-lighter-color);
 }
 
-button,
-input[type="submit"] {
-    color: var(--btn-text-color);
-    background-color: var(--btn-bg-color);
-    border: 1px solid var(--btn-border-color);
-    border-radius: 0;
-
-    padding: 4px 8px;
-}
 
 .btn:hover,
 .btn:focus {
