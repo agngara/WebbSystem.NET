@@ -26,7 +26,6 @@ namespace MVC.Controllers
             _logger = logger;
         }
 
-        // GET: CV-sida för inloggad användare
         public async Task<IActionResult> MyCv()
         {
             try
@@ -36,11 +35,10 @@ namespace MVC.Controllers
 
                 _logger.LogInformation($"Hämtar CV för användare: {user.Id}");
 
-                // ANVÄND ENKLARE QUERY - hämta bara grunddata först
                 var cv = await _context.CVs
-                    .AsNoTracking() // Snabbare, ingen change tracking
+                    .AsNoTracking()
                     .Where(c => c.UserId == user.Id)
-                    .Select(c => new // Anonymt objekt med bara fält som finns
+                    .Select(c => new
                     {
                         c.Id,
                         c.UserId,
@@ -52,30 +50,25 @@ namespace MVC.Controllers
                 {
                     _logger.LogInformation("CV finns inte, skapar nytt...");
 
-                    // Skapa nytt CV med minimal data
                     var newCv = new CV
                     {
                         UserId = user.Id,
                         User = user,
-                        ProfileImage = "/images/default-avatar.png"
-                        // Andra listor kommer vara tomma automatiskt
+                        ProfileImage = "/images/standard.png"
                     };
 
                     _context.CVs.Add(newCv);
                     await _context.SaveChangesAsync();
 
-                    // Använd det nya CV:t
                     return await LoadFullCvAsync(newCv.Id, user);
                 }
 
-                // Hämta fullständigt CV med alla relationer
                 return await LoadFullCvAsync(cv.Id, user);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Fel i MyCv");
 
-                // Fallback: Visa CV med grunddata
                 var user = await _userManager.GetUserAsync(User);
                 if (user != null)
                 {
@@ -84,7 +77,7 @@ namespace MVC.Controllers
                         Id = 0,
                         UserId = user.Id,
                         User = user,
-                        ProfileImage = "/images/default-avatar.png",
+                        ProfileImage = "/images/standard.png",
                         WorkExperiences = new List<WorkExperience>(),
                         Educations = new List<Education>(),
                         Competences = new List<Competence>()
@@ -98,17 +91,14 @@ namespace MVC.Controllers
             }
         }
 
-        // Hjälpmetod för att ladda fullständigt CV
         private async Task<IActionResult> LoadFullCvAsync(int cvId, User user)
         {
-            // Hämta CV med grunddata
             var cv = await _context.CVs
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.Id == cvId);
 
             if (cv == null) return NotFound();
 
-            // Hämta relationer separat (mindre risk för fel)
             try
             {
                 cv.WorkExperiences = await _context.WorkExperiences
@@ -128,7 +118,6 @@ namespace MVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Kunde inte ladda alla relationer");
-                // Fortsätt med tomma listor
                 cv.WorkExperiences ??= new List<WorkExperience>();
                 cv.Educations ??= new List<Education>();
                 cv.Competences ??= new List<Competence>();
@@ -137,7 +126,6 @@ namespace MVC.Controllers
             return View(cv);
         }
 
-        // GET: Publik CV-sida
         [AllowAnonymous]
         public async Task<IActionResult> PublicCv(string userId)
         {
@@ -147,7 +135,6 @@ namespace MVC.Controllers
                 if (user == null || user.IsPrivate == true)
                     return NotFound();
 
-                // Hitta CV för användaren
                 var cvId = await _context.CVs
                     .Where(c => c.UserId == userId)
                     .Select(c => (int?)c.Id)
@@ -156,14 +143,12 @@ namespace MVC.Controllers
                 if (cvId == null)
                     return NotFound();
 
-                // Hämta CV med all data
                 var cv = await _context.CVs
                     .Include(c => c.User)
                     .FirstOrDefaultAsync(c => c.Id == cvId);
 
                 if (cv == null) return NotFound();
 
-                // Ladda relationer
                 cv.WorkExperiences = await _context.WorkExperiences
                     .Where(we => we.CvId == cvId)
                     .Include(we => we.WorkPlace)
@@ -186,7 +171,6 @@ namespace MVC.Controllers
             }
         }
 
-        // GET: Redigera CV
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
@@ -198,12 +182,11 @@ namespace MVC.Controllers
 
             if (cvId == 0)
             {
-                // Skapa nytt CV om det inte finns
                 var newCv = new CV
                 {
                     UserId = user.Id,
                     User = user,
-                    ProfileImage = "/images/default-avatar.png"
+                    ProfileImage = "/images/standard.png"
                 };
 
                 _context.CVs.Add(newCv);
@@ -211,7 +194,6 @@ namespace MVC.Controllers
                 cvId = newCv.Id;
             }
 
-            // Hämta CV med all data
             var cv = await _context.CVs
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.Id == cvId);
@@ -233,7 +215,6 @@ namespace MVC.Controllers
             return View(cv);
         }
 
-        // POST: Redigera CV
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CV model)
@@ -260,13 +241,8 @@ namespace MVC.Controllers
                     _context.CVs.Add(existingCv);
                 }
 
-                // Uppdatera WorkExperiences
                 await UpdateWorkExperiencesAsync(existingCv, model.WorkExperiences);
-
-                // Uppdatera Educations
                 await UpdateEducationsAsync(existingCv, model.Educations);
-
-                // Uppdatera Competences
                 UpdateCompetences(existingCv, model.Competences);
 
                 await _context.SaveChangesAsync();
@@ -282,7 +258,6 @@ namespace MVC.Controllers
             }
         }
 
-        // POST: Ladda upp profilbild
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadProfileImage(IFormFile profileImage)
@@ -292,7 +267,6 @@ namespace MVC.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null) return Unauthorized();
 
-                // Hitta CV
                 var cv = await _context.CVs
                     .FirstOrDefaultAsync(c => c.UserId == user.Id);
 
@@ -309,38 +283,31 @@ namespace MVC.Controllers
                 if (profileImage == null || profileImage.Length == 0)
                     return BadRequest("Ingen bild vald");
 
-                // Validera filtyp
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
                 var extension = Path.GetExtension(profileImage.FileName).ToLowerInvariant();
                 if (!allowedExtensions.Contains(extension))
                     return BadRequest("Endast .jpg, .jpeg och .png filer är tillåtna");
 
-                // Validera filstorlek (max 5MB)
                 if (profileImage.Length > 5 * 1024 * 1024)
                     return BadRequest("Filen är för stor. Max 5MB");
 
-                // Skapa unikt filnamn
                 var fileName = $"profile_{user.Id}_{Guid.NewGuid()}{extension}";
                 var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "profiles");
 
-                // Skapa mapp om den inte finns
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
 
                 var filePath = Path.Combine(uploadsFolder, fileName);
 
-                // Spara filen
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await profileImage.CopyToAsync(stream);
                 }
 
-                // Spara bara URL:en i ProfileImage (vi sparar inte filnamn/content type än)
                 cv.ProfileImage = $"/uploads/profiles/{fileName}";
                 cv.ProfileImageFileName = fileName;
                 cv.ProfileImageContentType = profileImage.ContentType;
 
-                // Radera gamla bilden om den finns
                 if (!string.IsNullOrEmpty(cv.ProfileImage) && cv.ProfileImage.StartsWith("/uploads/profiles/"))
                 {
                     var oldFileName = Path.GetFileName(cv.ProfileImage);
@@ -365,12 +332,10 @@ namespace MVC.Controllers
             }
         }
 
-        // Hjälpmetoder för att uppdatera data
         private async Task UpdateWorkExperiencesAsync(CV existingCv, ICollection<WorkExperience> newExperiences)
         {
             if (newExperiences == null) return;
 
-            // Ta bort gamla
             _context.WorkExperiences.RemoveRange(existingCv.WorkExperiences);
             existingCv.WorkExperiences.Clear();
 

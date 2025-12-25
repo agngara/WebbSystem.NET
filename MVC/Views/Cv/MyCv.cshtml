@@ -7,7 +7,7 @@
     <!-- CV-header med profilinfo OCH BILDUPLADDNING -->
     <div class="cv-header">
         <div class="profile-image-container position-relative">
-            <img src="@(string.IsNullOrEmpty(Model.ProfileImage) ? "/images/default-avatar.png" : Model.ProfileImage)"
+            <img src="@(string.IsNullOrEmpty(Model.ProfileImage) ? "/images/standard.png" : Model.ProfileImage)"
                  alt="Profilbild"
                  class="cv-profile-img rounded-circle"
                  id="profileImage"
@@ -142,7 +142,7 @@
                     </div>
 
                     <div class="image-preview mb-3 text-center">
-                        <img id="imagePreview" src="@(string.IsNullOrEmpty(Model.ProfileImage) ? "/images/default-avatar.png" : Model.ProfileImage)"
+                        <img id="imagePreview" src="@(string.IsNullOrEmpty(Model.ProfileImage) ? "/images/standard.png" : Model.ProfileImage)"
                              class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                     </div>
 
