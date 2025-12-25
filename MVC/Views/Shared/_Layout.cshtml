@@ -23,7 +23,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3">
             <div class="container-fluid">
-                <div style="display:flex; justify-content: center; align-items: center;">
+                <div class="nav-section" style="display:flex; justify-content: flex-start; align-items: center;">
                     <a class="navbar-brand" asp-controller="Home" asp-action="Index">PinkedOut</a>
                     <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
                 </div>
@@ -40,27 +40,47 @@
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex">
+                <div class="nav-section navbar-collapse collapse d-sm-inline-flex" style="justify-content:flex-end">
                     <ul class="navbar-nav">
                         <div class="navbar-grouping">
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                    asp-action="Index">Home</a>
+                                <a class="nav-link text-dark link-flex" asp-controller="Home" asp-action="Index">
+                                    <img src="/Icons/Home.svg" alt="Home" />
+                                    <p class="mobile-nav-text">Home</p>
+                                </a>
                             </li>
+
+
                             @if (User.Identity!.IsAuthenticated)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account"
-                                        asp-action="Settings">Account Settings</a>
+                                    <a class="nav-link text-dark link-flex">
+                                        <div class="message-wrapper">
+                                            <img src="/Icons/Chat.svg" alt="Chat" />
+                                            @await Component.InvokeAsync("UnreadMessages")
+                                        </div>
+                                        <p class="mobile-nav-text">Messages</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark link-flex settings-icon" asp-controller="Account" asp-action="Settings">
+                                        <img src="/Icons/Settings.svg" alt="Settings" />
+                                    <p class="mobile-nav-text">Account</p>
+                                    </a>
                                 </li>
                             }
                             else
+
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account"
-                                        asp-action="LogIn">Login</a>
+                                    <a class="nav-link text-dark link-flex" asp-controller="Account" asp-action="LogIn"
+                                        style="display:flex; justify-content:center; align-items:center;">
+                                        <img src="/Icons/Login.svg" alt="Login" />
+                                        Sign in
+                                    </a>
                                 </li>
+
                             }
                         </div>
                     </ul>

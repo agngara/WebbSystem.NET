@@ -10,7 +10,7 @@ namespace DAL.Repositories;
 
 public class SqlServerRepository<T> : IRepository<T> where T : class
 {
-    protected DbContext _context;
+    protected AppDbContext _context;
 
     public SqlServerRepository(AppDbContext dbContext)
     {

@@ -97,6 +97,6 @@
         // Pass through if not POST
         return originalFetch.apply(this, args);
     };
-
-
 })();
+
+

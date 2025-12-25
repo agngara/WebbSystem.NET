@@ -1,0 +1,19 @@
+@model int
+
+@if (Model > 0)
+{
+    <div class="message-circle">
+        @if (Model > 99)
+        {
+            <p>
+                99+
+            </p>
+        }
+        else
+        {
+            <p>
+                @Model
+            </p>
+        }
+    </div>
+}

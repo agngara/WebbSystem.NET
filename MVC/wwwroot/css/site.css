@@ -230,8 +230,9 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 }
+
 
 .search-container {
     position: relative;
@@ -278,7 +279,6 @@ nav {
     position: absolute;
     width: 100%;
     background-color: var(--bg-lighter-color);
-    border-radius: 10px;
 }
 
 .search-result-item {
@@ -288,7 +288,6 @@ nav {
     padding: 6px 10px;
     cursor: pointer;
     bottom: 0;
-    border-radius: 10px;
     overflow-x: auto;
 }
 
@@ -318,7 +317,37 @@ nav {
     flex-direction: column;
 }
 
+.navbar-grouping img {
+    height: 28px;
+    width: 28px;
+}
+
+.link-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.mobile-nav-text {
+    display: block;
+}
+
+.nav-item {
+    min-width: 100px;
+    display: flex;
+    justify-content: flex-start;
+}
+
 @media (min-width: 576px) {
+
+    .settings-icon:hover {
+        animation: spin 0.6s forwards;
+    }
+
+    .nav-item {
+        min-width: 0;
+    }
 
     .navbar-collapse {
         flex: 0;
@@ -328,7 +357,15 @@ nav {
         flex-direction: row;
     }
 
+    .nav-section {
+        width: 150px;
+    }
+
+    .mobile-nav-text {
+        display: none;
+    }
 }
+
 
 .notification {
     position: absolute;
@@ -360,4 +397,46 @@ nav {
 
 .notify-error {
     color: var(--error-color);
+}
+
+.message-wrapper {
+    position: relative;
+    cursor: pointer;
+}
+
+.message-circle {
+    height: 16px;
+    min-width: 16px;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+
+    background-color: var(--error-color);
+    padding: 4px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.message-circle * {
+    color: white !important;
+}
+
+
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(180deg);
+
+    }
 }

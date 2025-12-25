@@ -176,13 +176,18 @@ input[type="checkbox"]:checked {
 
     outline: none;
 
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
 }
 
 .login-btn:focus-visible,
 .login-btn:hover {
     box-shadow: 0 0 0 3px var(--accent-color);
     border: 0;
+}
+
+.login-btn:active {
+    transition: background-color 0.3s, color 0.3s, transform 0.15s;
+    transform: scale(0.95);
 }
 
 .shadow-in {
@@ -259,4 +264,13 @@ input[type="checkbox"]:checked {
             0 1px 3px rgba(0, 0, 0, 0.06);
     }
 
+}
+
+
+
+.eye {
+    width: 200px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid var(--text-color);
 }
