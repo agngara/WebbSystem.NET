@@ -1,5 +1,4 @@
-﻿/* MVC/wwwroot/css/cv.css */
-.cv-container {
+﻿.cv-container {
     max-width: 1000px;
     width: 100%;
     padding: 2rem;
@@ -19,11 +18,58 @@
     gap: 1rem;
 }
 
+.profile-image-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
 .cv-profile-img {
     width: 120px;
     height: 120px;
     object-fit: cover;
     border: 3px solid var(--accent-color);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+    .cv-profile-img:hover {
+        opacity: 0.8;
+        filter: brightness(0.9);
+    }
+
+.profile-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border: 3px solid var(--accent-color);
+    border-radius: 50%;
+    pointer-events: none;
+    font-size: 0.8rem;
+}
+
+.profile-image-container:hover .profile-image-overlay {
+    opacity: 1;
+}
+
+.profile-image-overlay i {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.profile-image-overlay small {
+    font-size: 0.75rem;
 }
 
 .cv-header-info {
@@ -42,7 +88,6 @@
         font-weight: 600;
     }
 
-/* Kort-stilar */
 .card {
     background-color: var(--bg-darker-color);
     border: 1px solid var(--border-color) !important;
@@ -72,7 +117,6 @@
     line-height: 1.5;
 }
 
-/* Badge-stilar */
 .badge {
     font-weight: 500;
     padding: 0.35em 0.65em;
@@ -91,7 +135,6 @@
     border: none;
 }
 
-/* Modal-anpassningar */
 .modal-content {
     background-color: var(--bg-lighter-color);
     color: var(--text-color);
@@ -118,7 +161,6 @@
     padding: 1rem 1.5rem;
 }
 
-/* Formulär-stilar */
 .form-label {
     color: var(--text-color);
     font-weight: 500;
@@ -134,20 +176,34 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-    .form-control:focus {
-        background-color: var(--bg-darker-color);
-        border-color: var(--accent-color);
-        color: var(--text-color);
-        box-shadow: 0 0 0 0.25rem rgba(255, 182, 193, 0.25);
-        outline: none;
-    }
+.form-control:focus {
+    background-color: var(--bg-darker-color);
+    border-color: var(--accent-color);
+    color: var(--text-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 182, 193, 0.25);
+    outline: none;
+}
 
-    .form-control::placeholder {
-        color: var(--text-lighter-color);
-        opacity: 0.7;
-    }
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
 
-/* Knapp-stilar */
+.form-control::placeholder {
+    color: var(--text-lighter-color);
+    opacity: 0.7;
+}
+
+.progress {
+    background-color: var(--bg-darker-color);
+    border: 1px solid var(--border-color);
+}
+
+.progress-bar {
+    background-color: var(--accent-color);
+    color: #000;
+    transition: width 0.3s ease;
+}
+
 .btn-primary {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
@@ -158,11 +214,11 @@
     transition: background-color 0.2s, border-color 0.2s;
 }
 
-    .btn-primary:hover {
-        background-color: #ffb6c1;
-        border-color: #ffb6c1;
-        color: #000;
-    }
+.btn-primary:hover {
+    background-color: #ffb6c1;
+    border-color: #ffb6c1;
+    color: #000;
+}
 
 .btn-outline-primary {
     color: var(--accent-color);
@@ -170,34 +226,33 @@
     background-color: transparent;
 }
 
-    .btn-outline-primary:hover {
-        background-color: var(--accent-color);
-        border-color: var(--accent-color);
-        color: #000;
-    }
+.btn-outline-primary:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #000;
+}
 
 .btn-outline-secondary {
     color: var(--text-lighter-color);
     border-color: var(--border-color);
 }
 
-    .btn-outline-secondary:hover {
-        background-color: var(--bg-darker-color);
-        border-color: var(--accent-color);
-        color: var(--text-color);
-    }
+.btn-outline-secondary:hover {
+    background-color: var(--bg-darker-color);
+    border-color: var(--accent-color);
+    color: var(--text-color);
+}
 
 .btn-outline-danger {
     color: #dc3545;
     border-color: #dc3545;
 }
 
-    .btn-outline-danger:hover {
-        background-color: #dc3545;
-        color: white;
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
     }
 
-/* Modal-inmatningssektioner */
 .work-experience-entry,
 .education-entry {
     background-color: var(--bg-darker-color);
@@ -205,29 +260,36 @@
     transition: border-color 0.2s;
 }
 
-    .work-experience-entry:hover,
-    .education-entry:hover {
-        border-color: var(--accent-color) !important;
-    }
+.work-experience-entry:hover,
+.education-entry:hover {
+    border-color: var(--accent-color) !important;
+}
 
-/* Kompetens-taggar */
 .input-group {
     background-color: var(--bg-darker-color);
     border-radius: 6px;
     overflow: hidden;
 }
 
-    .input-group .form-control {
-        border-right: none;
-        border-color: var(--border-color);
-    }
+.input-group .form-control {
+    border-right: none;
+    border-color: var(--border-color);
+}
 
-    .input-group .btn {
-        border-left: none;
-        border-color: var(--border-color);
-    }
+.input-group .btn {
+    border-left: none;
+    border-color: var(--border-color);
+}
 
-/* Responsiv design */
+.image-preview img {
+    border: 2px solid var(--border-color);
+    transition: border-color 0.3s ease;
+}
+
+.image-preview img:hover {
+    border-color: var(--accent-color);
+}
+
 @media (max-width: 768px) {
     .cv-container {
         padding: 1rem;
@@ -249,6 +311,14 @@
         height: 100px;
     }
 
+    .profile-image-overlay {
+        font-size: 0.7rem;
+    }
+
+    .profile-image-overlay i {
+        font-size: 1.2rem;
+    }
+
     .btn {
         width: 100%;
         margin-top: 0.5rem;
@@ -261,4 +331,28 @@
     .cv-section h2 {
         font-size: 1.5rem;
     }
+}
+
+.alert {
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background-color: rgba(25, 135, 84, 0.1);
+    border: 1px solid rgba(25, 135, 84, 0.3);
+    color: #0f5132;
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: #842029;
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    color: #664d03;
 }

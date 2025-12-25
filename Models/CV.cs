@@ -12,6 +12,8 @@ namespace Models
         public required User User { get; set; }
 
         public string? ProfileImage { get; set; }
+        public string? ProfileImageFileName { get; set; } = null;
+        public string? ProfileImageContentType { get; set; } = null;
 
         public virtual List<WorkExperience> WorkExperiences { get; set; } = [];
         public virtual List<Competence> Competences { get; set; } = [];

@@ -4,16 +4,28 @@
 }
 
 <div class="cv-container">
-    <!-- CV-header med profilinfo -->
+    <!-- CV-header med profilinfo OCH BILDUPLADDNING -->
     <div class="cv-header">
-        @if (!string.IsNullOrEmpty(Model.ProfileImage))
-        {
-            <img src="@Model.ProfileImage" alt="Profilbild" class="cv-profile-img rounded-circle" />
-        }
+        <div class="profile-image-container position-relative">
+            <img src="@(string.IsNullOrEmpty(Model.ProfileImage) ? "/images/default-avatar.png" : Model.ProfileImage)"
+                 alt="Profilbild"
+                 class="cv-profile-img rounded-circle"
+                 id="profileImage"
+                 data-bs-toggle="modal"
+                 data-bs-target="#uploadImageModal">
+
+            <!-- Edit overlay på bilden -->
+            <div class="profile-image-overlay rounded-circle">
+                <i class="bi bi-camera"></i>
+                <small>Klicka för att ändra</small>
+            </div>
+        </div>
+
         <div class="cv-header-info ms-3">
             <h1 class="mb-1">@Model.User.Name</h1>
             <p class="text-muted mb-0">@Model.User.Address</p>
         </div>
+
         <button class="btn btn-outline-primary ms-auto" data-bs-toggle="modal" data-bs-target="#editCvModal">
             <i class="bi bi-pencil"></i> Redigera CV
         </button>
@@ -110,7 +122,58 @@
     </section>
 </div>
 
-<!-- Bootstrap Modal för redigering -->
+<!-- Bootstrap Modal för bilduppladdning -->
+<div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadImageModalLabel">Ändra profilbild</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadImageForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="profileImageFile" class="form-label">Välj bild</label>
+                        <input type="file" class="form-control" id="profileImageFile"
+                               name="profileImage" accept=".jpg,.jpeg,.png" required>
+                        <div class="form-text">
+                            Endast .jpg, .jpeg eller .png filer. Max 5MB.
+                        </div>
+                    </div>
+
+                    <div class="image-preview mb-3 text-center">
+                        <img id="imagePreview" src="@(string.IsNullOrEmpty(Model.ProfileImage) ? "/images/default-avatar.png" : Model.ProfileImage)"
+                             class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        Bilden kommer att beskäras till kvadratisk form automatiskt.
+                    </div>
+                </form>
+
+                <!-- Progress bar -->
+                <div class="progress mt-3" style="height: 20px; display: none;" id="uploadProgressContainer">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                         id="uploadProgressBar" style="width: 0%">
+                        0%
+                    </div>
+                </div>
+
+                <!-- Felmeddelanden -->
+                <div class="alert alert-danger mt-3" style="display: none;" id="uploadError"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                <button type="button" class="btn btn-primary" id="uploadImageBtn">
+                    <i class="bi bi-upload"></i> Ladda upp
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Modal för CV-redigering (utan profilbild) -->
 <div class="modal fade" id="editCvModal" tabindex="-1" aria-labelledby="editCvModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -119,18 +182,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
             </div>
             <div class="modal-body">
-                <!-- Formulär för CV-redigering -->
                 <form id="editCvForm" method="post" asp-action="Edit">
-                    <!-- Profilbild URL -->
-                    <div class="mb-3">
-                        <label for="profileImage" class="form-label">Profilbild URL</label>
-                        <input type="url" class="form-control" id="profileImage"
-                               name="ProfileImage" value="@Model.ProfileImage"
-                               placeholder="https://example.com/bild.jpg">
-                        <div class="form-text">
-                            Ange URL till din profilbild eller ladda upp en bild.
-                        </div>
-                    </div>
 
                     <!-- Arbetserfarenheter -->
                     <div class="mb-4">
@@ -174,7 +226,7 @@
                             }
                         </div>
                         <button type="button" class="btn btn-sm btn-outline-secondary"
-                                onclick="addWorkExperience()">
+                                onclick="cv.addWorkExperience()">
                             <i class="bi bi-plus"></i> Lägg till erfarenhet
                         </button>
                     </div>
@@ -221,7 +273,7 @@
                             }
                         </div>
                         <button type="button" class="btn btn-sm btn-outline-secondary"
-                                onclick="addEducation()">
+                                onclick="cv.addEducation()">
                             <i class="bi bi-plus"></i> Lägg till utbildning
                         </button>
                     </div>
@@ -240,7 +292,7 @@
                                                name="Competences[@i].Name"
                                                value="@comp.Name" placeholder="Kompetens" required>
                                         <button type="button" class="btn btn-outline-danger"
-                                                onclick="removeCompetence(this)">
+                                                onclick="cv.removeCompetence(this)">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -248,7 +300,7 @@
                             }
                         </div>
                         <button type="button" class="btn btn-sm btn-outline-secondary"
-                                onclick="addCompetence()">
+                                onclick="cv.addCompetence()">
                             <i class="bi bi-plus"></i> Lägg till kompetens
                         </button>
                     </div>
@@ -270,6 +322,7 @@
      data-work-exp-count="@(Model.WorkExperiences?.Count ?? 0)"
      data-education-count="@(Model.Educations?.Count ?? 0)"
      data-competence-count="@(Model.Competences?.Count ?? 0)"
+     data-upload-url="@Url.Action("UploadProfileImage", "Cv")"
      style="display: none;">
 </div>
 
