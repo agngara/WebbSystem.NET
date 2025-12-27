@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using DAL.Repositories;
 using DAL.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -13,7 +14,7 @@ namespace MVC.Controllers
         private UserManager<User> userManager;
         private SignInManager<User> signInManager;
 
-        public AccountController(UserManager<User> um, SignInManager<User> sm, IUserRepository _userRepo)
+        public AccountController(UserManager<User> um, SignInManager<User> sm)
         {
             userManager = um;
             signInManager = sm;
@@ -41,7 +42,7 @@ namespace MVC.Controllers
                 loginViewModel.UserName,
                 loginViewModel.Password,
                 isPersistent: loginViewModel.RememberMe,
-                lockoutOnFailure: false
+                lockoutOnFailure: true
             );
 
             if (result.Succeeded)
@@ -110,6 +111,7 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
@@ -136,6 +138,7 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> UpdateSettings(SettingsViewModel settingsViewModel)
         {
             if (!ModelState.IsValid)
