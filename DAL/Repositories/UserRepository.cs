@@ -62,6 +62,4 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
 
         return scoredResults;
     }
-
-
 }

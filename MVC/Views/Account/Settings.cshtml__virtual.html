@@ -1,0 +1,55 @@
+/*~~*/ /*~~~~~~~~~~~~~*/
+
+/*~~~~*/ /*~~*/ ~
+    <link rel="stylesheet" href="~/css/account.css" />
+~
+
+<div class="login-form">
+    <div class="create-account-wrapper ">
+        <form id="registerForm" class="login-form" method="post" asp-action="UpdateSettings"
+            style="display: flex; justify-content: flex-end; align-items: center; flex-direction: column; height: auto;">
+            <h2 class="login-header">Edit Account Info</h2>
+
+            <div class="input-outer">
+                <label for="name">Name</label>
+                <div class="input-wrapper">
+                    <input id="name" asp-for="/**/" type="text" placeholder="">
+                </div>
+                <p id="error-Name" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <label for="address">Address</label>
+                <div class="input-wrapper">
+                    <input id="address" asp-for="/*~~~*/" type="text" placeholder="My Street 123...">
+                </div>
+                <p id="error-Address" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input id="password" asp-for="/*~~~~*/" type="password" placeholder="">
+                    <img src="~/icons/Password.svg" alt="Password Logo">
+                </div>
+                <p id="error-Password" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <div class="rememberme-wrapper" style="align-self: flex-start;">
+                    <input class="form-check-input" type="checkbox" asp-for="/*~~~~~*/" id="private">
+                    <label class="form-check-label" for="private">
+                        Private
+                    </label>
+                </div>
+                <p id="error-IsPrivate" class="error-text"></p>
+            </div>
+            <input type="submit" value="SAVE" class="login-btn" style="">
+        </form>
+        <form id="" class="" method="post" asp-action="Logout"
+            style="width: 100%; display: flex; justify-content: center; align-items: center;">
+            <input type="submit" value="LOGOUT" class="login-btn"
+                style="background-color: var(--error-color); margin-top: 8px;">
+        </form>
+    </div>
+</div>
+
+<script src="~/js/account.js"></script>
+

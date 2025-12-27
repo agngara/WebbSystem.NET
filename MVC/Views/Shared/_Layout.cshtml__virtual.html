@@ -23,8 +23,10 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PinkedOut</a>
-                            <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
+                <div style="display:flex; justify-content: center; align-items: center;">
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">PinkedOut</a>
+                    <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
+                </div>
 
                 <div class="search-container">
                     <div class="search-input-wrapper">
@@ -43,34 +45,53 @@
                         <div class="navbar-grouping">
 
                             <li class="nav-item">
+                                <div class="message-wrapper">
+                                    <img src="/Icons/Chat.svg" />
+                                    /*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                                </div>
+
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home"
                                     asp-action="Index">Home</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account"
-                                    asp-action="LogIn">Login</a>
-                            </li>
-                        </div>
-                    </ul>
+                            ~~~ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                            ~
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account"
+                                        asp-action="Settings">Account Settings</a>
+                                </li>
+                            ~
+                            /**/
+                            
+~
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account"
+                                        asp-action="LogIn">Login</a>
+                                </li>
+                           
+     ~
+                            </div>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <main role="main" class="content-wrapper">
-        /*~~~~~~~~~*/
+            </nav>
+        </header>
+        <main role="main" class="content-wrapper">
+            /*~~~~~~~~~*/
     </main>
 
-    <footer class="footer">
-        <div>
-            &copy; 2025 - PinkedOut - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="/**/"></script>
-    <script src="~/js/search.js"></script>
-    <script src="~/js/colortheme.js"></script>
-    /*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~~~~*/ /*~~~~~*/ /*~~*/
+        <footer class="footer">
+            <div>
+                &copy; 2025 - PinkedOut - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version= "/**/"></script>
+        <script src="~/js/search.js"></script>
+        <script src="~/js/colortheme.js"></script>
+        /*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~~~~*/ /*~~~~~*/ /*~~*/
 </body>
 
 </html>

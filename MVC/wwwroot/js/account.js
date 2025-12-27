@@ -4,6 +4,8 @@
     let isSmall = true;
     const element = document.querySelector(".login-left-box");
 
+    if (!element) return
+
     const animateIn = () => {
         if (!element) return;
         if (!isSmall) return;
@@ -49,6 +51,9 @@
         }
     });
 
+})();
+
+(() => {
     document.getElementById("registerForm").addEventListener("submit", async function(e) {
         e.preventDefault();
 
@@ -61,26 +66,30 @@
             });
 
             const result = await response.json();
+            clearErrorText()
             if (result.success) {
-                window.location.href = result.redirectUrl;
+                if (result.redirectUrl) window.location.href = result.redirectUrl;
             } else {
-
-                const errTexts = document.querySelectorAll(".error-text");
-
-                for (const t of errTexts) {
-                    t.textContent = "";
-                }
 
                 for (let [key, message] of Object.entries(result.errors)) {
 
-                    if (key == "password") key = "Password"
+                    if (key == "password") key = "Password";
 
-                    const errElement = document.getElementById(`error-${key}`)
+                    const errElement = document.getElementById(`error-${key}`);
                     errElement.textContent = message;
                 }
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     });
-})()
+
+    function clearErrorText() {
+        const errTexts = document.querySelectorAll(".error-text");
+
+        for (const t of errTexts) {
+            t.textContent = "";
+        }
+    }
+})();
+
