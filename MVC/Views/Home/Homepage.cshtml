@@ -9,10 +9,12 @@
 
     <div id="homepage-container">
         <div class="brandcell">
-            <h2>All spaced out</h2>
+            <h2>All </h2>
+            <h2 id="pinked">Pinked</h2>
+            <h2 id="out">Out</h2>
         </div>
         <div class="textcell">
-            <p>Register and get linked out today!</p>
+            <p>Register and start getting connected - browse CV:s and upload your own.</p>
         </div>
         <div class="buttoncell">
             <button class="custom-button">Register</button>
@@ -30,7 +32,7 @@
 
 </section>
 
-<h2>Popular Profiles</h2>
+<h2 class="slide-title">Popular Profiles</h2>
 
 <section class="slider-window">
     <div class="arrow-left" id="slide-1-arrow-left">
@@ -46,7 +48,7 @@
                 <img src="~/Assets/UserUploads/stanprofilepic.png" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">@cv.User.Name</h5>
-                    <p class="card-text">En beskrivning av personen, som ännu inte hanteras av databasen... fuuck!</p>
+                    <p class="card-text">@cv.Description</p>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">@cv.Educations.Last().ProgramOrCourseName</li>
@@ -61,7 +63,7 @@
     </section>
 </section>
 
-<h2>Explore latest projects</h2>
+<h2 class="slide-title">Explore latest projects</h2>
 <section class="slider-window">
     <div class="arrow-left" id="slide-1-arrow-left-2">
         <img src="~/Assets/UI-Images/left_arrow_big.png" alt="Left arrow">
