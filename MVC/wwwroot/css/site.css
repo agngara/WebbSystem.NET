@@ -16,6 +16,7 @@
 
 * {
     box-sizing: border-box;
+ 
 }
 
 :root {
@@ -46,6 +47,7 @@
     --card-middle-color: #230c12;
     --card-end-color: var(--bg-color);
 }
+
 
 span.navbar-toggler-icon {
     background-image: url("/icons/Menu.svg") !important;
@@ -151,10 +153,11 @@ input[type="submit"] {}
     padding: 5px 7px;
 
     border-radius: 20px;
-    background-color: var(--bg-lighter-color);
+    background-color: transparent;
     border: 2px solid var(--border-color);
     outline: none;
     transition: background-color 0.3s, color 0.3s;
+    font-size: 0.8rem;
 }
 
 .custom-button:hover {
