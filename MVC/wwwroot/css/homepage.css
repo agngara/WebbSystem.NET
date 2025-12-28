@@ -54,6 +54,7 @@
     border-radius: 5px;
     padding: 0.15rem;
     width: fit-content;
+    color: white;
 }
 
 .buttoncell {
@@ -123,19 +124,19 @@
 }
 
 .layer:nth-of-type(1) {
-    background-image: url('../Assets/UI-Images/pink1.png');
+    background-image: url('../Assets/UI-Images/1.png');
 }
 
 .layer:nth-of-type(2) {
-    background-image: url('../Assets/UI-Images/pink2.png');
+    background-image: url('../Assets/UI-Images/2.png');
 }
 
 .layer:nth-of-type(3) {
-    background-image: url('../Assets/UI-Images/pink3.png');
+    background-image: url('../Assets/UI-Images/3.png');
 }
 
 .layer:nth-of-type(4) {
-    background-image: url('../Assets/UI-Images/pink4.png');
+    background-image: url('../Assets/UI-Images/4.png');
 }
 
 
@@ -187,14 +188,17 @@
     color: var(--text-color);
 }
 
-    .card > .list-group {
-        border-color: var(--bg-color);
-        border-top: 1px solid var(--bg-color);
-        border-bottom: 1px solid var(--bg-color);
-    }
+.card > .list-group {
+    border-color: var(--bg-color);
+    border-top: 1px solid var(--bg-color);
+    border-bottom: 1px solid var(--bg-color);
+}
 
 .list-group-item {
     background-color: var(--bg-lighter-color);
     color: var(--text-color);
+    border: var(--bs-list-group-border-width) solid var(--bg-color);
 }
+
+
 
