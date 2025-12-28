@@ -15,7 +15,7 @@ public class HomeController : Controller
     {
         _context = context;
     }
-    public async Task<IActionResult> Homepage()
+    public async Task<IActionResult> Index()
     {
         CVRepository CVrepo = new CVRepository(_context);
         ProjectRepository ProjectRepo = new ProjectRepository(_context);
@@ -29,7 +29,7 @@ public class HomeController : Controller
         return View(viewModel);
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Indexold()
     {
         var canConnect = await _context.Database.CanConnectAsync();
 

@@ -1,0 +1,15 @@
+﻿<h1>Database Test</h1>
+<h2>@ViewBag.Message</h2>
+@if (ViewBag.DatabaseName != null)
+{
+    <p>Databas: @ViewBag.DatabaseName</p>
+}
+
+
+<form method="post" asp-controller="Account" asp-action="Logout">
+    <AuthorizeView>
+        <Authorize>
+            <h2>Logged in as @User.Identity?.Name</h2>
+        </Authorize>
+    </AuthorizeView>
+</form>
