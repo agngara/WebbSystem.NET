@@ -1,6 +1,7 @@
 .content-wrapper {
     justify-content: center;
     align-items: center;
+    padding: 20px 20px;
 }
 
 .login-wrapper {
