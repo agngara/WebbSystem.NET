@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using System.Security.Claims;
 using DAL;
+using System.IO;
 
 namespace MVC.Controllers
 {
@@ -73,7 +74,7 @@ namespace MVC.Controllers
                 }
             }
 
-            return View(user);
+            return View("~/Views/CvView/View.cshtml", user);
         }
 
         // Visa och redigera eget CV
@@ -104,6 +105,7 @@ namespace MVC.Controllers
                 Id = user.Cv?.Id,
                 Description = user.Cv?.Description ?? "",
                 ExistingProfileImage = user.Cv?.ProfileImage,
+                ProfileImageUrl = user.Cv?.ProfileImage?.StartsWith("http") == true ? user.Cv.ProfileImage : null,
                 Competences = user.Cv?.Competences.Select(c => new CompetenceViewModel
                 {
                     Id = c.Id,
@@ -151,12 +153,12 @@ namespace MVC.Controllers
                 model.AvailableProjects = allProjects.Select(p => new ProjectOptionViewModel
                 {
                     Id = p.Id,
-                    Title = p.Titel, // Ändra från p.Title till p.Titel
+                    Title = p.Titel,
                     IsSelected = model.SelectedProjects?.Any(sp => sp.ProjectId == p.Id && sp.IsSelected) == true
                 }).ToList();
 
-                ViewBag.ProfileViews = 0; // Temporärt värde
-                return View("Edit", model);
+                ViewBag.ProfileViews = 0;
+                return View("~/Views/CvView/Edit.cshtml", model);
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -178,9 +180,10 @@ namespace MVC.Controllers
             // Skapa eller uppdatera CV
             if (user.Cv == null)
             {
-                user.Cv = new Models.CV // Lägg till Models. framför
+                user.Cv = new CV
                 {
                     UserId = userId,
+                    User = user,
                     Description = model.Description
                 };
                 _context.CVs.Add(user.Cv);
@@ -190,30 +193,31 @@ namespace MVC.Controllers
                 user.Cv.Description = model.Description;
             }
 
-            // Hantera profilbild
-            if (model.ProfileImageFile != null && model.ProfileImageFile.Length > 0)
+            // Hantera profilbild (Prioritet: URL > Base64 > Behåll befintlig)
+            if (!string.IsNullOrEmpty(model.ProfileImageUrl))
             {
-                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "profile-images");
-                Directory.CreateDirectory(uploadsFolder);
-
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ProfileImageFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await model.ProfileImageFile.CopyToAsync(stream);
-                }
-
-                user.Cv.ProfileImage = $"/uploads/profile-images/{uniqueFileName}";
+                // Använd URL
+                user.Cv.ProfileImage = model.ProfileImageUrl;
             }
+            else if (!string.IsNullOrEmpty(model.ProfileImageBase64))
+            {
+                // Spara base64 som fil på servern
+                var fileName = await SaveBase64Image(model.ProfileImageBase64);
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    user.Cv.ProfileImage = $"/uploads/profile-images/{fileName}";
+                }
+            }
+            // Om ingen ny bild anges, behåll den befintliga
 
             // Uppdatera kompetenser
             user.Cv.Competences.Clear();
             foreach (var comp in model.Competences.Where(c => !string.IsNullOrWhiteSpace(c.Name)))
             {
-                user.Cv.Competences.Add(new Models.Competence // Lägg till Models. framför
+                user.Cv.Competences.Add(new Competence
                 {
-                    Name = comp.Name,
+                    Name = comp.Name.Trim(),
+                    CvId = user.Cv.Id,
                     Cv = user.Cv
                 });
             }
@@ -222,17 +226,28 @@ namespace MVC.Controllers
             user.Cv.Educations.Clear();
             foreach (var edu in model.Educations.Where(e => !string.IsNullOrWhiteSpace(e.ProgramOrCourseName)))
             {
-                var institution = await _context.Institutions
-                    .FirstOrDefaultAsync(i => i.Name == edu.InstitutionName)
-                    ?? new Models.Institution { Name = edu.InstitutionName }; // Lägg till Models. framför
-
-                user.Cv.Educations.Add(new Models.Education // Lägg till Models. framför
+                // Hitta eller skapa institution
+                Institution? institution = null;
+                if (!string.IsNullOrWhiteSpace(edu.InstitutionName))
                 {
-                    ProgramOrCourseName = edu.ProgramOrCourseName,
+                    institution = await _context.Institutions
+                        .FirstOrDefaultAsync(i => i.Name.ToLower() == edu.InstitutionName.Trim().ToLower());
+
+                    if (institution == null)
+                    {
+                        institution = new Institution { Name = edu.InstitutionName.Trim() };
+                        _context.Institutions.Add(institution);
+                    }
+                }
+
+                user.Cv.Educations.Add(new Education
+                {
+                    ProgramOrCourseName = edu.ProgramOrCourseName.Trim(),
                     Institution = institution,
-                    Description = edu.Description,
+                    Description = edu.Description?.Trim(),
                     StartDate = edu.StartDate,
                     EndDate = edu.EndDate,
+                    CvId = user.Cv.Id,
                     Cv = user.Cv
                 });
             }
@@ -241,17 +256,28 @@ namespace MVC.Controllers
             user.Cv.WorkExperiences.Clear();
             foreach (var work in model.WorkExperiences.Where(w => !string.IsNullOrWhiteSpace(w.Title)))
             {
-                var workPlace = await _context.WorkPlaces
-                    .FirstOrDefaultAsync(wp => wp.Name == work.CompanyName)
-                    ?? new Models.WorkPlace { Name = work.CompanyName }; // Lägg till Models. framför
-
-                user.Cv.WorkExperiences.Add(new Models.WorkExperience // Lägg till Models. framför
+                // Hitta eller skapa arbetsplats
+                WorkPlace? workPlace = null;
+                if (!string.IsNullOrWhiteSpace(work.CompanyName))
                 {
-                    Title = work.Title,
+                    workPlace = await _context.WorkPlaces
+                        .FirstOrDefaultAsync(wp => wp.Name.ToLower() == work.CompanyName.Trim().ToLower());
+
+                    if (workPlace == null)
+                    {
+                        workPlace = new WorkPlace { Name = work.CompanyName.Trim() };
+                        _context.WorkPlaces.Add(workPlace);
+                    }
+                }
+
+                user.Cv.WorkExperiences.Add(new WorkExperience
+                {
+                    Title = work.Title.Trim(),
                     WorkPlace = workPlace,
-                    Description = work.Description,
+                    Description = work.Description?.Trim(),
                     StartDate = work.StartDate,
                     EndDate = work.EndDate,
+                    CvId = user.Cv.Id,
                     Cv = user.Cv
                 });
             }
@@ -262,10 +288,12 @@ namespace MVC.Controllers
             {
                 foreach (var selectedProject in model.SelectedProjects.Where(sp => sp.IsSelected))
                 {
-                    user.ProjectUsers.Add(new Models.ProjectUser // Lägg till Models. framför
+                    user.ProjectUsers.Add(new ProjectUser
                     {
                         UserId = userId,
-                        ProjectId = selectedProject.ProjectId
+                        ProjectId = selectedProject.ProjectId,
+                        User = user,
+                        Project = await _context.Projects.FindAsync(selectedProject.ProjectId)
                     });
                 }
             }
@@ -274,6 +302,50 @@ namespace MVC.Controllers
 
             TempData["SuccessMessage"] = "CV har uppdaterats!";
             return RedirectToAction("MyCV");
+        }
+
+        // Hjälpmetod för att spara base64 bild som fil
+        private async Task<string?> SaveBase64Image(string base64Image)
+        {
+            if (string.IsNullOrEmpty(base64Image) || !base64Image.Contains(","))
+                return null;
+
+            try
+            {
+                // Ta bort "data:image/png;base64," delen
+                var base64Data = base64Image.Substring(base64Image.IndexOf(",") + 1);
+
+                // Kontrollera om det är giltig base64
+                if (base64Data.Length % 4 != 0)
+                    return null;
+
+                byte[] imageBytes = Convert.FromBase64String(base64Data);
+
+                // Kontrollera filstorlek (max 2MB)
+                if (imageBytes.Length > 2 * 1024 * 1024)
+                    return null;
+
+                // Skapa uploads-mapp om den inte finns
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "profile-images");
+                Directory.CreateDirectory(uploadsFolder);
+
+                // Bestäm filtyp från base64 header
+                string fileExtension = ".png"; // default
+                if (base64Image.Contains("image/jpeg"))
+                    fileExtension = ".jpg";
+                else if (base64Image.Contains("image/gif"))
+                    fileExtension = ".gif";
+
+                var fileName = $"{Guid.NewGuid()}{fileExtension}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
+                return fileName;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         // Redigera profilinformation
@@ -295,7 +367,7 @@ namespace MVC.Controllers
                 Email = user.Email
             };
 
-            return View(viewModel);
+            return View("~/Views/CvView/EditProfile.cshtml", viewModel);
         }
 
         [HttpPost]
@@ -304,7 +376,7 @@ namespace MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("EditProfile", model);
+                return View("~/Views/CvView/EditProfile.cshtml", model);
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -332,10 +404,10 @@ namespace MVC.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
-            return View("EditProfile", model);
+            return View("~/Views/CvView/EditProfile.cshtml", model);
         }
 
-        // Hjälpmetod för att lägga till tomma rader i formuläret
+        // Hjälpmetod för att lägga till tomma rader i formuläret (AJAX)
         [HttpPost]
         public IActionResult AddCompetenceRow([FromBody] List<CompetenceViewModel> currentCompetences)
         {

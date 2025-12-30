@@ -1,4 +1,4 @@
-﻿// Models/CVViewModel.cs
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Models
@@ -11,7 +11,9 @@ namespace Models
         [StringLength(500, ErrorMessage = "Beskrivning får max vara 500 tecken")]
         public string Description { get; set; } = string.Empty;
 
-        public IFormFile? ProfileImageFile { get; set; }
+        public string? ProfileImageBase64 { get; set; }
+        [Url(ErrorMessage = "Ange en giltig URL")]
+        public string? ProfileImageUrl { get; set; }
         public string? ExistingProfileImage { get; set; }
 
         // Kompetenser
