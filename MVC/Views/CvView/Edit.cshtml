@@ -260,9 +260,9 @@
                 </div>
 
                 <div class="text-end">
-                    <button type="submit" class="btn btn-primary">Spara CV</button>
                     <a asp-action="View" asp-route-id="@userId"
-                       class="btn btn-outline-secondary">Avbryt</a>
+                       class="btn btn-outline-secondary me-2">Avbryt</a>
+                    <button type="submit" class="btn btn-primary">Spara CV</button>
                 </div>
             </div>
         </div>
@@ -271,7 +271,7 @@
 
 @section Scripts {
     <script>
-        // ========== BILDUPPLADDNING ==========
+        // BILDUPPLADDNING
         document.getElementById('imageUpload')?.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;

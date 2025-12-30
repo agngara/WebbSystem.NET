@@ -1,5 +1,4 @@
-﻿// cv.js
-(() => {
+﻿(() => {
     'use strict';
 
     class CVManager {
@@ -7,10 +6,10 @@
             this.initDynamicForms();
             this.initImagePreview();
             this.initValidation();
+            this.initEditToggle();
         }
 
         initDynamicForms() {
-            // Dynamiskt lägga till/ta bort rader för kompetenser, utbildningar, erfarenheter
             document.addEventListener('click', (e) => {
                 if (e.target.classList.contains('add-dynamic-row')) {
                     this.addDynamicRow(e.target);
@@ -43,7 +42,6 @@
         }
 
         initValidation() {
-            // Lägg till real-time validering
             const forms = document.querySelectorAll('.needs-validation');
             forms.forEach(form => {
                 form.addEventListener('submit', (e) => {
@@ -56,6 +54,41 @@
             });
         }
 
+        initEditToggle() {
+            const cvContainer = document.getElementById('cvContainer');
+            const editBtn = document.getElementById('editCvBtn');
+            const saveBtn = document.getElementById('saveCvBtn');
+            const cancelBtn = document.getElementById('cancelCvBtn');
+
+            if (!cvContainer) return;
+
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    cvContainer.classList.remove('cv-view-mode');
+                    cvContainer.classList.add('cv-edit-mode');
+                });
+            }
+
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => {
+                    this.saveCV();
+                    cvContainer.classList.remove('cv-edit-mode');
+                    cvContainer.classList.add('cv-view-mode');
+                });
+            }
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => {
+                    cvContainer.classList.remove('cv-edit-mode');
+                    cvContainer.classList.add('cv-view-mode');
+                });
+            }
+        }
+
+        saveCV() {
+            console.log('CV sparad');
+        }
+
         addDynamicRow(button) {
             const container = button.closest('.dynamic-container');
             const template = container.querySelector('.dynamic-template');
@@ -65,7 +98,6 @@
             newRow.classList.add('dynamic-row');
             newRow.style.display = 'block';
 
-            // Uppdatera index för alla inputs
             const index = container.querySelectorAll('.dynamic-row').length;
             const inputs = newRow.querySelectorAll('input, select, textarea');
 
@@ -76,13 +108,11 @@
                     input.setAttribute('name', newName);
                 }
 
-                // Nollställ värden
                 if (input.type !== 'hidden') {
                     input.value = '';
                 }
             });
 
-            // Lägg till raden före knappen
             container.insertBefore(newRow, button);
         }
 
@@ -108,23 +138,17 @@
             });
         }
 
-        // Export CV som PDF (för VG-krav)
         exportAsPDF() {
-            // Implementera PDF-export här
             console.log('Exporting CV as PDF...');
-            // Använd jsPDF eller liknande bibliotek
         }
 
-        // Spara CV som XML (för VG-krav)
         exportAsXML() {
-            // Implementera XML-export här
             console.log('Exporting CV as XML...');
-            // Använd XMLSerializer
         }
     }
 
-    // Initialisera när sidan laddas
     document.addEventListener('DOMContentLoaded', () => {
         window.cvManager = new CVManager();
     });
+
 })();

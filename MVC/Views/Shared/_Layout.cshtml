@@ -3,7 +3,6 @@
 
 <head>
     <script>
-        //LÅT DENNA VARA HÖGST UPP SÅ DET INTE BLIR FLICKERING
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme === "light") {
             document.documentElement.classList.add("light-mode");
@@ -16,7 +15,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
-    <!-- ÄNDRING 1: Lägg till CV CSS -->
     <link rel="stylesheet" href="~/css/cv.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -54,11 +52,11 @@
 
                         @if (User.Identity!.IsAuthenticated)
                         {
-                            <!-- ÄNDRING 2: Lägg till länk till My CV -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark link-flex" asp-controller="CV" asp-action="MyCV">
-                                    <img src="/Icons/User.svg" alt="My CV" />
-                                    <p class="mobile-nav-text">My CV</p>
+                                <a class="nav-link text-dark link-flex" asp-controller="CV" asp-action="View"
+                                   asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value">
+                                    <img src="/Icons/User.svg" alt="My Profile" />
+                                    <p class="mobile-nav-text">My Profile</p>
                                 </a>
                             </li>
 
