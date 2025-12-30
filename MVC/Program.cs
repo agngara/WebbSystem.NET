@@ -47,11 +47,21 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "cv",
+    pattern: "CV/{action}/{id?}",
+    defaults: new { controller = "CV" });
+
+app.MapControllerRoute(
+    name: "profile",
+    pattern: "Profile/{action}/{id?}",
+    defaults: new { controller = "CV", action = "View" });
 
 app.MapStaticAssets();
 

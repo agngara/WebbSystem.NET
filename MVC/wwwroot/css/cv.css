@@ -1,0 +1,155 @@
+﻿/* cv.css */
+.cv-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.cv-profile-section {
+    background: linear-gradient(135deg, var(--accent-lighter-color), var(--bg-lighter-color));
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+}
+
+.cv-profile-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border: 3px solid var(--accent-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cv-section {
+    background-color: var(--bg-lighter-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid var(--border-color);
+}
+
+.cv-section-header {
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.skill-badge {
+    background-color: var(--accent-lighter-color);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    margin: 5px;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.timeline-item {
+    border-left: 2px solid var(--accent-color);
+    padding-left: 20px;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -7px;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--accent-color);
+    }
+
+.project-card {
+    background-color: var(--bg-lighter-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .project-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+.stat-card {
+    background: linear-gradient(135deg, var(--accent-lighter-color), var(--bg-lighter-color));
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid var(--accent-color);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: var(--text-lighter-color);
+    font-size: 0.9rem;
+}
+
+/* Form styling for CV editor */
+.cv-form-section {
+    background-color: var(--bg-lighter-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.form-row-dynamic {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.remove-btn {
+    background-color: var(--error-color);
+    border-color: var(--error-color);
+    color: white;
+}
+
+    .remove-btn:hover {
+        background-color: #d63031;
+        border-color: #d63031;
+    }
+
+.add-btn {
+    background-color: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+}
+
+    .add-btn:hover {
+        background-color: var(--accent-color);
+        color: var(--bg-color);
+    }
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .cv-profile-section {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .cv-profile-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .cv-section {
+        padding: 15px;
+    }
+}

@@ -3,7 +3,7 @@
 
 <head>
     <script>
-        //LÅT DENNA VARA HÖGST UPP SÅ DET INTE BLIR FLICKERING 
+        //LÅT DENNA VARA HÖGST UPP SÅ DET INTE BLIR FLICKERING
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme === "light") {
             document.documentElement.classList.add("light-mode");
@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
+    <!-- ÄNDRING 1: Lägg till CV CSS -->
+    <link rel="stylesheet" href="~/css/cv.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
@@ -37,54 +39,59 @@
                 </div>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="nav-section navbar-collapse collapse d-sm-inline-flex" style="justify-content:flex-end">
                     <ul class="navbar-nav">
                         <div class="navbar-grouping">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-flex" asp-controller="Home" asp-action="Index">
+                                <img src="/Icons/Home.svg" alt="Home" />
+                                <p class="mobile-nav-text">Home</p>
+                            </a>
+                        </li>
 
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <!-- ÄNDRING 2: Lägg till länk till My CV -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark link-flex" asp-controller="Home" asp-action="Index">
-                                    <img src="/Icons/Home.svg" alt="Home" />
-                                    <p class="mobile-nav-text">Home</p>
+                                <a class="nav-link text-dark link-flex" asp-controller="CV" asp-action="MyCV">
+                                    <img src="/Icons/User.svg" alt="My CV" />
+                                    <p class="mobile-nav-text">My CV</p>
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link text-dark link-flex" href="#" id="messages-link">
+                                    <div class="message-wrapper">
+                                        <img src="/Icons/Chat.svg" alt="Chat" />
+                                        @await Component.InvokeAsync("UnreadMessages")
+                                    </div>
+                                    <p class="mobile-nav-text">Messages</p>
+                                </a>
+                            </li>
 
-                            @if (User.Identity!.IsAuthenticated)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark link-flex">
-                                        <div class="message-wrapper">
-                                            <img src="/Icons/Chat.svg" alt="Chat" />
-                                            @await Component.InvokeAsync("UnreadMessages")
-                                        </div>
-                                        <p class="mobile-nav-text">Messages</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark link-flex settings-icon" asp-controller="Account" asp-action="Settings">
-                                        <img src="/Icons/Settings.svg" alt="Settings" />
+                            <li class="nav-item">
+                                <a class="nav-link text-dark link-flex settings-icon" asp-controller="Account" asp-action="Settings">
+                                    <img src="/Icons/Settings.svg" alt="Settings" />
                                     <p class="mobile-nav-text">Account</p>
-                                    </a>
-                                </li>
-                            }
-                            else
-
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark link-flex" asp-controller="Account" asp-action="LogIn"
-                                        style="display:flex; justify-content:center; align-items:center;">
-                                        <img src="/Icons/Login.svg" alt="Login" />
-                                        Sign in
-                                    </a>
-                                </li>
-
-                            }
-                        </div>
-                    </ul>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark link-flex" asp-controller="Account" asp-action="LogIn"
+                                   style="display:flex; justify-content:center; align-items:center;">
+                                    <img src="/Icons/Login.svg" alt="Login" />
+                                    Sign in
+                                </a>
+                            </li>
+                        }
                 </div>
+                </ul>
+            </div>
             </div>
         </nav>
     </header>
@@ -102,6 +109,8 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/search.js"></script>
     <script src="~/js/colortheme.js"></script>
+    <!-- ÄNDRING 3: Lägg till CV JavaScript -->
+    <script src="~/js/cv.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
