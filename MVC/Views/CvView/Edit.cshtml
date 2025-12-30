@@ -28,21 +28,22 @@
                     </div>
                     <div class="card-body text-center">
                         <!-- Visa existerande bild -->
-                        @if (!string.IsNullOrEmpty(Model.ExistingProfileImage))
+                        @if (!string.IsNullOrEmpty(Model.ExistingProfileImage) && Model.ExistingProfileImage != "pfp/standard.png")
                         {
                             <img src="@Model.ExistingProfileImage"
                                  class="rounded-circle mb-3"
                                  style="width: 150px; height: 150px; object-fit: cover;"
                                  alt="Nuvarande bild"
-                                 id="existingImage">
+                                 id="existingImage"
+                                 onerror="this.src='/pfp/standard.png'">
                         }
                         else
                         {
-                            <div class="rounded-circle mb-3 d-flex align-items-center justify-content-center bg-secondary"
-                                 style="width: 150px; height: 150px;"
-                                 id="noImagePlaceholder">
-                                <span class="text-white">Ingen bild</span>
-                            </div>
+                            <img src="/pfp/standard.png"
+                                 class="rounded-circle mb-3"
+                                 style="width: 150px; height: 150px; object-fit: cover;"
+                                 alt="Standard profilbild"
+                                 id="existingImage">
                         }
 
                         <!-- Förhandsvisning av ny bild -->
@@ -57,14 +58,6 @@
                             <input type="file" id="imageUpload" class="form-control"
                                    accept="image/*" />
                             <small class="text-muted">Max 2MB, JPG/PNG/GIF</small>
-                        </div>
-
-                        <!-- Bildalternativ 2: URL -->
-                        <div class="mb-3">
-                            <label asp-for="ProfileImageUrl" class="form-label">Eller ange bild-URL</label>
-                            <input asp-for="ProfileImageUrl" class="form-control"
-                                   placeholder="https://example.com/bild.jpg" />
-                            <span asp-validation-for="ProfileImageUrl" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -471,11 +464,6 @@
             const competences = document.querySelectorAll('input[name^="Competences["]');
             const hasCompetences = Array.from(competences).some(input => input.value.trim() !== '');
 
-            if (!hasCompetences) {
-                alert('Vänligen lägg till minst en kompetens!');
-                e.preventDefault();
-                return;
-            }
         });
     </script>
 }

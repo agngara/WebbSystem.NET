@@ -10,15 +10,20 @@
             <!-- Profilinformation -->
             <div class="card mb-4">
                 <div class="card-body">
-                    @if (Model.Cv?.ProfileImage != null)
+                    @if (!string.IsNullOrEmpty(Model.Cv?.ProfileImage) && Model.Cv.ProfileImage != "/pfp/standard.png")
                     {
-                        <img src="@Model.Cv.ProfileImage" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Profilbild">
+                        <img src="@Model.Cv.ProfileImage"
+                             class="rounded-circle mb-3"
+                             style="width: 150px; height: 150px; object-fit: cover;"
+                             alt="Profilbild"
+                             onerror="this.src='/pfp/standard.png'">
                     }
                     else
                     {
-                        <div class="rounded-circle mb-3 d-flex align-items-center justify-content-center bg-secondary" style="width: 150px; height: 150px;">
-                            <span class="text-white">Ingen bild</span>
-                        </div>
+                        <img src="/pfp/standard.png"
+                             class="rounded-circle mb-3"
+                             style="width: 150px; height: 150px; object-fit: cover;"
+                             alt="Standard profilbild">
                     }
 
                     <h2>@Model.Name</h2>

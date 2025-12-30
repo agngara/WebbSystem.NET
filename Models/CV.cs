@@ -20,5 +20,10 @@ namespace Models
         public virtual List<WorkExperience> WorkExperiences { get; set; } = [];
         public virtual List<Competence> Competences { get; set; } = [];
         public virtual List<Education> Educations { get; set; } = [];
+
+        public CV()
+        {
+            ProfileImage = "/pfp/standard.png";
+        }
     }
 }

@@ -13,7 +13,6 @@ namespace Models
 
         public string? ProfileImageBase64 { get; set; }
         [Url(ErrorMessage = "Ange en giltig URL")]
-        public string? ProfileImageUrl { get; set; }
         public string? ExistingProfileImage { get; set; }
 
         // Kompetenser

@@ -105,7 +105,6 @@ namespace MVC.Controllers
                 Id = user.Cv?.Id,
                 Description = user.Cv?.Description ?? "",
                 ExistingProfileImage = user.Cv?.ProfileImage,
-                ProfileImageUrl = user.Cv?.ProfileImage?.StartsWith("http") == true ? user.Cv.ProfileImage : null,
                 Competences = user.Cv?.Competences.Select(c => new CompetenceViewModel
                 {
                     Id = c.Id,
@@ -148,7 +147,6 @@ namespace MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Hämta projekt igen om validering misslyckas
                 var allProjects = await _context.Projects.ToListAsync();
                 model.AvailableProjects = allProjects.Select(p => new ProjectOptionViewModel
                 {
@@ -184,31 +182,23 @@ namespace MVC.Controllers
                 {
                     UserId = userId,
                     User = user,
-                    Description = model.Description
+                    Description = model.Description,
+                    ProfileImage = string.IsNullOrEmpty(model.ProfileImageBase64)
+                        ? "/pfp/standard.png"
+                        : await SaveBase64ImageAsync(model.ProfileImageBase64)
                 };
                 _context.CVs.Add(user.Cv);
             }
             else
             {
                 user.Cv.Description = model.Description;
-            }
 
-            // Hantera profilbild (Prioritet: URL > Base64 > Behåll befintlig)
-            if (!string.IsNullOrEmpty(model.ProfileImageUrl))
-            {
-                // Använd URL
-                user.Cv.ProfileImage = model.ProfileImageUrl;
-            }
-            else if (!string.IsNullOrEmpty(model.ProfileImageBase64))
-            {
-                // Spara base64 som fil på servern
-                var fileName = await SaveBase64Image(model.ProfileImageBase64);
-                if (!string.IsNullOrEmpty(fileName))
+                // Hantera profilbild
+                if (!string.IsNullOrEmpty(model.ProfileImageBase64))
                 {
-                    user.Cv.ProfileImage = $"/uploads/profile-images/{fileName}";
+                    user.Cv.ProfileImage = await SaveBase64ImageAsync(model.ProfileImageBase64);
                 }
             }
-            // Om ingen ny bild anges, behåll den befintliga
 
             // Uppdatera kompetenser
             user.Cv.Competences.Clear();
@@ -226,7 +216,6 @@ namespace MVC.Controllers
             user.Cv.Educations.Clear();
             foreach (var edu in model.Educations.Where(e => !string.IsNullOrWhiteSpace(e.ProgramOrCourseName)))
             {
-                // Hitta eller skapa institution
                 Institution? institution = null;
                 if (!string.IsNullOrWhiteSpace(edu.InstitutionName))
                 {
@@ -256,7 +245,6 @@ namespace MVC.Controllers
             user.Cv.WorkExperiences.Clear();
             foreach (var work in model.WorkExperiences.Where(w => !string.IsNullOrWhiteSpace(w.Title)))
             {
-                // Hitta eller skapa arbetsplats
                 WorkPlace? workPlace = null;
                 if (!string.IsNullOrWhiteSpace(work.CompanyName))
                 {
@@ -304,48 +292,52 @@ namespace MVC.Controllers
             return RedirectToAction("MyCV");
         }
 
-        // Hjälpmetod för att spara base64 bild som fil
-        private async Task<string?> SaveBase64Image(string base64Image)
+        private async Task<string> SaveBase64ImageAsync(string base64String)
         {
-            if (string.IsNullOrEmpty(base64Image) || !base64Image.Contains(","))
-                return null;
+            if (string.IsNullOrEmpty(base64String))
+                return "/pfp/standard.png";
 
             try
             {
-                // Ta bort "data:image/png;base64," delen
-                var base64Data = base64Image.Substring(base64Image.IndexOf(",") + 1);
+                var base64Data = base64String.Contains(',')
+                    ? base64String.Split(',')[1]
+                    : base64String;
 
-                // Kontrollera om det är giltig base64
-                if (base64Data.Length % 4 != 0)
-                    return null;
+                var bytes = Convert.FromBase64String(base64Data);
 
-                byte[] imageBytes = Convert.FromBase64String(base64Data);
-
-                // Kontrollera filstorlek (max 2MB)
-                if (imageBytes.Length > 2 * 1024 * 1024)
-                    return null;
-
-                // Skapa uploads-mapp om den inte finns
-                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "profile-images");
-                Directory.CreateDirectory(uploadsFolder);
-
-                // Bestäm filtyp från base64 header
-                string fileExtension = ".png"; // default
-                if (base64Image.Contains("image/jpeg"))
-                    fileExtension = ".jpg";
-                else if (base64Image.Contains("image/gif"))
-                    fileExtension = ".gif";
+                string fileExtension = GetImageExtension(bytes);
 
                 var fileName = $"{Guid.NewGuid()}{fileExtension}";
-                var filePath = Path.Combine(uploadsFolder, fileName);
 
-                await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
-                return fileName;
+                // RÄTT SÖKVÄG: wwwroot/pfp/
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pfp", fileName);
+
+                var directory = Path.GetDirectoryName(filePath);
+                if (!System.IO.Directory.Exists(directory))
+                {
+                    System.IO.Directory.CreateDirectory(directory!);
+                }
+
+                await System.IO.File.WriteAllBytesAsync(filePath, bytes);
+
+                return $"/pfp/{fileName}";
             }
             catch
             {
-                return null;
+                return "/pfp/standard.png";
             }
+        }
+
+        private string GetImageExtension(byte[] bytes)
+        {
+            if (bytes.Length > 2 && bytes[0] == 0xFF && bytes[1] == 0xD8)
+                return ".jpg";
+            if (bytes.Length > 3 && bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47)
+                return ".png";
+            if (bytes.Length > 4 && bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
+                return ".gif";
+
+            return ".jpg";
         }
 
         // Redigera profilinformation
