@@ -4,7 +4,7 @@
     <html>
     <head>
         <title>LinkedOut</title>
-        <link rel="stylesheet" href="~/css/homepage.css"/>
+        <link rel="stylesheet" href="~/css/catalog.css"/>
         <script src="~/js/project.js" defer></script>
 
 </head>
@@ -27,7 +27,7 @@
             @foreach (Models.Project project in Model.userProjects)
             {
                 <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
-                    <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="Placeholder-imag">
+                    <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="Placeholder-image">
                     <div class="card-body">
                         <h5 class="card-title">@project.Titel</h5>
                         <p class="card-text">@project.Description</p>
@@ -42,5 +42,25 @@
         </section>
     </section>
     }
+    <h2 class="slide-title">All Projects</h2>
+        
+    <section class="all-projects-container">
+        @foreach (Models.Project project in Model.allProjects)
+        {
+            <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
+                <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="Placeholder-image">
+                <div class="card-body">
+                    <h5 class="card-title">@project.Titel</h5>
+                    <p class="card-text">@project.Description</p>
+                </div>
+
+                <div class="card-body">
+                    <button class="custom-button">Explore project</button>
+                </div>
+            </div>
+        }
+        
+    </section>
+
     </body>
     </html>
