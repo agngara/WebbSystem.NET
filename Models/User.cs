@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models
 {
@@ -10,6 +11,8 @@ namespace Models
 
         public bool? IsPrivate { get; set; }
 
+        public int? CvId { get; set; }
+        [ForeignKey(nameof(CvId))]
         public CV? Cv { get; set; }
 
         public List<Message> SentMessages { get; set; } = [];

@@ -178,8 +178,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("CVs");
                 });
@@ -355,6 +354,9 @@ namespace DAL.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CvId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -403,6 +405,8 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CvId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -522,8 +526,8 @@ namespace DAL.Migrations
             modelBuilder.Entity("Models.CV", b =>
                 {
                     b.HasOne("Models.User", "User")
-                        .WithOne("Cv")
-                        .HasForeignKey("Models.CV", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -606,6 +610,15 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Models.User", b =>
+                {
+                    b.HasOne("Models.CV", "Cv")
+                        .WithMany()
+                        .HasForeignKey("CvId");
+
+                    b.Navigation("Cv");
+                });
+
             modelBuilder.Entity("Models.WorkExperience", b =>
                 {
                     b.HasOne("Models.CV", "Cv")
@@ -644,8 +657,6 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Models.User", b =>
                 {
-                    b.Navigation("Cv");
-
                     b.Navigation("ProjectUsers");
 
                     b.Navigation("ReceivedMessages");
