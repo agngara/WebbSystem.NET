@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
-namespace DAL
+namespace DAL.Repositories
 {
     public class CVRepository
     {
