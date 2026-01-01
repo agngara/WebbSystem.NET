@@ -1,0 +1,221 @@
+﻿@model Models.User
+
+@{
+    ViewData["Title"] = $"{Model.Name}'s CV";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Profilinformation -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.Cv?.ProfileImage) && Model.Cv.ProfileImage != "/pfp/standard.png")
+                    {
+                        <img src="@Model.Cv.ProfileImage"
+                             class="rounded-circle mb-3"
+                             style="width: 150px; height: 150px; object-fit: cover;"
+                             alt="Profilbild"
+                             onerror="this.src='/pfp/standard.png'">
+                    }
+                    else
+                    {
+                        <img src="/pfp/standard.png"
+                             class="rounded-circle mb-3"
+                             style="width: 150px; height: 150px; object-fit: cover;"
+                             alt="Standard profilbild">
+                    }
+
+                    <h2>@Model.Name</h2>
+                    @if (!string.IsNullOrEmpty(Model.Address))
+                    {
+                        <p><i class="fas fa-map-marker-alt"></i> @Model.Address</p>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <p><i class="fas fa-envelope"></i> @Model.Email</p>
+                    }
+
+                    @if (Model.IsPrivate == true)
+                    {
+                        <span class="badge bg-warning">Privat profil</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Offentlig profil</span>
+                    }
+
+                    @if (User.Identity!.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
+                    {
+                        <div class="mt-3">
+                            <a asp-action="MyCV" class="btn btn-primary">Redigera mitt CV</a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Kompetenser -->
+            @if (Model.Cv?.Competences?.Any() == true)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Kompetenser</h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var competence in Model.Cv.Competences)
+                        {
+                            <span class="badge bg-primary me-1 mb-1">@competence.Name</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-8">
+            <!-- Beskrivning -->
+            @if (!string.IsNullOrEmpty(Model.Cv?.Description))
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Om mig</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>@Model.Cv.Description</p>
+                    </div>
+                </div>
+            }
+
+            <!-- Arbetserfarenhet -->
+            @if (Model.Cv?.WorkExperiences?.Any() == true)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Arbetserfarenhet</h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var work in Model.Cv.WorkExperiences)
+                        {
+                            <div class="mb-3">
+                                <h6>@work.Title</h6>
+                                @if (work.WorkPlace != null)
+                                {
+                                    <p class="text-muted mb-1">@work.WorkPlace.Name</p>
+                                }
+                                @if (work.StartDate.HasValue || work.EndDate.HasValue)
+                                {
+                                    <p class="text-muted mb-1">
+                                        @work.StartDate?.ToString("yyyy-MM-dd") - @(work.EndDate?.ToString("yyyy-MM-dd") ?? "Pågående")
+                                    </p>
+                                }
+                                @if (!string.IsNullOrEmpty(work.Description))
+                                {
+                                    <p>@work.Description</p>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Utbildning -->
+            @if (Model.Cv?.Educations?.Any() == true)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Utbildning</h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var edu in Model.Cv.Educations)
+                        {
+                            <div class="mb-3">
+                                <h6>@edu.ProgramOrCourseName</h6>
+                                @if (edu.Institution != null)
+                                {
+                                    <p class="text-muted mb-1">@edu.Institution.Name</p>
+                                }
+                                @if (edu.StartDate.HasValue || edu.EndDate.HasValue)
+                                {
+                                    <p class="text-muted mb-1">
+                                        @edu.StartDate?.ToString("yyyy-MM-dd") - @(edu.EndDate?.ToString("yyyy-MM-dd") ?? "Pågående")
+                                    </p>
+                                }
+                                @if (!string.IsNullOrEmpty(edu.Description))
+                                {
+                                    <p>@edu.Description</p>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Projekt -->
+            @if (Model.ProjectUsers?.Any() == true)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Projekt</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var projectUser in Model.ProjectUsers)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6>@projectUser.Project?.Titel</h6>
+                                            @if (!string.IsNullOrEmpty(projectUser.Project?.Description))
+                                            {
+                                                <p class="small">@projectUser.Project.Description</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Profilvisningar (endast för ägaren) -->
+            @if (User.Identity!.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Statistik</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Den här profilen har visats <strong>@(Model.Cv?.ProfileViews ?? 0)</strong> gånger</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            background-color: var(--bg-lighter-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            background-color: var(--accent-lighter-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h2, h5, h6 {
+            color: var(--text-color);
+        }
+
+        .text-muted {
+            color: var(--text-lighter-color) !important;
+        }
+
+        .badge {
+            padding: 0.5em 0.8em;
+            font-size: 0.9em;
+        }
+    </style>
+}

@@ -45,21 +45,52 @@
         @foreach (Models.CV cv in Model.TopCVs)
         {
             <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
-                <img src="~/Assets/UserUploads/stanprofilepic.png" class="card-img-top" alt="...">
+                @if (!string.IsNullOrEmpty(cv.ProfileImage))
+                {
+                    <img src="@cv.ProfileImage" class="card-img-top" alt="@cv.User?.Name"
+                         style="height: 200px; object-fit: cover;">
+                }
+                else
+                {
+                    <img src="~/Assets/UI-Images/default_profile.png" class="card-img-top"
+                         alt="Default profile" style="height: 200px; object-fit: cover;">
+                }
+
                 <div class="card-body">
-                    <h5 class="card-title">@cv.User.Name</h5>
-                    <p class="card-text">@cv.Description</p>
+                    <h5 class="card-title">@cv.User?.Name</h5>
+                    <p class="card-text">@(cv.Description?.Length > 100 ? cv.Description.Substring(0, 100) + "..." : cv.Description)</p>
                 </div>
+
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">@cv.Educations.Last().ProgramOrCourseName</li>
-                    <li class="list-group-item">@cv.WorkExperiences.Last().Title</li>
+                    <li class="list-group-item">
+                        @if (cv.Educations?.Any() == true)
+                        {
+                            @cv.Educations.Last().ProgramOrCourseName
+                        }
+                        else
+                        {
+                            <span class="text-muted">Ingen utbildning</span>
+                        }
+                    </li>
+
+                    <li class="list-group-item">
+                        @if (cv.WorkExperiences?.Any() == true)
+                        {
+                            @cv.WorkExperiences.Last().Title
+                        }
+                        else
+                        {
+                            <span class="text-muted">Ingen erfarenhet</span>
+                        }
+                    </li>
                 </ul>
+
                 <div class="card-body">
-                    <button class="custom-button">See profile</button>
+                    <a asp-controller="CV" asp-action="View" asp-route-id="@cv.User?.Id"
+                       class="custom-button">See profile</a>
                 </div>
             </div>
         }
-
     </section>
 </section>
 

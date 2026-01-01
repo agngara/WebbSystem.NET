@@ -1,0 +1,68 @@
+﻿@model Models.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Redigera profil";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <form asp-action="UpdateProfile" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="card">
+            <div class="card-header">
+                <h5>Profilinformation</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Name" class="form-label">Namn *</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Email" class="form-label">E-post</label>
+                        <input asp-for="Email" class="form-control" readonly />
+                        <small class="text-muted">E-post kan inte ändras här</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Address" class="form-label">Adress</label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" asp-for="IsPrivate" />
+                        <label class="form-check-label" asp-for="IsPrivate">
+                            Gör min profil privat
+                        </label>
+                    </div>
+                    <small class="text-muted">
+                        Om din profil är privat kan endast inloggade användare se din information.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Spara ändringar</button>
+            <a asp-action="MyCV" class="btn btn-outline-secondary">Tillbaka till CV</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
