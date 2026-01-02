@@ -1,12 +1,22 @@
-﻿.body {
-    justify-content: center;
-}
+﻿
+
 
 .slide-title {
     display: block;
     text-align: left;
     margin: 5rem 5rem 2rem 3rem;
     place-items: start;
+}
+
+.all-projects-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+    align-items: flex-start; 
+    gap: 1.5rem;
+    padding: 0 2rem;
+    margin: 0 auto; 
+    width: auto;
 }
 
 .scroll-container {
@@ -59,12 +69,33 @@
     border: var(--bs-list-group-border-width) solid var(--bg-color);
 }
 
-.all-projects-container {
-    align-self: center;
-    justify-self: center;
-    display: flex;
-    flex-wrap: wrap;
-    
+.create-project-popup {
+    position: fixed;
+    top: 10%;
+    left: auto;
+    width: 80%;
+    height: 80%;
+    background-color: var(--bg-lighter-color);
+    border-radius: 20px;
+    padding: 3rem;
+    border: 5px solid var(--card-middle-color);
 }
+
+.top-bar {
+    display: grid;
+    grid-template-columns: 97% 10%
+
+}
+
+#close-create {
+    grid-column: 2;
+    color: var(--card-middle-color);    
+
+}
+
+#create-title {
+    grid-column: 1;
+}
+
 
 

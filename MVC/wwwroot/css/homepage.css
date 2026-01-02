@@ -79,6 +79,12 @@
     margin: auto;
 }
 
+.custom-button a {
+    text-decoration: none;
+    text-decoration-color: var(--text-color);
+  
+}
+
 .buttoncell > button {
     padding: 0.5rem 3rem;
     width: 100%;

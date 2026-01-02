@@ -19,7 +19,10 @@ namespace DAL.Repositories
         public Task<List<Project>> GetAllAsync()
         {
 
-            return _context.Projects.ToListAsync();
+            return _context.Projects                            
+                            .Include(p => p.ProjectUsers)
+                            .ThenInclude(pu => pu.User)
+                            .ToListAsync();
         }
 
         /// <summary>
