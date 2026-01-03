@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using MVC.Models;
 using System.Diagnostics.Eventing.Reader;
+using System.Security.Claims;
 
 
 namespace MVC.Controllers
@@ -58,6 +59,9 @@ namespace MVC.Controllers
             }
 
             //Here follows code regarding the project image.
+
+            string filePath = "Assets/UI-Images/project_placeholder_image.jpg";
+
             if (model.ImageFile != null)
             {
                 bool isValid = ImageUploadService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, model.ImageFile.FileName);
@@ -72,20 +76,29 @@ namespace MVC.Controllers
                     return Json(ModelStateErrorResponse("Uploaded file is too large."));
                 }
 
-
+                filePath = ImageUploadService.SaveFile(model.ImageFile, "Assets/UserUploads/ProjectImages");
 
             }
-            
 
-            Project project = new Project {
-                        CreatorId = model.UserId,
-                        Creator = await _userRepository.GetUserById(model.UserId),
-                        Titel = model.Name,
-                        Description = model.Description,
-                        ProjectUsers = new List<ProjectUser>(),
 
-                        };
 
+            Project project = new Project
+            {
+                CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                Creator = await _userRepository.GetUserById(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                Titel = model.Name,
+                Description = model.Description,
+                ProjectUsers = new List<ProjectUser>(),
+                ImageUrl = filePath
+
+            };
+
+            bool addResult = _projectRepository.AddProject(project);
+
+            if (!addResult)
+            {
+                return Json(ModelStateErrorResponse("Something went wrong when saving project picture, please try again :("));
+            }
 
             return RedirectToAction("Catalog");
         }

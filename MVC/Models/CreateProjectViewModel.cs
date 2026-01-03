@@ -4,8 +4,6 @@ namespace MVC.Models
 {
     public class CreateProjectViewModel
     {
-        public string UserId { get; set; }
-
         [Required(ErrorMessage = "Please Enter a Project Name.")]
         [StringLength(30)]
         public string Name { get; set; }

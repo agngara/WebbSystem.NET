@@ -23,7 +23,7 @@
             <img src="~/Assets/UI-Images/right_arrow_big.png" alt="Right arrow">
         </div>
         <section class="scroll-container">
-            <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
+            <div class="card mx-3 shadow-sm" id="new-project-card" style="width: 20rem; min-width: 20rem;">
                 <img src="~/Assets/UI-Images/addprojectimage3.png" class="card-img" alt="Placeholder-imag">
                 
             </div>
@@ -51,7 +51,7 @@
         @foreach (Models.Project project in Model.allProjects)
         {
             <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
-                <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="Placeholder-imag">
+                <img src="@project.ImageUrl" class="card-img-top" alt="Placeholder-imag">
                 <div class="card-body">
                     <h5 class="card-title">@project.Titel</h5>
                     <p class="card-text">Created by @project.Creator.Name</p>

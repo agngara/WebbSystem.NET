@@ -13,6 +13,8 @@ namespace DAL.Repositories.Interfaces
 
         Task<List<Project>> GetUserProjectsAsync(string userId);
 
+        bool AddProject(Project project);
+
 
     }
 }

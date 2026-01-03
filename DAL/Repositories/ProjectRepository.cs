@@ -44,5 +44,20 @@ namespace DAL.Repositories
                             .Any(pu => pu.UserId == userId))
                             .ToListAsync();
         }
+
+        public bool AddProject(Project project)
+        {
+            try
+            {
+                _context.Add(project);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return false;
+            }
+        }
     }
 }

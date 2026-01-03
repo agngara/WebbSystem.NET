@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BL.Services
 {
-    
+
     public static class ImageUploadService
     {
         /// <summary>
@@ -16,40 +16,43 @@ namespace BL.Services
         /// <returns></returns>
         public static bool ValidateFiletype(string[] allowedTypes, string filename)
         {
-            if (allowedTypes.Contains(filename))
-            {
-                return true;
-            }
-            else return false;
+            string extension = Path.GetExtension(filename);
+
+            return allowedTypes.Contains(extension);
         }
-
-        public static bool SaveFile(IFormFile file, string filePath)
+        /// <summary>
+        /// Saves a file to a wwwroot folder. 
+        /// </summary>
+        /// <param name="file">File to be saved.</param>
+        /// <param name="relativePath">Relative path, in other words, not including wwwroot or disk.</param>
+        /// <returns>Relative path to saved file. Returns an empty string if an exception occurs.</returns>
+        public static string SaveFile(IFormFile file, string relativePath)
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), filePath);
 
-            var directory = Path.GetDirectoryName(filePath);
-            if (!Directory.Exists(directory))
+            string wwwRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            string fullPath = Path.Combine(wwwRoot, relativePath);
+
+            if (!Directory.Exists(fullPath))
             {
-                Directory.CreateDirectory(directory!);
+                Directory.CreateDirectory(fullPath);
             }
-            FileInfo fileInfo = new FileInfo(file.FileName);
-            string fileName = file.FileName + fileInfo.Extension;
-            string fileNameWithPath = path + fileName;
+
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            string exactPath = Path.Combine(fullPath, fileName);
             try
             {
-                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                using (var stream = new FileStream(exactPath, FileMode.Create))
                 {
                     file.CopyTo(stream);
-                    return true;
+                    return "/" + Path.Combine(relativePath, fileName).Replace("\\", "/");
                 }
+
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
-                return false;
+                return "";
             }
-
         }
-        
     }
 }
