@@ -160,12 +160,25 @@ input[type="submit"] {}
     color: var(--text-color);
 }
 
-.custom-button:hover {
+
+.custom-button-accent {
+    padding: 5px 7px;
+    border-radius: 20px;
+    background-color: transparent;
+    border: 2px solid var(--accent-color);
+    outline: none;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.custom-button:hover,
+.custom-button-accent:hover {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
     color: var(--bg-lighter-color);
 }
-
 .custom-button-large {
     padding: 10px 40px;
     border-radius: 20px;

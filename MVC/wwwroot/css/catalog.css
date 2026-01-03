@@ -73,11 +73,11 @@
     position: fixed;
     top: 10%;
     left: auto;
-    width: 80%;
-    height: 80%;
+    width: 70%;
+    height: 70%;
     background-color: var(--bg-lighter-color);
     border-radius: 20px;
-    padding: 3rem;
+    padding: 3rem 6rem;
     border: 5px solid var(--card-middle-color);
 }
 

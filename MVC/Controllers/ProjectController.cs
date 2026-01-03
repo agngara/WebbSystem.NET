@@ -1,21 +1,26 @@
-﻿using DAL;
+﻿using BL.Services;
+using DAL;
 using DAL.Repositories;
 using DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using MVC.Models;
+using System.Diagnostics.Eventing.Reader;
+
 
 namespace MVC.Controllers
 {
-    public class ProjectController : Controller
+    public class ProjectController : BaseController
     {
         private IProjectRepository _projectRepository;
+        private IUserRepository _userRepository;
         private UserManager<User> _userManager;
-        public ProjectController(IProjectRepository projectRepository, UserManager<User> userManager)
+        public ProjectController(IProjectRepository projectRepository, UserManager<User> userManager, IUserRepository userRepository)
         {
             _projectRepository = projectRepository;
             _userManager = userManager;
+            _userRepository = userRepository;
         }
         public async Task<IActionResult> Catalog()
         {
@@ -43,6 +48,46 @@ namespace MVC.Controllers
 
             return View(catalogViewModel);
 
+        }
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateProjectViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(ModelStateErrorResponse("Invalid project creation :("));
+            }
+
+            //Here follows code regarding the project image.
+            if (model.ImageFile != null)
+            {
+                bool isValid = ImageUploadService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, model.ImageFile.FileName);
+                
+                if (!isValid) 
+                { 
+                    return Json(ModelStateErrorResponse("Filetype not allowed.")); 
+                }
+
+                if (model.ImageFile.Length > 2000000)
+                {
+                    return Json(ModelStateErrorResponse("Uploaded file is too large."));
+                }
+
+
+
+            }
+            
+
+            Project project = new Project {
+                        CreatorId = model.UserId,
+                        Creator = await _userRepository.GetUserById(model.UserId),
+                        Titel = model.Name,
+                        Description = model.Description,
+                        ProjectUsers = new List<ProjectUser>(),
+
+                        };
+
+
+            return RedirectToAction("Catalog");
         }
     }
 }

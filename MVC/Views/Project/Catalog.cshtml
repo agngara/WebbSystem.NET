@@ -100,36 +100,9 @@
         }
         
     </section>
+    @*Injects project creation form*@
+    @await Html.PartialAsync("ProjectCreationForm", new CreateProjectViewModel {})
 
-    <section class="create-project-popup">
-        <div class="top-bar">
-            <h1 id="create-title">Create New Project</h1>
-            <h1 id="close-create">X</h1>
-        </div>
-        <div class="create-project-form">
-            <form>
-                <div class="mb-3">
-                    <label for="Name" class="form-label">Project Name</label>
-                    <input type="text" class="form-control" id="Name">
-                </div>
-                <div class="mb-3">
-                    <label for="Description" class="form-label">Description</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                </div>
-                <div class="mb-3">
-                    <label for="image" class="form-label">Project Image</label>
-                    <input class="form-control" type="file" id="image" accept="image/*">
-                    <div id="fileHelp" class="form-text">Max 2MB, JPG/PNG/GIF</div>
-
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
-    </section>
 
     </body>
     </html>

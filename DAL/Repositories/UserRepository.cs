@@ -10,11 +10,18 @@ namespace DAL.Repositories;
 public class UserRepository : SqlServerRepository<User>, IUserRepository
 {
     private readonly SearchScoringConfig _scoringConfig;
+    private readonly AppDbContext _context;
 
 
     public UserRepository(AppDbContext dbContext, SearchScoringConfig _config) : base(dbContext)
     {
+        _context = dbContext;
         _scoringConfig = _config;
+    }
+
+    public async Task<User> GetUserById(string id)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<List<ScoredResult<User>>> SearchByNameOrUsername(string query, int limit)
