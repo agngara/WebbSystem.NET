@@ -34,14 +34,30 @@ namespace DAL.Repositories
         {
             return _context.Projects.Take(amountOfProjects).ToList();
         }
-
-        public async Task<List<Project>> GetUserProjectsAsync(string userId)
+        /// <summary>
+        /// Gets the projects where the entered userId is listed as member of the project.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<List<Project>> GetProjectsByMembers(string userId)
         {
+
             return await _context.Projects
                             .Include(p => p.ProjectUsers)
                             .ThenInclude(pu => pu.User)
                             .Where(p => p.ProjectUsers
                             .Any(pu => pu.UserId == userId))
+                            .ToListAsync();
+
+
+        }
+
+        public async Task<List<Project>> GetProjectsByCreator(string userId)
+        {
+            return await _context.Projects
+                            .Include(p => p.ProjectUsers)
+                            .ThenInclude(pu => pu.User)
+                            .Where(p => p.CreatorId == userId)
                             .ToListAsync();
         }
 
@@ -58,6 +74,11 @@ namespace DAL.Repositories
                 System.Diagnostics.Debug.WriteLine(ex);
                 return false;
             }
+        }
+
+        public async Task<Project> GetProjectAsync(int projectId)
+        {           
+            return await _context.Projects.Where(p => p.Id == projectId).FirstOrDefaultAsync();
         }
     }
 }

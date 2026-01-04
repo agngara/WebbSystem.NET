@@ -31,7 +31,7 @@ namespace MVC.Controllers
             if (user != null)
             {
                 userId = user.Id;
-                userProjects = await _projectRepository.GetUserProjectsAsync(userId);
+                userProjects = await _projectRepository.GetProjectsByCreator(userId);
 
             }
             else
@@ -43,8 +43,9 @@ namespace MVC.Controllers
 
             CatalogViewModel catalogViewModel = new CatalogViewModel
             {
-                allProjects = allProjects,
-                userProjects = userProjects
+                AllProjects = allProjects,
+                UserProjects = userProjects,
+ 
             };
 
             return View(catalogViewModel);
@@ -102,5 +103,35 @@ namespace MVC.Controllers
 
             return RedirectToAction("Catalog");
         }
+        public async Task<IActionResult> StageChange(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            string userId;
+            List<Project> userProjects;
+            if (user != null)
+            {
+                userId = user.Id;
+                userProjects = await _projectRepository.GetProjectsByCreator(userId);
+
+            }
+            else
+            {
+                userProjects = new List<Project>();
+            }
+
+            List<Project> allProjects = await _projectRepository.GetAllAsync();
+
+            CatalogViewModel catalogViewModel = new CatalogViewModel
+            {
+                AllProjects = allProjects,
+                UserProjects = userProjects,
+                ProjectToEdit = await _projectRepository.GetProjectAsync(id)
+
+            };
+
+            return View("Catalog", catalogViewModel);
+        }
+
+
     }
 }

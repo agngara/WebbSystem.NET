@@ -82,6 +82,18 @@
     border: 5px solid var(--card-middle-color);
 }
 
+.edit-project-popup {
+    position: fixed;
+    top: 10%;
+    left: auto;
+    width: 70%;
+    height: 70%;
+    background-color: var(--bg-lighter-color);
+    border-radius: 20px;
+    padding: 3rem 6rem;
+    border: 5px solid var(--card-middle-color);
+}
+
 .icon-btn {
     background: none;
     border: none;
@@ -105,15 +117,19 @@
 
 }
 
-#close-create {
+#close-add-window, #close-edit-window {
     grid-column: 2;
     color: var(--card-middle-color);    
 
 }
 
-#create-title {
+
+
+#create-title, #edit-title {
     grid-column: 1;
 }
+
+
 
 
 

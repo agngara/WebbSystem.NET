@@ -27,7 +27,7 @@
                 <img src="~/Assets/UI-Images/addprojectimage3.png" class="card-img" alt="Placeholder-imag">
                 
             </div>
-            @foreach (Models.Project project in Model.userProjects)
+            @foreach (Models.Project project in Model.UserProjects)
             {
                 <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
                     <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="Placeholder-image">
@@ -35,9 +35,8 @@
                         <h5 class="card-title">@project.Titel</h5>
                         <p class="card-text">@project.Description</p>
                     </div>
-
-                    <div class="card-body">
-                        <button class="custom-button">Explore project</button>
+                    <div class="card-body"> 
+                        <a class="custom-button" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
                     </div>
                 </div>
             }
@@ -48,7 +47,7 @@
     <h2 class="slide-title">All Projects</h2>
         
     <section class="all-projects-container">
-        @foreach (Models.Project project in Model.allProjects)
+        @foreach (Models.Project project in Model.AllProjects)
         {
             <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
                 <img src="@project.ImageUrl" class="card-img-top" alt="Placeholder-imag">
@@ -91,7 +90,18 @@
                         }
                         else
                         {
-                            <button class="custom-button">Edit</button>
+                            <a class="custom-button" asp-action="StageChange" asp-route-id="@project.Id">Edit test</a>
+                            @if (Model.ProjectToEdit != null)
+
+                            {
+                                @await Html.PartialAsync("ProjectEditForm", new EditProjectViewModel {
+                                ProjectId = project.Id,
+                                Name = project.Titel,
+                                Description = project.Description,
+                                ImageUrl = project.ImageUrl
+                                });
+                            }
+                            
                         }
                         <button class="custom-button">See participants</button>
                     }

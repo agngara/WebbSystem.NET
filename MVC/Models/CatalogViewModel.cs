@@ -5,8 +5,10 @@ namespace MVC.Models
 {
     public class CatalogViewModel
     {
-        public List<Project> userProjects {  get; set; }
+        public List<Project> UserProjects {  get; set; }
 
-        public List <Project> allProjects { get; set; }
+        public List <Project> AllProjects { get; set; }
+
+        public Project ProjectToEdit { get; set; }
     }
 }
