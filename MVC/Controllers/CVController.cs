@@ -50,17 +50,17 @@ namespace MVC.Controllers
             // Kontrollera om profilen är privat
             if (user.IsPrivate == true)
             {
-                if (!User.Identity!.IsAuthenticated)
+                if (User.Identity.IsAuthenticated == false)
                 {
                     return Unauthorized("Den här profilen är privat. Logga in för att se den.");
                 }
 
                 // Kontrollera om den aktuella användaren är samma som profilen
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (currentUserId != user.Id)
-                {
-                    return Forbid("Du har inte behörighet att se denna privata profil");
-                }
+                //var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                //if (currentUserId != user.Id)
+                //{
+                //   return Forbid("Du har inte behörighet att se denna privata profil");
+                //}
             }
 
             // Öka profilvisningar om det är en annan användare
