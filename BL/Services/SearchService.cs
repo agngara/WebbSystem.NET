@@ -16,9 +16,10 @@ public class SearchService : ISearchService
         _userRepo = userRepository;
     }
 
-    public async Task<List<SearchResultDto>> Search(string query)
+    public async Task<List<SearchResultDto>> Search(string query, bool isAuthenticated)
     {
-        var queryResults = await _userRepo.SearchByNameOrUsername(query, limit);
+
+        var queryResults = await _userRepo.SearchByNameOrUsername(query, limit, isAuthenticated);
         Console.WriteLine($"startof service: {queryResults.Count()}");
 
         List<SearchResultDto> returnedResults = new();

@@ -20,7 +20,10 @@ public class SearchController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var results = await _serachService.Search(request.Query);
+        var isAuthenticated = false;
+        if (User.Identity.IsAuthenticated) isAuthenticated = true;
+
+        var results = await _serachService.Search(request.Query, isAuthenticated);
         return Ok(results);
     }
 }

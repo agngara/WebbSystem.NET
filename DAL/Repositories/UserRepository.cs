@@ -17,12 +17,18 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
         _scoringConfig = _config;
     }
 
-    public async Task<List<ScoredResult<User>>> SearchByNameOrUsername(string query, int limit)
+    public async Task<List<ScoredResult<User>>> SearchByNameOrUsername(string query, int limit, bool isAuthenticated)
     {
         string normQuery = query.Trim().ToLower();
 
-        var candidates = await _context.Set<User>()
-            .Where(u => u.IsPrivate != true)
+        var Dbquery = _context.Set<User>().AsQueryable();
+
+        if (!isAuthenticated)
+        {
+            Dbquery = Dbquery.Where(u => u.IsPrivate != true);
+        }
+
+        var candidates = await Dbquery
             .Where(u => u.Name.ToLower().Contains(normQuery)
                      || u.UserName!.ToLower().Contains(normQuery))
             .OrderBy(u => u.Name)
