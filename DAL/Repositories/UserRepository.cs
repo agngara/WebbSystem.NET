@@ -22,6 +22,7 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
         string normQuery = query.Trim().ToLower();
 
         var candidates = await _context.Set<User>()
+            .Where(u => u.IsPrivate != true)
             .Where(u => u.Name.ToLower().Contains(normQuery)
                      || u.UserName!.ToLower().Contains(normQuery))
             .OrderBy(u => u.Name)

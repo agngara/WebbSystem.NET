@@ -73,7 +73,7 @@ class Search {
 
         this.#resultsContainer.style.display = "block";
 
-        results.forEach(result => {
+        results.forEach((result, i) => {
             const item = document.createElement("div");
             item.classList.add("search-result-item");
 
@@ -89,6 +89,8 @@ class Search {
             item.appendChild(p);
 
             item.addEventListener("click", () => {
+                window.location.href = `/CV/View/${results[i].id}`;
+
             });
 
             this.#resultsContainer.appendChild(item);

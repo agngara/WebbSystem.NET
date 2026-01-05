@@ -1,4 +1,8 @@
 ﻿@model Models.CvEditModel
+
+    <link rel="stylesheet" href="~/css/cv.css" asp-append-version="true" />
+    <script src="~/js/cv.js" asp-append-version="true"></script>
+
 @{
     ViewData["Title"] = "Redigera mitt CV";
     var userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
