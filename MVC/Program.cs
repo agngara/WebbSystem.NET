@@ -35,6 +35,8 @@ builder.Services.AddSingleton(new SearchScoringConfig());
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectUserRepository, ProjectUserRepository>();
 
 var app = builder.Build();
 

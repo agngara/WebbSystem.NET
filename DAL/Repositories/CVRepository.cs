@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
-namespace DAL
+namespace DAL.Repositories
 {
     public class CVRepository
     {
@@ -27,10 +27,20 @@ namespace DAL
                                     .ToList();
             return query;
         }
-        // TO BE IMPLEMENTED
-        public async Task<List<CV>> GetTop50CVs()
+        /// <summary>
+        /// Getter limited to 20 rows and ordered descending by profile views. 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<CV>> GetTop20CVs()
         {
-            return new List<CV>();
+            return await _context.CVs.Include(c => c.Competences)
+                        .Include(c => c.WorkExperiences)
+                        .Include(c => c.Educations)
+                        .Include(c => c.User)
+                        .OrderByDescending(c => c.ProfileViews)
+                        .Take(20)
+                        .ToListAsync();
+            
         }
     }
 

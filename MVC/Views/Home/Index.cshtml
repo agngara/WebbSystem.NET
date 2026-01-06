@@ -1,8 +1,9 @@
 ﻿@model HomepageViewModel;
+@using System.Security.Claims;
 @{
     ViewData["title"] = "LinkedOut";
 }
-<link rel="stylesheet" href="~/css/homepage.css" />
+<link rel="stylesheet" href="~/css/homepage.css"/>
 <script src="~/js/homepage.js" defer></script>
 
 <section class="homepage-landing">
@@ -17,7 +18,7 @@
             <p>Register and start getting connected - browse CV:s and upload your own.</p>
         </div>
         <div class="buttoncell">
-            <button class="custom-button">Register</button>
+            <a asp-controller="Account" asp-action="Register" class="custom-button-large-accent">Register</a>
         </div>
     </div>
 
@@ -52,7 +53,7 @@
                 }
                 else
                 {
-                    <img src="~/Assets/UI-Images/default_profile.png" class="card-img-top"
+                    <img src="~/pfp/standard.png" class="card-img-top"
                          alt="Default profile" style="height: 200px; object-fit: cover;">
                 }
 
@@ -93,8 +94,11 @@
         }
     </section>
 </section>
+<div class="title-grid">
+    <h2 class="title-grid-item1">Latest Projects</h2>
+    <p class="title-grid-item2"><a asp-action="Catalog" asp-controller="Project">Browse all -></a></p>
+ </div>
 
-<h2 class="slide-title">Explore latest projects</h2>
 <section class="slider-window">
     <div class="arrow-left" id="slide-1-arrow-left-2">
         <img src="~/Assets/UI-Images/left_arrow_big.png" alt="Left arrow">
@@ -109,11 +113,47 @@
                 <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="Placeholder-imag">
                 <div class="card-body">
                     <h5 class="card-title">@project.Titel</h5>
+                    <p class="card-text">Created by @project.Creator.Name</p>
                     <p class="card-text">@project.Description</p>
                 </div>
 
                 <div class="card-body">
-                    <button class="custom-button">Explore project</button>
+                    @*Displays buttons for anonymous users*@
+                    @if (!User.Identity!.IsAuthenticated)
+                    {
+                        <a class="custom-button" asp-action="Login" asp-controller="Account">Join</a>
+                        <a class="custom-button" asp-action="Login" asp-controller="Account">See More</a>
+                    }
+                    else
+                    {
+                        @*Otherwise, checks if user is or is not creator of project*@
+                        if (User.FindFirstValue(ClaimTypes.NameIdentifier) != project.CreatorId)
+                        {
+                            bool isJoined = false;
+                            @*Loops through userlist to see if user is a participant of the project*@
+                            foreach (var user in project.ProjectUsers)
+                            {
+                                if (user.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                                {
+                                    isJoined = true;
+                                    break;
+                                }
+                            }
+                            if (isJoined == false)
+                            {
+                                <a class="custom-button" asp-controller="Project" asp-action="Join" asp-route-projectId="@project.Id">Join</a>
+                            }
+                            else
+                            {
+                                <a class="custom-button" asp-controller="Project" asp-action="Leave" asp-route-projectId="@project.Id">Leave</a>
+                            }
+                        }
+                        else
+                        {
+                            <button class="custom-button">Edit</button>
+                        }
+                        <button class="custom-button">See More</button>
+                    }
                 </div>
             </div>
         }

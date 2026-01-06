@@ -1,0 +1,17 @@
+﻿@using MVC.Models.Projects
+@using Models;
+@model ProjectViewModel
+
+<h1>@Model.Titel</h1>
+<h3>Created by: @Model.Creator.Name</h3>
+<p>@Model.Description</p>
+
+<h3>Members</h3>
+<ul>
+    @foreach (User user in Model.Users)
+    {
+        <li>@user.Name</li>
+    }
+</ul>
+
+

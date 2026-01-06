@@ -5,6 +5,7 @@ namespace MVC.Controllers;
 
 public abstract class BaseController : Controller
 {
+
     protected ApiResponse ModelStateErrorResponse(string? message = null)
     {
         var errors = new Dictionary<string, string>();

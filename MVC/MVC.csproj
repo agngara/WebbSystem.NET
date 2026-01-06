@@ -30,4 +30,8 @@
     <ProjectReference Include="..\BL\BL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Assets\UserUploads\ProjectImages\" />
+  </ItemGroup>
+
 </Project>
