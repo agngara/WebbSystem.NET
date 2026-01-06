@@ -11,11 +11,26 @@ namespace DAL.Repositories
     {
         private readonly AppDbContext _context;
 
-        public ProjectRepository(AppDbContext context) {
+            public ProjectRepository(AppDbContext context) {
 
-            _context = context;
+                _context = context;
+            }
+
+        public bool AddProject(Project project)
+        {
+            try
+            {
+                _context.Add(project);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return false;
+            }
         }
-        
+
         public Task<List<Project>> GetAllAsync()
         {
 
@@ -61,11 +76,16 @@ namespace DAL.Repositories
                             .ToListAsync();
         }
 
-        public bool AddProject(Project project)
+        public async Task<Project> GetProjectAsync(int projectId)
+        {           
+            return await _context.Projects.Where(p => p.Id == projectId).FirstOrDefaultAsync();
+        }
+
+        public bool UpdateProject(Project project)
         {
             try
             {
-                _context.Add(project);
+                _context.Projects.Update(project);
                 _context.SaveChanges();
                 return true;
             }
@@ -76,9 +96,29 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task<Project> GetProjectAsync(int projectId)
-        {           
-            return await _context.Projects.Where(p => p.Id == projectId).FirstOrDefaultAsync();
+        public bool DeleteProject(int id)
+        {
+            try
+            {
+                Project? project = _context.Projects.Find(id);
+
+                if (project != null)
+                {
+                    _context.Remove(project);
+                    _context.SaveChanges();
+                    return true;
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return false;
+            }
         }
     }
 }

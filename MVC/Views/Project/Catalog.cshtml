@@ -1,13 +1,14 @@
 ﻿@model CatalogViewModel;
 @using System.Security.Claims;
-
-
+@{
+    ViewData["Title"] = "Projects";
+}
 
 <!DOCTYPE html>
     <html>
     <head>
         <title>LinkedOut</title>
-        <link rel="stylesheet" href="~/css/catalog.css"/>
+        <link rel="stylesheet" href="~/css/Project/catalog.css"/>
         <script src="~/js/project.js" defer></script>
 
 </head>
@@ -30,7 +31,7 @@
             @foreach (Models.Project project in Model.UserProjects)
             {
                 <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
-                    <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="Placeholder-image">
+                    <img src="@project.ImageUrl" class="card-img-top" alt="Placeholder-image">
                     <div class="card-body">
                         <h5 class="card-title">@project.Titel</h5>
                         <p class="card-text">@project.Description</p>
@@ -81,26 +82,16 @@
                             }
                             if (isJoined == false)
                             {
-                                <button class="custom-button">Join</button>
+                                <a class="custom-button" asp-controller="Project" asp-action="Join" asp-route-projectId="@project.Id">Join</a>
                             }
                             else
                             {
-                                <button class="custom-button">Leave</button>
+                                <a class="custom-button" asp-controller="Project" asp-action="Leave" asp-route-projectId="@project.Id">Leave</a>
                             }
                         }
                         else
                         {
-                            <a class="custom-button" asp-action="StageChange" asp-route-id="@project.Id">Edit test</a>
-                            @if (Model.ProjectToEdit != null)
-
-                            {
-                                @await Html.PartialAsync("ProjectEditForm", new EditProjectViewModel {
-                                ProjectId = project.Id,
-                                Name = project.Titel,
-                                Description = project.Description,
-                                ImageUrl = project.ImageUrl
-                                });
-                            }
+                            <a class="custom-button" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
                             
                         }
                         <button class="custom-button">See participants</button>
@@ -111,7 +102,7 @@
         
     </section>
     @*Injects project creation form*@
-    @await Html.PartialAsync("ProjectCreationForm", new CreateProjectViewModel {})
+    @await Html.PartialAsync("ProjectCreationForm", new CreateProjectViewModel {})  
 
 
     </body>

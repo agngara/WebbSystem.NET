@@ -1,0 +1,36 @@
+﻿@model EditProjectViewModel
+@using System.Security.Claims
+
+
+<link rel="stylesheet" href="~/css/Project/catalog.css"/>
+<link rel="stylesheet" href="~/css/Project/Edit.css"/>
+<script src="site.js" defer></script>
+<script src="project.js" defer></script>
+
+
+<div class="edit-project-form">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data" asp-route-id="@Model.ProjectId">
+        <div class="mb-3">
+            <label for="Name" class="form-label">Project Name</label>
+            <input type="text" class="form-control" id="Name" asp-for="Name" placeholder="@Model.Name">
+        </div>
+        <div class="mb-3">
+            <label for="Description" class="form-label">Description</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="Description" placeholder="@Model.Description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Replace image</label>
+            <input class="form-control" type="file" id="image" accept="image/*" asp-for="ImageFile">
+            <div id="fileHelp" class="form-text">Max 2MB, JPG/PNG/GIF</div>
+
+        </div>
+        <div>
+        <input type="submit" value="Update" class="custom-button-accent" asp-controller="Project" asp-action="Edit" asp-route-id="@Model.ProjectId"></>
+        </div>
+    </form>
+    <form asp-action="Delete" asp-route-id="@Model.ProjectId" method="post">
+        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete @Model.Name')">
+            Delete project
+        </button>
+    </form>
+</div>

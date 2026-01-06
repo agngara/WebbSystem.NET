@@ -7,6 +7,8 @@ namespace DAL.Repositories.Interfaces
 {
     public interface IProjectRepository
     {
+        bool AddProject(Project project);
+
         Task<List<Project>> GetAllAsync();
 
         List<Project> GetAmount(int amountOfProjects);
@@ -15,9 +17,13 @@ namespace DAL.Repositories.Interfaces
 
         Task<List<Project>> GetProjectsByCreator(string userId);
 
-        bool AddProject(Project project);
 
         Task<Project> GetProjectAsync(int projectId);
+
+        bool UpdateProject(Project project);
+
+        bool DeleteProject(int id);
+
 
 
     }

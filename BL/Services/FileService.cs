@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 namespace BL.Services
 {
 
-    public static class ImageUploadService
+    public static class FileService
     {
         /// <summary>
         /// Checks if filename has any of the strings passed in as allowed types, in it. 
@@ -54,5 +54,15 @@ namespace BL.Services
                 return "";
             }
         }
+
+        //public static IFormFile GetFile(string relativePath)
+        //{
+        //    string wwwRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        //    string fullPath = Path.Combine(wwwRoot, relativePath);
+        //    using BinaryReader binaryReader = new BinaryReader(new  FileStream(fullPath, FileMode.Open, FileAccess.Read));
+
+        //    IFormFile = binaryReader.Read();
+
+        //}
     }
 }

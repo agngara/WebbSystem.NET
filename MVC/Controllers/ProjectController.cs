@@ -4,6 +4,7 @@ using DAL.Repositories;
 using DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Models;
 using MVC.Models;
 using System.Diagnostics.Eventing.Reader;
@@ -16,10 +17,13 @@ namespace MVC.Controllers
     {
         private IProjectRepository _projectRepository;
         private IUserRepository _userRepository;
+        private IProjectUserRepository _projectUserRepository;
         private UserManager<User> _userManager;
-        public ProjectController(IProjectRepository projectRepository, UserManager<User> userManager, IUserRepository userRepository)
+
+        public ProjectController(IProjectRepository projectRepository, IProjectUserRepository projectUserRepository, UserManager<User> userManager, IUserRepository userRepository)
         {
             _projectRepository = projectRepository;
+            _projectUserRepository = projectUserRepository;
             _userManager = userManager;
             _userRepository = userRepository;
         }
@@ -65,7 +69,7 @@ namespace MVC.Controllers
 
             if (model.ImageFile != null)
             {
-                bool isValid = ImageUploadService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, model.ImageFile.FileName);
+                bool isValid = FileService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, model.ImageFile.FileName);
                 
                 if (!isValid) 
                 { 
@@ -77,7 +81,7 @@ namespace MVC.Controllers
                     return Json(ModelStateErrorResponse("Uploaded file is too large."));
                 }
 
-                filePath = ImageUploadService.SaveFile(model.ImageFile, "Assets/UserUploads/ProjectImages");
+                filePath = FileService.SaveFile(model.ImageFile, "Assets/UserUploads/ProjectImages");
 
             }
 
@@ -102,36 +106,105 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction("Catalog");
-        }
-        public async Task<IActionResult> StageChange(int id)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            string userId;
-            List<Project> userProjects;
-            if (user != null)
-            {
-                userId = user.Id;
-                userProjects = await _projectRepository.GetProjectsByCreator(userId);
 
+
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            
+            Project project = await _projectRepository.GetProjectAsync(id);
+
+            if (project == null)
+            {
+                return Json(ModelStateErrorResponse("No project found, Yo :("));
+            }
+
+            EditProjectViewModel viewModel = new EditProjectViewModel()
+            {
+                ProjectId = project.Id,
+                Name = project.Titel,
+                Description = project.Description,
+                ImageUrl = project.ImageUrl,
+                ImageFile = null
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, EditProjectViewModel viewModel)
+        {
+            Project p = await _projectRepository.GetProjectAsync(id);
+
+            string? imgUrl = viewModel.ImageUrl;
+
+            if (string.IsNullOrEmpty(imgUrl))
+            {
+                imgUrl = p.ImageUrl;
+            }
+
+                p.Id = id;
+                p.CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                p.Creator = await _userRepository.GetUserById(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                p.Titel = viewModel.Name;
+                p.Description = viewModel.Description;
+                p.ImageUrl = imgUrl;
+            
+
+            _projectRepository.UpdateProject(p);
+            return RedirectToAction("Catalog");
+        }
+        
+        public IActionResult Delete(int id)
+        {
+            _projectRepository.DeleteProject(id);
+
+            return RedirectToAction("Catalog");
+        }
+
+        public IActionResult Join(int projectId)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!_projectUserRepository.AddUserToProject(userId, projectId))
+            {
+                return Json(ModelStateErrorResponse("Could not join project, because there is already a user assigned to the project with id: " + projectId));
             }
             else
             {
-                userProjects = new List<Project>();
+                var referer = Request.Headers["Referer"].ToString();
+
+                if (!string.IsNullOrEmpty(referer))
+                {
+                    return Redirect(referer);
+                }
+
+                return RedirectToAction("Catalog");
+            }
+        }
+        public IActionResult Leave(int projectId)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!_projectUserRepository.RemoveUserFromProject(userId, projectId))
+            {
+                return Json(ModelStateErrorResponse("Could not leave project, because there were no user with Id: " + userId + " to remove."));
+            }
+            else
+            {
+                var referer = Request.Headers["Referer"].ToString();
+
+                if (!string.IsNullOrEmpty(referer))
+                {
+                    return Redirect(referer);
+                }
+                return RedirectToAction("Catalog");
             }
 
-            List<Project> allProjects = await _projectRepository.GetAllAsync();
 
-            CatalogViewModel catalogViewModel = new CatalogViewModel
-            {
-                AllProjects = allProjects,
-                UserProjects = userProjects,
-                ProjectToEdit = await _projectRepository.GetProjectAsync(id)
-
-            };
-
-            return View("Catalog", catalogViewModel);
         }
-
 
     }
 }

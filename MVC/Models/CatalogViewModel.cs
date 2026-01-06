@@ -8,7 +8,5 @@ namespace MVC.Models
         public List<Project> UserProjects {  get; set; }
 
         public List <Project> AllProjects { get; set; }
-
-        public Project ProjectToEdit { get; set; }
     }
 }

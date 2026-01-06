@@ -141,11 +141,11 @@
                             }
                             if (isJoined == false)
                             {
-                                <button class="custom-button">Join</button>
+                                <a class="custom-button" asp-controller="Project" asp-action="Join" asp-route-projectId="@project.Id">Join</a>
                             }
                             else
                             {
-                                <button class="custom-button">Leave</button>
+                                <a class="custom-button" asp-controller="Project" asp-action="Leave" asp-route-projectId="@project.Id">Leave</a>
                             }
                         }
                         else
