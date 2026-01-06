@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Models;
-using MVC.Models;
+using MVC.Models.Projects;
 using System.Diagnostics.Eventing.Reader;
 using System.Security.Claims;
 
@@ -102,7 +102,7 @@ namespace MVC.Controllers
 
             if (!addResult)
             {
-                return Json(ModelStateErrorResponse("Something went wrong when saving project picture, please try again :("));
+                return Json(ModelStateErrorResponse("Something went wrong when saving project image, please try again :("));
             }
 
             return RedirectToAction("Catalog");
@@ -202,8 +202,30 @@ namespace MVC.Controllers
                 }
                 return RedirectToAction("Catalog");
             }
+        }
+
+        public async Task<IActionResult> Details(int projectId)
+        {
 
 
+            List<User> users = _projectUserRepository.GetAllUsersByProject(projectId);
+
+            Project project = await _projectRepository.GetProjectAsync(projectId);
+
+            User creator = await _userRepository.GetUserById(project.CreatorId);
+
+            ProjectViewModel viewModel = new ProjectViewModel
+            {
+                ProjectId = project.Id,
+                CreatorId = project.CreatorId,
+                Creator = creator,
+                Titel = project.Titel, 
+                Description = project.Description,
+                ImageUrl = project.ImageUrl,
+                Users = users
+            };
+
+            return View(viewModel);
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿@model CatalogViewModel;
 @using System.Security.Claims;
+@using MVC.Models.Projects
 @{
     ViewData["Title"] = "Projects";
 }
@@ -63,7 +64,7 @@
                     @if (!User.Identity!.IsAuthenticated)
                     {
                         <a class="custom-button" asp-action="Login" asp-controller="Account">Join</a>
-                        <a class="custom-button" asp-action="Login" asp-controller="Account">See participants</a>
+                        <a class="custom-button" asp-action="Login" asp-controller="Account">See More</a>
                     }
                     else
                     {
@@ -94,7 +95,7 @@
                             <a class="custom-button" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
                             
                         }
-                        <button class="custom-button">See participants</button>
+                        <a class="custom-button" asp-controller="Project" asp-action="Details" asp-route-projectId="@project.Id">See More</a>
                     }
                 </div>
             </div>

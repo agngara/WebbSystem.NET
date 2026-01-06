@@ -9,6 +9,8 @@ namespace DAL.Repositories.Interfaces
     {
         ProjectUser GetProjectUser(string userId, int projectId);
 
+        List<User> GetAllUsersByProject(int projectId);
+
         User GetUserFromProject(string userId, int ProjectId);
 
         bool AddUserToProject(string userId, int projectId);

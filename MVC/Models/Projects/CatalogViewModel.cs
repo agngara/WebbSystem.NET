@@ -1,6 +1,6 @@
 ﻿using Models;
 
-namespace MVC.Models
+namespace MVC.Models.Projects
 
 {
     public class CatalogViewModel

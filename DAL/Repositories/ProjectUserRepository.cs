@@ -25,6 +25,17 @@ namespace DAL.Repositories
             return _context.ProjectUsers.FirstOrDefault(up => up.UserId == userId && up.ProjectId == projectId);
         }
 
+        public List<User> GetAllUsersByProject(int projectId)
+        {
+            List<User> users = _context
+                            .ProjectUsers
+                            .Where(pu => pu.ProjectId == projectId)
+                            .Include(pu => pu.User).Select(pu => pu.User)
+                            .ToList();
+
+            return users;
+        }
+
         public User? GetUserFromProject(string userId, int projectId)
         {
             ProjectUser? projectUser = _context.ProjectUsers.FirstOrDefault(up => up.UserId == userId && up.ProjectId == projectId);

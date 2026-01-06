@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MVC.Models
+namespace MVC.Models.Projects
 {
     public class EditProjectViewModel
     {
