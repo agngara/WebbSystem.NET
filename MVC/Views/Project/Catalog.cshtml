@@ -51,11 +51,22 @@
     <section class="all-projects-container">
         @foreach (Models.Project project in Model.AllProjects)
         {
+            String creator = "";
+            
+            if (project.Creator != null)
+            {
+                creator = project.Creator.Name;
+            }
+            else
+            {
+                creator = "Unknown";
+            }
+
             <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
                 <img src="@project.ImageUrl" class="card-img-top" alt="Placeholder-imag">
                 <div class="card-body">
                     <h5 class="card-title">@project.Titel</h5>
-                    <p class="card-text">Created by @project.Creator.Name</p>
+                    <p class="card-text">Created by @creator</p>
                     <p class="card-text">@project.Description</p>
                 </div>
 
