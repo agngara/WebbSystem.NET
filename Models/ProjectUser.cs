@@ -7,11 +7,11 @@ namespace Models
         public required int ProjectId { get; set; }
 
         [ForeignKey(nameof(ProjectId))]
-        public required Project Project { get; set; }
+        public  Project Project { get; set; }
 
         public required string UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public required User User { get; set; }
+        public User User { get; set; }
     }
 }

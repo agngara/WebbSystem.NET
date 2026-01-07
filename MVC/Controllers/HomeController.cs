@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 using DAL;
 using Models;
+using DAL.Repositories;
 
 namespace MVC;
 
@@ -22,8 +23,8 @@ public class HomeController : Controller
 
         HomepageViewModel viewModel = new HomepageViewModel
         {
-            TopCVs = await CVrepo.GetAllExtendedCVs(),
-            LatestProjects = ProjectRepo.GetAll()
+            TopCVs = await CVrepo.GetTop20CVs(),
+            LatestProjects = await ProjectRepo.GetAllAsync()
         };
 
         return View(viewModel);

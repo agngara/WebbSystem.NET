@@ -1,0 +1,135 @@
+﻿
+
+
+.slide-title {
+    display: block;
+    text-align: left;
+    margin: 5rem 5rem 2rem 3rem;
+    place-items: start;
+}
+
+.all-projects-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+    align-items: flex-start; 
+    gap: 1.5rem;
+    padding: 0 2rem;
+    margin: 0 auto; 
+    width: auto;
+}
+
+.scroll-container {
+    scroll-behavior: smooth;
+    display: flex;
+    overflow-x: scroll;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.slider-window {
+    position: relative;
+    width: 100%;
+    padding-bottom: 3rem;
+}
+
+.arrow-left, .arrow-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.arrow-right {
+    right: 0;
+}
+
+
+.scroll-card {
+    margin: 20px;
+}
+
+.card {
+    background-color: var(--bg-lighter-color);
+    color: var(--text-color);
+}
+
+    .card > .list-group {
+        border-color: var(--bg-color);
+        border-top: 1px solid var(--bg-color);
+        border-bottom: 1px solid var(--bg-color);
+    }
+
+.list-group-item {
+    background-color: var(--bg-lighter-color);
+    color: var(--text-color);
+    border: var(--bs-list-group-border-width) solid var(--bg-color);
+}
+
+.create-project-popup {
+    visibility: hidden;
+    position: fixed;
+    top: 10%;
+    left: auto;
+    width: 70%;
+    height: 70%;
+    background-color: var(--bg-lighter-color);
+    border-radius: 20px;
+    padding: 3rem 6rem;
+    border: 5px solid var(--card-middle-color);
+}
+
+.edit-project-popup {
+    position: fixed;
+    top: 10%;
+    left: auto;
+    width: 70%;
+    height: 70%;
+    background-color: var(--bg-lighter-color);
+    border-radius: 20px;
+    padding: 3rem 6rem;
+    border: 5px solid var(--card-middle-color);
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+    .icon-btn:hover {
+        color: var(--accent-color);
+        transform: scale(1.1);
+    }
+
+
+.top-bar {
+    display: grid;
+    grid-template-columns: 97% 10%
+
+}
+
+#close-add-window, #close-edit-window {
+    grid-column: 2;
+    color: var(--card-middle-color);    
+
+}
+
+
+
+#create-title, #edit-title {
+    grid-column: 1;
+}
+
+
+
+
+

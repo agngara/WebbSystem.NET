@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Models;
+using DAL.Repositories;
 
 namespace DAL;
 
@@ -20,11 +21,10 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<Institution> Institutions { get; set; }
     public DbSet<WorkExperience> WorkExperiences { get; set; }
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-
         //Project user
         //make foreignkey combination primary key
         modelBuilder.Entity<ProjectUser>()
