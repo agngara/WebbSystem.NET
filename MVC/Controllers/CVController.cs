@@ -6,6 +6,8 @@ using Models;
 using System.Security.Claims;
 using DAL;
 using System.IO;
+using BL.Interfaces;
+using BL.DTOs;
 
 namespace MVC.Controllers
 {
@@ -15,12 +17,14 @@ namespace MVC.Controllers
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _environment;
+        private readonly ISearchService _searchService;
 
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment)
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, ISearchService searchService)
         {
             _context = context;
             _userManager = userManager;
             _environment = environment;
+            _searchService = searchService;
         }
 
         // Visa CV för en specifik användare
@@ -79,6 +83,46 @@ namespace MVC.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
+
+            // ⭐⭐ NYTT: Hämta relevanta profiler ⭐⭐
+            List<RelevantProfileDto> relevantProfiles = new List<RelevantProfileDto>();
+
+            if (user.Cv != null)
+            {
+                try
+                {
+                    // Hämta den inloggade användarens ID (om någon är inloggad)
+                    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    // Om ingen är inloggad, använd en tom sträng
+                    currentUserId = currentUserId ?? "";
+
+                    // Hämta relevanta profiler för denna användare
+                    // Exkludera både profilanvändaren OCH den inloggade användaren
+                    relevantProfiles = await _searchService.SearchRelevantProfiles(
+                        currentUserId: currentUserId,
+                        profileUserId: id  // Detta är profilen vi är inne på
+                    );
+
+                    Console.WriteLine($"Found {relevantProfiles.Count} relevant profiles for user {id}");
+
+                    // Extra säkerhetskontroll: Filtrera bort båda användarna manuellt också
+                    relevantProfiles = relevantProfiles
+                        .Where(p => p.UserId != id && p.UserId != currentUserId)
+                        .ToList();
+
+                    Console.WriteLine($"After manual filtering: {relevantProfiles.Count} profiles");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error getting relevant profiles: {ex.Message}");
+                    // Fortsätt utan relevanta profiler om det går fel
+                }
+            }
+
+            // Skicka med relevanta profiler till vyn
+            ViewBag.RelevantProfiles = relevantProfiles;
+            ViewBag.HasRelevantProfiles = relevantProfiles.Any();
 
             return View("~/Views/CvView/View.cshtml", user);
         }
