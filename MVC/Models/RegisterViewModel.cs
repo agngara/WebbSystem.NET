@@ -9,10 +9,12 @@ namespace MVC.Models
 
         [Required(ErrorMessage = "Please Enter a Username")]
         [StringLength(30)]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Username can only contain letters and numbers")]
         public required string UserName { get; set; }
 
         [Required(ErrorMessage = "Please Enter a Name")]
         [StringLength(30)]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Name can only contain letters and numbers")]
         public required string Name { get; set; }
 
         [Required(ErrorMessage = "Please Enter a Address")]

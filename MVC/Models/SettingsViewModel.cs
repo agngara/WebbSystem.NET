@@ -5,6 +5,7 @@ namespace MVC.Models
     public class SettingsViewModel
     {
         [StringLength(30)]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Name can only contain letters and numbers")]
         public string? Name { get; set; }
 
         [StringLength(50)]
