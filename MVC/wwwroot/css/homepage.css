@@ -200,12 +200,10 @@
 .arrow-right {
     right: 0;
 }
-
 .material-symbols-outlined {
     font-size: 48px;
     color: var(--text-color);
 }
-
 
 .scroll-card {
     margin: 20px;

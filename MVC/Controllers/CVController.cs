@@ -6,6 +6,9 @@ using Models;
 using System.Security.Claims;
 using DAL;
 using System.IO;
+using System.Xml.Serialization;
+using MVC.Models.Projects;
+using DAL.Repositories.Interfaces;
 
 namespace MVC.Controllers
 {
@@ -16,11 +19,14 @@ namespace MVC.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _environment;
 
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment)
+        private readonly IUserRepository _userRepository;
+
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IUserRepository userRepository )
         {
             _context = context;
             _userManager = userManager;
             _environment = environment;
+            _userRepository = userRepository;
         }
 
         // Visa CV för en specifik användare
@@ -139,6 +145,45 @@ namespace MVC.Controllers
             ViewBag.ProfileViews = user.Cv?.ProfileViews ?? 0;
             return View("~/Views/CvView/Edit.cshtml", viewModel);
         }
+
+        // Export CV-File
+        
+        public async Task<IActionResult> Export(int cvId)
+        {
+            CV? cv = _context.CVs
+                            .Include(c => c.Competences)
+                            .Include(c => c.WorkExperiences)
+                            .Include(c => c.Educations)
+                            .Include(c => c.User)
+                            .FirstOrDefault(c => c.Id == cvId);
+                                    
+            User? user = await _userRepository.GetUserById(cv.UserId);
+
+            if (user == null || cv == null) 
+            {
+                return BadRequest();
+            }
+            // Fix workplace name
+            CvFileModel fileModel = new CvFileModel()
+            {
+                Name = user.Name,
+                Description = cv.Description,
+                WorkExperiences = cv.WorkExperiences,
+                Competences = cv.Competences,
+                Educations = cv.Educations,
+            };
+
+            XmlSerializer serializer = new XmlSerializer(typeof(CvFileModel));
+
+            using var memoryStream = new MemoryStream();
+
+            serializer.Serialize(memoryStream, fileModel);
+            
+            memoryStream.Position = 0;
+
+            return File(memoryStream.ToArray(), "application/xml", Guid.NewGuid().ToString());
+        }
+
 
         // Uppdatera CV
         [HttpPost]
