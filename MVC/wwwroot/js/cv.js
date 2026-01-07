@@ -151,4 +151,30 @@
         window.cvManager = new CVManager();
     });
 
+
+    window.handleFormSubmit = function(formId) {
+        const form = document.getElementById(formId);
+        if (!form) {
+            console.error(`Form with id "${formId}" not found`);
+            return;
+        }
+
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                // NotifyUI interceptor handles the response
+            } catch (error) {
+                console.error('Form submission error:', error);
+                ui.showError('An error occurred submitting the form');
+            }
+        });
+    };
+
 })();
