@@ -39,6 +39,7 @@ public class CompetenceRepository : SqlServerRepository<Competence>, ICompetence
         }
 
         var competences = await Dbquery
+            .Where(c => c.Cv.User.IsActive == true)
             .Where(c => c.Name.ToLower().Contains(normQuery))
             .Take(100)
             .ToListAsync();

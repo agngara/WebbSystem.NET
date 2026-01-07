@@ -11,6 +11,8 @@ namespace Models
 
         public bool? IsPrivate { get; set; }
 
+        public bool IsActive { get; set; } = true;
+
         public int? CvId { get; set; }
         [ForeignKey(nameof(CvId))]
         public CV? Cv { get; set; }

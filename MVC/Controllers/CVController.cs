@@ -47,6 +47,11 @@ namespace MVC.Controllers
                 return NotFound("Användaren hittades inte");
             }
 
+            if (user.IsActive == false)
+            {
+                return Unauthorized("This account is deactivated");
+            }
+
             // Kontrollera om profilen är privat
             if (user.IsPrivate == true)
             {
@@ -62,6 +67,7 @@ namespace MVC.Controllers
                 //   return Forbid("Du har inte behörighet att se denna privata profil");
                 //}
             }
+
 
             // Öka profilvisningar om det är en annan användare
             if (User.Identity!.IsAuthenticated)

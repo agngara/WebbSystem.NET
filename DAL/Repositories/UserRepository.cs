@@ -39,6 +39,7 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
         }
 
         var candidates = await Dbquery
+            .Where(u => u.IsActive == true)
             .Where(u => u.Name.ToLower().Contains(normQuery)
                      || u.UserName!.ToLower().Contains(normQuery))
             .OrderBy(u => u.Name)

@@ -1,0 +1,87 @@
+/*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~*/
+
+/*~~~~*/ /*~~*/ ~
+    <link rel="stylesheet" href="~/css/account.css" />
+~
+
+<div class="login-form">
+    <div class="create-account-wrapper">
+        <form id="deactivateForm" class="login-form" method="post" asp-action="DeactivateAccount"
+            style="display: flex; justify-content: flex-end; align-items: center; flex-direction: column; height: auto;">
+            <h2 class="login-header" style="color: var(--error-color);">Deactivate Account</h2>
+            
+            <p class="warning-text" style="text-align: center; margin-bottom: 20px; color: var(--warning-color);">
+                <strong>Warning:</strong> This will permanently deactivate your account. You will not be able to log in again.
+            </p>
+
+            <div class="input-outer">
+                <label for="password">Current Password</label>
+                <div class="input-wrapper">
+                    <input id="password" asp-for="/*~~~~*/" type="password" placeholder="Enter your password">
+                    <img src="~/icons/Password.svg" alt="Password Logo">
+                </div>
+                <span asp-validation-for="/*~~~~*/" class="error-text"></span>
+                <p id="error-Password" class="error-text"></p>
+            </div>
+
+            <div class="input-outer">
+                <div class="rememberme-wrapper" style="align-self: flex-start; margin-top: 15px;">
+                    <input class="form-check-input" type="checkbox" asp-for="/*~~~~~~~~~~~~~~~*/" id="confirmDeactivation">
+                    <label class="form-check-label" for="confirmDeactivation" style="color: var(--error-color); font-weight: bold;">
+                        I understand that account deactivation is permanent and cannot be undone
+                    </label>
+                </div>
+                <span asp-validation-for="/*~~~~~~~~~~~~~~~*/" class="error-text"></span>
+                <p id="error-ConfirmDeactivation" class="error-text"></p>
+            </div>
+
+            <input type="submit" value="DEACTIVATE ACCOUNT" class="login-btn" 
+                   style="background-color: var(--error-color); margin-top: 20px;">
+        </form>
+
+        <form method="post" asp-action="CancelDeactivation" 
+              style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+            <a asp-controller="Account" asp-action="Settings" class="login-btn" 
+               style="background-color: var(--text-color); text-decoration: none; text-align: center;">
+                CANCEL
+            </a>
+        </form>
+    </div>
+</div>
+
+/*~~~~*/ /*~~~*/ ~
+    <script src="~/js/account.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deactivateForm = document.getElementById('deactivateForm');
+            const confirmCheckbox = document.getElementById('confirmDeactivation');
+            
+            // Lägg till bekräftelse innan formulär skickas
+            deactivateForm.addEventListener('submit', function (e) {
+                if (!confirmCheckbox.checked) {
+                    e.preventDefault();
+                    showError('ConfirmDeactivation', 'You must confirm that you understand this action is permanent.');
+                    return false;
+                }
+                
+                // Ytterligare bekräftelse
+                if (!confirm('Are you absolutely sure you want to deactivate your account? This action cannot be undone.')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Funktion för att visa felmeddelanden (samma som i din befintliga kod)
+            function showError(fieldName, message) {
+                const errorElement = document.getElementById(`error-${fieldName}`);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+        });
+    </script>
+~
+
