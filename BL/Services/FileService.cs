@@ -21,7 +21,7 @@ namespace BL.Services
             return allowedTypes.Contains(extension);
         }
         /// <summary>
-        /// Saves a file to a wwwroot folder. 
+        /// Saves a file to the wwwroot folder. 
         /// </summary>
         /// <param name="file">File to be saved.</param>
         /// <param name="relativePath">Relative path, in other words, not including wwwroot or disk.</param>
@@ -54,15 +54,5 @@ namespace BL.Services
                 return "";
             }
         }
-
-        //public static IFormFile GetFile(string relativePath)
-        //{
-        //    string wwwRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        //    string fullPath = Path.Combine(wwwRoot, relativePath);
-        //    using BinaryReader binaryReader = new BinaryReader(new  FileStream(fullPath, FileMode.Open, FileAccess.Read));
-
-        //    IFormFile = binaryReader.Read();
-
-        //}
     }
 }

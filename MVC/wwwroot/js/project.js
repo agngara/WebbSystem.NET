@@ -1,4 +1,17 @@
-﻿// Projects scroll arrows
+﻿// Textformatter for cutting off long card-texts
+
+const descriptions = document.querySelectorAll(".card-text");
+const descriptionscount = descriptions.length;
+
+for (let i = 0; i < descriptionscount; i++) {
+    const textLength = descriptions[i].textContent.length;
+
+    if (textLength > 100) {
+        descriptions[i].textContent = descriptions[i].textContent.slice(0, 100) + "...";
+    }
+}
+
+// Projects scroll arrows
 
 var scrollContainerProject = document.getElementsByClassName("scroll-container").item(0);
 var rightArrow = document.getElementById("slide-1-arrow-right-2");
@@ -42,3 +55,5 @@ var closeButton = document.getElementById("close-edit-window");
 closeButton.addEventListener("click", () => {
     addProjectWindow.style.visibility = "hidden";
 })
+
+

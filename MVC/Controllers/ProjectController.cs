@@ -65,7 +65,7 @@ namespace MVC.Controllers
 
             //Here follows code regarding the project image.
 
-            string filePath = "Assets/UI-Images/project_placeholder_image.jpg";
+            string filePath = "/Assets/UI-Images/project_placeholder_image.jpg";
 
             if (model.ImageFile != null)
             {
