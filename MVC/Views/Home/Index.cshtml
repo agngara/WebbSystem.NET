@@ -142,15 +142,18 @@
                                     break;
                                 }
                             }
+                            @*Displays joinbutton*@
                             if (isJoined == false)
                             {
                                 <a class="custom-button" asp-controller="Project" asp-action="Join" asp-route-projectId="@project.Id">Join</a>
                             }
+                            @*Else, displays Leave-button*@
                             else
                             {
                                 <a class="custom-button" asp-controller="Project" asp-action="Leave" asp-route-projectId="@project.Id">Leave</a>
                             }
                         }
+                        @*If project creator, display edit-buttons*@
                         else
                         {
                             <a class="custom-button" asp-controller="Project" asp-action="Edit">Edit</a>
