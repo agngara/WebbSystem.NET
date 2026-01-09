@@ -205,6 +205,34 @@ namespace DAL.Migrations
                     b.ToTable("Competences");
                 });
 
+            modelBuilder.Entity("Models.Conversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("Models.ConversationUser", b =>
+                {
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ConversationId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ConversationUsers");
+                });
+
             modelBuilder.Entity("Models.Education", b =>
                 {
                     b.Property<int>("Id")
@@ -240,6 +268,44 @@ namespace DAL.Migrations
                     b.ToTable("Educations");
                 });
 
+            modelBuilder.Entity("Models.GuestMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("GuestName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("ToUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ToUserId");
+
+                    b.ToTable("GuestMessages");
+                });
+
             modelBuilder.Entity("Models.Institution", b =>
                 {
                     b.Property<int>("Id")
@@ -265,30 +331,29 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("SendDateTime")
+                    b.Property<DateTime>("SendDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SenderId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("SenderName")
+                    b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
+                    b.HasIndex("ConversationId");
 
                     b.HasIndex("SenderId");
 
@@ -548,6 +613,25 @@ namespace DAL.Migrations
                     b.Navigation("Cv");
                 });
 
+            modelBuilder.Entity("Models.ConversationUser", b =>
+                {
+                    b.HasOne("Models.Conversation", "Conversation")
+                        .WithMany("Participants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.User", "User")
+                        .WithMany("ConversationUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Models.Education", b =>
                 {
                     b.HasOne("Models.CV", "Cv")
@@ -565,12 +649,23 @@ namespace DAL.Migrations
                     b.Navigation("Institution");
                 });
 
+            modelBuilder.Entity("Models.GuestMessage", b =>
+                {
+                    b.HasOne("Models.User", "ToUser")
+                        .WithMany()
+                        .HasForeignKey("ToUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ToUser");
+                });
+
             modelBuilder.Entity("Models.Message", b =>
                 {
-                    b.HasOne("Models.User", "Receiver")
-                        .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("Models.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.User", "Sender")
@@ -578,7 +673,7 @@ namespace DAL.Migrations
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Receiver");
+                    b.Navigation("Conversation");
 
                     b.Navigation("Sender");
                 });
@@ -648,6 +743,13 @@ namespace DAL.Migrations
                     b.Navigation("WorkExperiences");
                 });
 
+            modelBuilder.Entity("Models.Conversation", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("Participants");
+                });
+
             modelBuilder.Entity("Models.Institution", b =>
                 {
                     b.Navigation("Educations");
@@ -660,9 +762,9 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Models.User", b =>
                 {
-                    b.Navigation("ProjectUsers");
+                    b.Navigation("ConversationUsers");
 
-                    b.Navigation("ReceivedMessages");
+                    b.Navigation("ProjectUsers");
 
                     b.Navigation("SentMessages");
                 });

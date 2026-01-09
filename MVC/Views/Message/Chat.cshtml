@@ -1,0 +1,109 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Models
+@using MVC.Models.Message
+
+@model ChatViewModel
+
+@{
+    ViewData["Title"] = "Chat";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="stylesheet" href="~/css/Message/message.css" />
+    <script src="~/js/project.js" defer></script>
+</head>
+<body>
+
+    <div class="chat-layout">
+
+        <div class="chat-header">
+            <a asp-action="Index" class="chat-back">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+
+            <span class="chat-name">
+                @(string.IsNullOrWhiteSpace(Model.OtherUserName)
+                                ? Model.OtherUserEmail
+                                : Model.OtherUserName)
+            </span>
+        </div>
+
+
+        <div class="chat-messages">
+
+            @if (Model.IsGuest)
+            {
+                <div class="chat-system-message">
+                    <i class="bi bi-info-circle"></i>
+                    <span>
+                        You are sending this message as a guest.
+                        The user cannot reply to you, therefore please include your contact information if you want to be reached.
+                    </span>
+                </div>
+            }
+            else
+            {
+                @foreach (var msg in Model.Messages)
+                {
+                    <div class="chat-row @(msg.IsMine ? "mine" : "theirs")">
+                        <div class="chat-bubble">
+                            <div class="text">@msg.Text</div>
+                            <div class="meta">
+                                @msg.SentAt.ToLocalTime().ToString("dd MMM HH:mm")
+
+                                @if (msg.IsMine)
+                                {
+                                    <span class="read">
+                                        @if (msg.IsRead)
+                                        {
+                                            <i class="bi bi-check2-all"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-check2"></i>
+                                        }
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <form asp-action="Chat" method="post" class="chat-input-area">
+            @Html.AntiForgeryToken()
+
+
+            <input type="hidden" asp-for="ToUserId" />
+            <input type="hidden" asp-for="IsGuest" />
+
+            @if (Model.IsGuest)
+            {
+                <div class="guest-name-wrapper">
+                    <i class="bi bi-person-fill"></i>
+                    <input asp-for="GuestName"
+                           placeholder="Ditt namn"
+                           autocomplete="name" />
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="ConversationId" />
+            }
+
+            <input asp-for="NewMessageText" placeholder="Write a message..." />
+            <span asp-validation-for="NewMessageText"></span>
+
+            <button type="submit">
+                <i class="bi bi-send"></i>
+            </button>
+        </form>
+
+    </div>
+
+</body>
+</html>

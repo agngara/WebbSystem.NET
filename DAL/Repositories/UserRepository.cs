@@ -288,6 +288,20 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
         return SearchType.Relevance;
     }
 
+    public async Task<List<User>> SearchUsersAsync(string searchTerm)
+    {
+        searchTerm = searchTerm.Trim();
+
+        return await _context.Users
+            .Where(u =>
+                (u.Email != null && u.Email.Contains(searchTerm)) ||
+                (u.UserName != null && u.UserName.Contains(searchTerm)) ||
+                (u.Name != null && u.Name.Contains(searchTerm)))
+            .OrderBy(u => u.Name ?? u.Email ?? u.UserName)
+
+            .ToListAsync();
+    }
+
     // Helper DTO
     private class CvDataDto
     {

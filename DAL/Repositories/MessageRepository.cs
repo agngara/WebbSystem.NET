@@ -15,10 +15,44 @@ public class MessageRepository : SqlServerRepository<Message>, IMessageRepositor
     }
 
 
-    public async Task<int> GetUnreadCountAsync(string userId)
+    public async Task AddMessageAsync(int conversationId, string senderId, string text)
     {
-        return await _context.Messages
-            .Where(m => m.Receiver.Id == userId && !m.IsRead)
-            .CountAsync();
+        _context.Messages.Add(new Message
+        {
+            ConversationId = conversationId,
+            SenderId = senderId,
+            Text = text.Trim(),
+            SendDateTime = DateTime.UtcNow,
+            IsRead = false
+        });
+
+        await _context.SaveChangesAsync();
     }
+
+    public async Task MarkAsReadAsync(int conversationId, string currentUserId)
+    {
+        var unread = await _context.Messages
+            .Where(m => m.ConversationId == conversationId
+                     && m.SenderId != currentUserId
+                     && !m.IsRead)
+            .ToListAsync();
+
+        if (unread.Count == 0) return;
+
+        foreach (var m in unread)
+        {
+            m.IsRead = true;
+            m.ReadAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+
+    //public async Task<int> GetUnreadCountAsync(string userId)
+    //{
+    //    return await _context.Messages
+    //        .Where(m => m.Receiver.Id == userId && !m.IsRead)
+    //        .CountAsync();
+    //}
 }

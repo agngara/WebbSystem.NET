@@ -1,0 +1,41 @@
+﻿@using Models
+@using MVC.Models.Message
+@model GuestMessage
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="stylesheet" href="~/css/Message/message.css" />
+    <script src="~/js/project.js" defer></script>
+</head>
+<body>
+
+<div class="chat-header">
+    <a asp-action="Index" class="chat-back">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+
+    <div>
+        <span class="guest-name">@Model.GuestName</span>
+        <div class="chat-">Guest Message</div>
+    </div>
+</div>
+
+<div class="chat-messages">
+    <div class="chat-row theirs">
+        <div class="chat-bubble">
+            <div class="text">@Model.Text</div>
+            <div class="meta">@Model.SentAt.ToLocalTime().ToString("dd MMM HH:mm")</div>
+        </div>
+    </div>
+</div>
+
+<div class="guest-message">
+    You been contected by a guest-user. U can not answer this message.
+</div>
+
+</body>
+</html>
