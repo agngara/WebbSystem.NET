@@ -59,10 +59,11 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark link-flex" href="#" id="messages-link">
+                                <a class="nav-link text-dark link-flex" asp-controller="Message" asp-action="Conversation">
+
                                     <div class="message-wrapper">
                                         <img src="/Icons/Chat.svg" alt="Chat" />
-                                        @await Component.InvokeAsync("UnreadMessages")
+                                       @*  @await Component.InvokeAsync("UnreadMessages") *@
                                     </div>
                                     <p class="mobile-nav-text">Messages</p>
                                 </a>

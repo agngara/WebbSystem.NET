@@ -1,0 +1,179 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Models
+@using MVC.Models.Message
+@model ConversationViewModel
+
+@{
+    ViewData["Title"] = "Meddelanden";
+}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="stylesheet" href="~/css/Message/message.css" />
+    <script src="~/js/project.js" defer></script>
+</head>
+<body>
+
+
+<div class="mesages-layout">
+
+    <div class="messages-header">
+        <form method="get" asp-action="Conversation" class="messages-search">
+            <input type="text"
+                   name="searchTerm"
+                   value="@Model.SearchTerm"
+                   placeholder="Search..." />
+            <button type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+    </div>
+
+    @if (ViewBag.SearchError != null)
+    {
+        <div class="alert alert-warning">@ViewBag.SearchError</div>
+    }
+
+    <div class="conversation-lista">
+
+
+        @if (Model.IsGuest)
+        {
+            if (!Model.UserResults.Any())
+            {
+                <p>Search on a user by entering a name och email</p>
+            }
+            else
+            {
+                foreach (var u in Model.UserResults)
+                {
+                    <a asp-controller="Message"
+                       asp-action="Chat"
+                       asp-route-toUserId="@u.UserId"
+                       class="conversation-item guest">
+
+                        <div class="avatar">
+                            @((u.DisplayName ?? "U")[0])
+                        </div>
+
+                        <div class="content">
+                            <div class="top">
+                                <span class="name">@u.DisplayName</span>
+                            </div>
+                            <div class="preview">Skicka ett meddelande som gäst</div>
+                        </div>
+                    </a>
+                }
+            }
+        }
+        else
+        {
+
+
+            @if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && Model.UserResults.Any())
+            {
+                foreach (var u in Model.UserResults)
+                {
+                    <a asp-controller="Message"
+                       asp-action="CreateConversation"
+                       asp-route-otherUserId="@u.UserId"
+                       class="conversation-item">
+
+                        <div class="conversation-profilpic">
+                            @((u.DisplayName ?? "U")[0])
+                        </div>
+
+                        <div class="conversation-texts">
+                            <div class="conversation-top-row">
+                                <span class="conversation-name">@u.DisplayName</span>
+                            </div>
+                            <div class="conversation-last-message">@u.Email</div>
+                        </div>
+                    </a>
+                }
+            }
+
+
+
+            if (!Model.Items.Any())
+            {
+                <p>No Conversations yet.</p>
+            }
+            else
+            {
+                foreach (var conv in Model.Items)
+                {
+                    if (conv.IsGuest)
+                    {
+                        <a asp-action="Guest"
+                           asp-route-id="@conv.GuestId"
+                           class="conversation-item guest">
+
+                            <div class="avatar">
+                                <i class="bi bi-fingerprint"></i>
+                            </div>
+
+                            <div class="content">
+                                <div class="top">
+                                    <span class="name">@conv.GuestName</span>
+                                    @if (conv.LastMessageAt.HasValue)
+                                    {
+                                        <span class="date">
+                                            @conv.LastMessageAt.Value.ToLocalTime().ToString("dd MMM")
+                                        </span>
+                                    }
+                                </div>
+
+                                <div class="preview">@conv.LastMessageText</div>
+                            </div>
+
+                            @if (conv.UnreadMessage > 0)
+                            {
+                                <span class="unread-dot"></span>
+                            }
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-action="Chat"
+                           asp-route-id="@conv.ConversationId"
+                           class="conversation-item">
+
+                            <div class="conversation-profilpic">
+                                @conv.OtherUserEmail?[0]
+                            </div>
+
+                            <div class="conversation-texts">
+                                <div class="conversation-top-row">
+                                    <span class="conversation-name">
+                                        @(string.IsNullOrWhiteSpace(conv.OtherUserName)
+                                                                ? conv.OtherUserEmail
+                                                                : conv.OtherUserName)
+                                    </span>
+
+                                    @if (conv.UnreadMessage > 0)
+                                    {
+                                        <i class="bi bi-envelope-plus-fill"></i>
+                                    }
+
+                                    @if (conv.LastMessageAt.HasValue)
+                                    {
+                                        <span class="conversation-date">
+                                            @conv.LastMessageAt.Value.ToLocalTime().ToString("dd MMM")
+                                        </span>
+                                    }
+                                </div>
+
+                                <div class="conversation-last-message">@conv.LastMessageText</div>
+                            </div>
+                        </a>
+                    }
+                }
+            }
+        }
+    </div>
+</div>
+
+</body>
+</html>

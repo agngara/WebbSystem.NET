@@ -15,25 +15,25 @@ public class UnreadMessagesViewComponent : ViewComponent
         _messageRepository = messageRepository;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync()
-    {
-        if (!UserClaimsPrincipal.Identity!.IsAuthenticated)
-            return View(0);
+    //public async Task<IViewComponentResult> InvokeAsync()
+    //{
+    //    if (!UserClaimsPrincipal.Identity!.IsAuthenticated)
+    //        return View(0);
 
-        var user = await _userManager.GetUserAsync(UserClaimsPrincipal);
+    //    var user = await _userManager.GetUserAsync(UserClaimsPrincipal);
 
-        if (user == null)
-            return View(0);
+    //    if (user == null)
+    //        return View(0);
 
-        int count = 0;
-        try
-        {
-            count = await _messageRepository.GetUnreadCountAsync(user.Id);
-        }
-        catch (Exception err)
-        {
-            Console.WriteLine(err);
-        }
-        return View(count);
-    }
+    //    int count = 0;
+    //    try
+    //    {
+    //        count = await _messageRepository.GetUnreadCountAsync(user.Id);
+    //    }
+    //    catch (Exception err)
+    //    {
+    //        Console.WriteLine(err);
+    //    }
+    //    return View(count);
+    //}
 }

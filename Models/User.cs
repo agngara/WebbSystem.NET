@@ -18,7 +18,7 @@ namespace Models
         public CV? Cv { get; set; }
 
         public List<Message> SentMessages { get; set; } = [];
-        public List<Message> ReceivedMessages { get; set; } = [];
+        public List<ConversationUser> ConversationUsers { get; set; } = [];
         public virtual List<ProjectUser> ProjectUsers { get; set; } = [];
     }
 }
