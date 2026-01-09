@@ -7,8 +7,8 @@ using System.Security.Claims;
 using DAL;
 using System.IO;
 using System.Xml.Serialization;
-using MVC.Models.Projects;
 using DAL.Repositories.Interfaces;
+using MVC.Models.CVs;
 
 namespace MVC.Controllers
 {
@@ -20,13 +20,15 @@ namespace MVC.Controllers
         private readonly IWebHostEnvironment _environment;
 
         private readonly IUserRepository _userRepository;
+        private readonly IWorkPlaceRepository _workplaceRepository;
 
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IUserRepository userRepository )
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository )
         {
             _context = context;
             _userManager = userManager;
             _environment = environment;
             _userRepository = userRepository;
+            _workplaceRepository = workPlaceRepository;
         }
 
         // Visa CV för en specifik användare
@@ -163,12 +165,35 @@ namespace MVC.Controllers
             {
                 return BadRequest();
             }
+            List<WorkExperienceFileModel> viewWorkExperiences = new List<WorkExperienceFileModel>();
+
+            foreach (WorkExperience w in cv.WorkExperiences)
+            {
+                WorkPlace? workplace = await _workplaceRepository.GetWorkPlaceFromIdAsync(w.WorkPlaceId);
+                if (workplace == null)
+                {
+                    break;
+                }
+
+                WorkExperienceFileModel workExperienceFileModel = new WorkExperienceFileModel()
+                {
+                    Title = w.Title,
+                    Description = w.Description,
+                    StartDate = w.StartDate,
+                    EndDate = w.EndDate,
+                    WorkPlaceName = workplace.Name,
+                            
+                };
+
+                viewWorkExperiences.Add(workExperienceFileModel);
+            }
+
             // Fix workplace name
             CvFileModel fileModel = new CvFileModel()
             {
                 Name = user.Name,
                 Description = cv.Description,
-                WorkExperiences = cv.WorkExperiences,
+                WorkExperiences = viewWorkExperiences,
                 Competences = cv.Competences,
                 Educations = cv.Educations,
             };

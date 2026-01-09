@@ -37,6 +37,7 @@ builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectUserRepository, ProjectUserRepository>();
+builder.Services.AddScoped<IWorkPlaceRepository, WorkPlaceRepository>();
 
 var app = builder.Build();
 
