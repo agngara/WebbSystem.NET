@@ -445,9 +445,9 @@ nav {
 
 
 .notification {
-    position: absolute;
+    position: fixed;
     z-index: 100;
-    top: 0;
+    top: 60px;
     right: 0;
     margin: 10px;
 

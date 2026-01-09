@@ -53,43 +53,49 @@
 
 })();
 
+
 (() => {
-    document.getElementById("registerForm").addEventListener("submit", async function(e) {
-        e.preventDefault();
+    window.addErrorListener = (formId) => {
 
-        const formData = new FormData(this);
+        document.getElementById(formId).addEventListener("submit", async function(e) {
+            e.preventDefault();
 
-        try {
-            const response = await fetch(this.action, {
-                method: "POST",
-                body: formData
-            });
+            const formData = new FormData(this);
 
-            const result = await response.json();
-            clearErrorText()
-            if (result.success) {
-                if (result.redirectUrl) window.location.href = result.redirectUrl;
-            } else {
+            try {
+                const response = await fetch(this.action, {
+                    method: "POST",
+                    body: formData
+                });
 
-                for (let [key, message] of Object.entries(result.errors)) {
+                const result = await response.json();
+                clearErrorText()
+                if (result.success) {
+                    if (result.redirectUrl) window.location.href = result.redirectUrl;
+                } else {
 
-                    if (key == "password") key = "Password";
+                    for (let [key, message] of Object.entries(result.errors)) {
 
-                    const errElement = document.getElementById(`error-${key}`);
-                    errElement.textContent = message;
+                        if (key == "password") key = "Password";
+
+                        const errElement = document.getElementById(`error-${key}`);
+                        errElement.textContent = message;
+                    }
                 }
+            } catch (error) {
+                console.log(error);
             }
-        } catch (error) {
-            console.log(error);
-        }
-    });
+        });
 
-    function clearErrorText() {
-        const errTexts = document.querySelectorAll(".error-text");
+        function clearErrorText() {
+            const errTexts = document.querySelectorAll(".error-text");
 
-        for (const t of errTexts) {
-            t.textContent = "";
+            for (const t of errTexts) {
+                t.textContent = "";
+            }
         }
     }
+
+    addErrorListener("registerForm")
 })();
 

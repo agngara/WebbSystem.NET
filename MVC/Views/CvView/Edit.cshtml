@@ -1,7 +1,7 @@
 ﻿@model Models.CvEditModel
 
-    <link rel="stylesheet" href="~/css/cv.css" asp-append-version="true" />
-    <script src="~/js/cv.js" asp-append-version="true"></script>
+<link rel="stylesheet" href="~/css/cv.css" asp-append-version="true" />
+<script src="~/js/cv.js" asp-append-version="true"></script>
 
 @{
     ViewData["Title"] = "Redigera mitt CV";
@@ -32,35 +32,28 @@
                     </div>
                     <div class="card-body text-center">
                         <!-- Visa existerande bild -->
-                        @if (!string.IsNullOrEmpty(Model.ExistingProfileImage) && Model.ExistingProfileImage != "pfp/standard.png")
+                        @if (!string.IsNullOrEmpty(Model.ExistingProfileImage) && Model.ExistingProfileImage !=
+                                                "pfp/standard.png")
                         {
-                            <img src="@Model.ExistingProfileImage"
-                                 class="rounded-circle mb-3"
-                                 style="width: 150px; height: 150px; object-fit: cover;"
-                                 alt="Nuvarande bild"
-                                 id="existingImage"
-                                 onerror="this.src='/pfp/standard.png'">
+                            <img src="@Model.ExistingProfileImage" class="rounded-circle mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;" alt="Nuvarande bild"
+                                id="existingImage" onerror="this.src='/pfp/standard.png'">
                         }
                         else
                         {
-                            <img src="/pfp/standard.png"
-                                 class="rounded-circle mb-3"
-                                 style="width: 150px; height: 150px; object-fit: cover;"
-                                 alt="Standard profilbild"
-                                 id="existingImage">
+                            <img src="/pfp/standard.png" class="rounded-circle mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;" alt="Standard profilbild"
+                                id="existingImage">
                         }
 
                         <!-- Förhandsvisning av ny bild -->
-                        <img id="imagePreview"
-                             class="rounded-circle mb-3"
-                             style="width: 150px; height: 150px; object-fit: cover; display: none;"
-                             alt="Ny bild">
+                        <img id="imagePreview" class="rounded-circle mb-3"
+                            style="width: 150px; height: 150px; object-fit: cover; display: none;" alt="Ny bild">
 
                         <!-- Bildalternativ 1: Filuppladdning -->
                         <div class="mb-3">
                             <label class="form-label">Ladda upp ny bild</label>
-                            <input type="file" id="imageUpload" class="form-control"
-                                   accept="image/*" />
+                            <input type="file" id="imageUpload" class="form-control" accept="image/*" />
                             <small class="text-muted">Max 2MB, JPG/PNG/GIF</small>
                         </div>
                     </div>
@@ -81,7 +74,7 @@
                                         <input type="hidden" asp-for="@Model.AvailableProjects[i].Id" />
                                         <input type="hidden" asp-for="@Model.AvailableProjects[i].Title" />
                                         <input class="form-check-input" type="checkbox"
-                                               asp-for="@Model.AvailableProjects[i].IsSelected" />
+                                            asp-for="@Model.AvailableProjects[i].IsSelected" />
                                         <label class="form-check-label" asp-for="@Model.AvailableProjects[i].IsSelected">
                                             @Model.AvailableProjects[i].Title
                                         </label>
@@ -120,7 +113,7 @@
                         <div class="form-group mb-3">
                             <label asp-for="Description" class="form-label"></label>
                             <textarea asp-for="Description" class="form-control" rows="4"
-                                      placeholder="Beskriv dig själv, dina intressen och karriärmål..."></textarea>
+                                placeholder="Beskriv dig själv, dina intressen och karriärmål..."></textarea>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
@@ -141,7 +134,7 @@
                                 <div class="col-10">
                                     <input type="hidden" asp-for="@Model.Competences[i].Id" />
                                     <input asp-for="@Model.Competences[i].Name" class="form-control"
-                                           placeholder="T.ex. ASP.NET, React, SQL" />
+                                        placeholder="T.ex. ASP.NET, React, SQL" />
                                     <span asp-validation-for="@Model.Competences[i].Name" class="text-danger"></span>
                                 </div>
                                 <div class="col-2">
@@ -170,32 +163,39 @@
                                     <div class="col-md-6">
                                         <label asp-for="@Model.WorkExperiences[i].Title" class="form-label">Titel*</label>
                                         <input asp-for="@Model.WorkExperiences[i].Title" class="form-control"
-                                               placeholder="T.ex. Utvecklare, Projektledare" />
-                                        <span asp-validation-for="@Model.WorkExperiences[i].Title" class="text-danger"></span>
+                                            placeholder="T.ex. Utvecklare, Projektledare" />
+                                        <span asp-validation-for="@Model.WorkExperiences[i].Title"
+                                            class="text-danger"></span>
                                     </div>
                                     <div class="col-md-6">
-                                        <label asp-for="@Model.WorkExperiences[i].CompanyName" class="form-label">Företag</label>
+                                        <label asp-for="@Model.WorkExperiences[i].CompanyName"
+                                            class="form-label">Företag</label>
                                         <input asp-for="@Model.WorkExperiences[i].CompanyName" class="form-control"
-                                               placeholder="T.ex. Microsoft, ICA" />
+                                            placeholder="T.ex. Microsoft, ICA" />
                                     </div>
                                 </div>
 
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label asp-for="@Model.WorkExperiences[i].StartDate" class="form-label">Startdatum</label>
-                                        <input type="date" asp-for="@Model.WorkExperiences[i].StartDate" class="form-control" />
+                                        <label asp-for="@Model.WorkExperiences[i].StartDate"
+                                            class="form-label">Startdatum</label>
+                                        <input type="date" asp-for="@Model.WorkExperiences[i].StartDate"
+                                            class="form-control" />
                                     </div>
                                     <div class="col-md-6">
-                                        <label asp-for="@Model.WorkExperiences[i].EndDate" class="form-label">Slutdatum</label>
-                                        <input type="date" asp-for="@Model.WorkExperiences[i].EndDate" class="form-control" />
+                                        <label asp-for="@Model.WorkExperiences[i].EndDate"
+                                            class="form-label">Slutdatum</label>
+                                        <input type="date" asp-for="@Model.WorkExperiences[i].EndDate"
+                                            class="form-control" />
                                         <small class="text-muted">Lämna tomt om pågående</small>
                                     </div>
                                 </div>
 
                                 <div class="mb-2">
-                                    <label asp-for="@Model.WorkExperiences[i].Description" class="form-label">Beskrivning</label>
+                                    <label asp-for="@Model.WorkExperiences[i].Description"
+                                        class="form-label">Beskrivning</label>
                                     <textarea asp-for="@Model.WorkExperiences[i].Description" class="form-control" rows="2"
-                                              placeholder="Beskriv dina arbetsuppgifter och ansvar..."></textarea>
+                                        placeholder="Beskriv dina arbetsuppgifter och ansvar..."></textarea>
                                 </div>
 
                                 <button type="button" class="btn btn-danger btn-sm remove-row">Ta bort erfarenhet</button>
@@ -220,21 +220,25 @@
 
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label asp-for="@Model.Educations[i].ProgramOrCourseName" class="form-label">Program/Kurs*</label>
+                                        <label asp-for="@Model.Educations[i].ProgramOrCourseName"
+                                            class="form-label">Program/Kurs*</label>
                                         <input asp-for="@Model.Educations[i].ProgramOrCourseName" class="form-control"
-                                               placeholder="T.ex. Systemvetenskap, .NET-utveckling" />
-                                        <span asp-validation-for="@Model.Educations[i].ProgramOrCourseName" class="text-danger"></span>
+                                            placeholder="T.ex. Systemvetenskap, .NET-utveckling" />
+                                        <span asp-validation-for="@Model.Educations[i].ProgramOrCourseName"
+                                            class="text-danger"></span>
                                     </div>
                                     <div class="col-md-6">
-                                        <label asp-for="@Model.Educations[i].InstitutionName" class="form-label">Institution/Skola</label>
+                                        <label asp-for="@Model.Educations[i].InstitutionName"
+                                            class="form-label">Institution/Skola</label>
                                         <input asp-for="@Model.Educations[i].InstitutionName" class="form-control"
-                                               placeholder="T.ex. Örebro universitet" />
+                                            placeholder="T.ex. Örebro universitet" />
                                     </div>
                                 </div>
 
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label asp-for="@Model.Educations[i].StartDate" class="form-label">Startdatum</label>
+                                        <label asp-for="@Model.Educations[i].StartDate"
+                                            class="form-label">Startdatum</label>
                                         <input type="date" asp-for="@Model.Educations[i].StartDate" class="form-control" />
                                     </div>
                                     <div class="col-md-6">
@@ -247,7 +251,7 @@
                                 <div class="mb-2">
                                     <label asp-for="@Model.Educations[i].Description" class="form-label">Beskrivning</label>
                                     <textarea asp-for="@Model.Educations[i].Description" class="form-control" rows="2"
-                                              placeholder="Beskriv vad du lärt dig..."></textarea>
+                                        placeholder="Beskriv vad du lärt dig..."></textarea>
                                 </div>
 
                                 <button type="button" class="btn btn-danger btn-sm remove-row">Ta bort utbildning</button>
@@ -257,9 +261,8 @@
                 </div>
 
                 <div class="text-end">
-                    <a asp-action="View" asp-route-id="@userId"
-                       class="btn btn-outline-secondary me-2">Avbryt</a>
-                    <button type="submit" class="btn btn-primary">Spara CV</button>
+                    <a asp-action="View" asp-route-id="@userId" class="btn btn-outline-secondary me-2">Avbryt</a>
+                    <button type="submit" class="btn btn-primary" id="save-cv-btn">Spara CV</button>
                 </div>
             </div>
         </div>
@@ -269,7 +272,7 @@
 @section Scripts {
     <script>
         // BILDUPPLADDNING
-        document.getElementById('imageUpload')?.addEventListener('change', function(e) {
+        document.getElementById('imageUpload')?.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (!file) return;
 
@@ -289,7 +292,7 @@
             }
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 // Spara som base64 i hidden field
                 document.getElementById('imageBase64').value = e.target.result;
 
@@ -309,122 +312,122 @@
 
         // ========== DYNAMISKA FORMULÄRRAder ==========
         // Lägg till kompetensrad
-        document.getElementById('addCompetenceBtn')?.addEventListener('click', function() {
+        document.getElementById('addCompetenceBtn')?.addEventListener('click', function () {
             const container = document.getElementById('competencesContainer');
             const index = container.querySelectorAll('.competence-row').length;
 
             const html = `
-                <div class="row mb-2 competence-row">
-                    <div class="col-10">
-                        <input type="hidden" name="Competences[${index}].Id" value="" />
-                        <input name="Competences[${index}].Name" class="form-control"
-                               placeholder="T.ex. ASP.NET, React, SQL" />
-                    </div>
-                    <div class="col-2">
-                        <button type="button" class="btn btn-danger btn-sm remove-row">Ta bort</button>
-                    </div>
-                </div>
-            `;
+                                            <div class="row mb-2 competence-row">
+                                                <div class="col-10">
+                                                    <input type="hidden" name="Competences[${index}].Id" value="" />
+                                                    <input name="Competences[${index}].Name" class="form-control"
+                                                           placeholder="T.ex. ASP.NET, React, SQL" />
+                                                </div>
+                                                <div class="col-2">
+                                                    <button type="button" class="btn btn-danger btn-sm remove-row">Ta bort</button>
+                                                </div>
+                                            </div>
+                                        `;
 
             container.insertAdjacentHTML('beforeend', html);
         });
 
         // Lägg till arbetserfarenhet
-        document.getElementById('addWorkExperienceBtn')?.addEventListener('click', function() {
+        document.getElementById('addWorkExperienceBtn')?.addEventListener('click', function () {
             const container = document.getElementById('workExperiencesContainer');
             const index = container.querySelectorAll('.work-experience-row').length;
 
             const html = `
-                <div class="work-experience-row mb-4 p-3 border rounded">
-                    <input type="hidden" name="WorkExperiences[${index}].Id" value="" />
+                                            <div class="work-experience-row mb-4 p-3 border rounded">
+                                                <input type="hidden" name="WorkExperiences[${index}].Id" value="" />
 
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <label class="form-label">Titel*</label>
-                            <input name="WorkExperiences[${index}].Title" class="form-control"
-                                   placeholder="T.ex. Utvecklare, Projektledare" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Företag</label>
-                            <input name="WorkExperiences[${index}].CompanyName" class="form-control"
-                                   placeholder="T.ex. Microsoft, ICA" />
-                        </div>
-                    </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Titel*</label>
+                                                        <input name="WorkExperiences[${index}].Title" class="form-control"
+                                                               placeholder="T.ex. Utvecklare, Projektledare" />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Företag</label>
+                                                        <input name="WorkExperiences[${index}].CompanyName" class="form-control"
+                                                               placeholder="T.ex. Microsoft, ICA" />
+                                                    </div>
+                                                </div>
 
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <label class="form-label">Startdatum</label>
-                            <input type="date" name="WorkExperiences[${index}].StartDate" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Slutdatum</label>
-                            <input type="date" name="WorkExperiences[${index}].EndDate" class="form-control" />
-                            <small class="text-muted">Lämna tomt om pågående</small>
-                        </div>
-                    </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Startdatum</label>
+                                                        <input type="date" name="WorkExperiences[${index}].StartDate" class="form-control" />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Slutdatum</label>
+                                                        <input type="date" name="WorkExperiences[${index}].EndDate" class="form-control" />
+                                                        <small class="text-muted">Lämna tomt om pågående</small>
+                                                    </div>
+                                                </div>
 
-                    <div class="mb-2">
-                        <label class="form-label">Beskrivning</label>
-                        <textarea name="WorkExperiences[${index}].Description" class="form-control" rows="2"
-                                  placeholder="Beskriv dina arbetsuppgifter och ansvar..."></textarea>
-                    </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label">Beskrivning</label>
+                                                    <textarea name="WorkExperiences[${index}].Description" class="form-control" rows="2"
+                                                              placeholder="Beskriv dina arbetsuppgifter och ansvar..."></textarea>
+                                                </div>
 
-                    <button type="button" class="btn btn-danger btn-sm remove-row">Ta bort erfarenhet</button>
-                </div>
-            `;
+                                                <button type="button" class="btn btn-danger btn-sm remove-row">Ta bort erfarenhet</button>
+                                            </div>
+                                        `;
 
             container.insertAdjacentHTML('beforeend', html);
         });
 
         // Lägg till utbildning
-        document.getElementById('addEducationBtn')?.addEventListener('click', function() {
+        document.getElementById('addEducationBtn')?.addEventListener('click', function () {
             const container = document.getElementById('educationsContainer');
             const index = container.querySelectorAll('.education-row').length;
 
             const html = `
-                <div class="education-row mb-4 p-3 border rounded">
-                    <input type="hidden" name="Educations[${index}].Id" value="" />
+                                            <div class="education-row mb-4 p-3 border rounded">
+                                                <input type="hidden" name="Educations[${index}].Id" value="" />
 
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <label class="form-label">Program/Kurs*</label>
-                            <input name="Educations[${index}].ProgramOrCourseName" class="form-control"
-                                   placeholder="T.ex. Systemvetenskap, .NET-utveckling" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Institution/Skola</label>
-                            <input name="Educations[${index}].InstitutionName" class="form-control"
-                                   placeholder="T.ex. Örebro universitet" />
-                        </div>
-                    </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Program/Kurs*</label>
+                                                        <input name="Educations[${index}].ProgramOrCourseName" class="form-control"
+                                                               placeholder="T.ex. Systemvetenskap, .NET-utveckling" />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Institution/Skola</label>
+                                                        <input name="Educations[${index}].InstitutionName" class="form-control"
+                                                               placeholder="T.ex. Örebro universitet" />
+                                                    </div>
+                                                </div>
 
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <label class="form-label">Startdatum</label>
-                            <input type="date" name="Educations[${index}].StartDate" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Slutdatum</label>
-                            <input type="date" name="Educations[${index}].EndDate" class="form-control" />
-                            <small class="text-muted">Lämna tomt om pågående</small>
-                        </div>
-                    </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Startdatum</label>
+                                                        <input type="date" name="Educations[${index}].StartDate" class="form-control" />
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Slutdatum</label>
+                                                        <input type="date" name="Educations[${index}].EndDate" class="form-control" />
+                                                        <small class="text-muted">Lämna tomt om pågående</small>
+                                                    </div>
+                                                </div>
 
-                    <div class="mb-2">
-                        <label class="form-label">Beskrivning</label>
-                        <textarea name="Educations[${index}].Description" class="form-control" rows="2"
-                                  placeholder="Beskriv vad du lärt dig..."></textarea>
-                    </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label">Beskrivning</label>
+                                                    <textarea name="Educations[${index}].Description" class="form-control" rows="2"
+                                                              placeholder="Beskriv vad du lärt dig..."></textarea>
+                                                </div>
 
-                    <button type="button" class="btn btn-danger btn-sm remove-row">Ta bort utbildning</button>
-                </div>
-            `;
+                                                <button type="button" class="btn btn-danger btn-sm remove-row">Ta bort utbildning</button>
+                                            </div>
+                                        `;
 
             container.insertAdjacentHTML('beforeend', html);
         });
 
         // Ta bort rader
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-row')) {
                 e.target.closest('.competence-row, .work-experience-row, .education-row')?.remove();
                 updateIndices();
@@ -463,7 +466,7 @@
         }
 
         // Validering vid submit
-        document.getElementById('cvForm')?.addEventListener('submit', function(e) {
+        document.getElementById('cvForm')?.addEventListener('submit', function (e) {
             // Kontrollera att minst ett fält är ifyllt i varje sektion
             const competences = document.querySelectorAll('input[name^="Competences["]');
             const hasCompetences = Array.from(competences).some(input => input.value.trim() !== '');

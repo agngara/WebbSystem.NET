@@ -1,0 +1,155 @@
+@model DeactivateAccountViewModel
+
+<link rel="stylesheet" href="~/css/account.css" />
+
+<div class="login-form">
+    <div class="create-account-wrapper">
+        <form id="deactivateForm" class="login-form" method="post" asp-action="DeactivateAccount"
+            style="display: flex; justify-content: flex-end; align-items: center; flex-direction: column; height: auto;">
+            <h2 class="login-header" style="color: var(--error-color);">Deactivate Account</h2>
+
+            <p class="warning-text" style="text-align: center; margin-bottom: 16px; color: var(--warning-color);">
+                <strong>Warning:</strong> This will permanently deactivate your account. You will not be able to log in
+                again.
+            </p>
+
+            <div class="input-outer">
+                <label for="password">Current Password</label>
+                <div class="input-wrapper">
+                    <input id="password" asp-for="Password" type="password" placeholder="Enter your password">
+                    <img src="~/icons/Password.svg" alt="Password Logo">
+                </div>
+                <p id="error-Password" class="error-text"></p>
+            </div>
+
+            <input type="submit" value="DEACTIVATE ACCOUNT" class="login-btn"
+                style="background-color: var(--error-color); color: #ffffff; margin-top: 30px;">
+        </form>
+
+        <a asp-controller="Account" asp-action="Settings" class="login-btn"
+            style="background-color: var(--text-color); color: var(--bg-color); text-decoration: none; display: flex; justify-content: center; align-items: center; margin-top: 8px;">
+            CANCEL
+        </a>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmationModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 class="modal-title">⚠️ Confirm Account Deactivation</h3>
+        <p class="modal-message">
+            Are you absolutely sure you want to deactivate your account?<br>
+            <strong>This action cannot be undone.</strong>
+        </p>
+        <div class="modal-buttons">
+            <button id="confirmDeactivation" class="login-btn"
+                style="color: #ffffff; background-color: var(--error-color);">Yes, Deactivate</button>
+            <button id="cancelDeactivation" class="login-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/account.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deactivateForm = document.getElementById('deactivateForm');
+            const deactivateBtn = deactivateForm.querySelector('input[type="submit"]');
+            const confirmationModal = document.getElementById('confirmationModal');
+            const confirmBtn = document.getElementById('confirmDeactivation');
+            const cancelBtn = document.getElementById('cancelDeactivation');
+
+            // Ändra submit-knappen till vanlig knapp
+            deactivateBtn.type = 'button';
+
+            // När man klickar på DEACTIVATE ACCOUNT (visar bara popup)
+            deactivateBtn.addEventListener('click', function () {
+                // Validera formuläret
+                const passwordInput = document.getElementById('password');
+                let isValid = true;
+
+                // Rensa tidigare fel
+                clearErrors();
+
+                // Validera lösenord
+                if (!passwordInput.value.trim()) {
+                    showError('Password', 'Password is required');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    // Visa popup
+                    confirmationModal.style.display = 'flex';
+                }
+            });
+
+            // När man bekräftar i popupen (skickar formuläret)
+            confirmBtn.addEventListener('click', function () {
+                confirmationModal.style.display = 'none';
+
+                // Hämta formulärdata
+                const formData = new FormData(deactivateForm);
+
+                // Skicka med AJAX
+                fetch('@Url.Action("DeactivateAccount", "Account")', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+
+                        if (data.success) {
+                            if (data.redirectUrl) {
+                                window.location.href = data.redirectUrl;
+                            }
+                        } else {
+                            // Hantera fel
+                            if (data.errors) {
+                                for (const [key, value] of Object.entries(data.errors)) {
+                                    showError(key, value);
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+            // Avbryt i popupen
+            cancelBtn.addEventListener('click', function () {
+                confirmationModal.style.display = 'none';
+            });
+
+            // Stäng modal om man klickar utanför
+            confirmationModal.addEventListener('click', function (e) {
+                if (e.target === confirmationModal) {
+                    confirmationModal.style.display = 'none';
+                }
+            });
+
+            // Stöd för Enter-tangenten i lösenordsfältet
+            document.getElementById('password').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    deactivateBtn.click();
+                }
+            });
+
+            function showError(fieldName, message) {
+                const errorElement = document.getElementById(`error-${fieldName}`);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+
+            function clearErrors() {
+                document.querySelectorAll('.error-text').forEach(el => {
+                    el.textContent = '';
+                });
+            }
+        });
+    </script>
+}

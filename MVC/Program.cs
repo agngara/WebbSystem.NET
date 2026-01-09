@@ -38,6 +38,7 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectUserRepository, ProjectUserRepository>();
 builder.Services.AddScoped<IWorkPlaceRepository, WorkPlaceRepository>();
+builder.Services.AddScoped<ICompetenceRepository, CompetenceRepository>();
 
 var app = builder.Build();
 

@@ -8,4 +8,5 @@ public class ScoredResult<T>
     public required T Entity { get; set; }
     public int Score { get; set; }
     public SearchType MatchedOn { get; set; }
+    public List<string> MatchedCompetences { get; set; } = new();
 }

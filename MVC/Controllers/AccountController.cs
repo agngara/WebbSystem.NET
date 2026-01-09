@@ -38,6 +38,22 @@ namespace MVC.Controllers
                 return Json(ModelStateErrorResponse("Invalid Login"));
             }
 
+            var user = await userManager.FindByNameAsync(loginViewModel.UserName);
+
+            // Om användaren finns, kontrollera om den är deaktiverad
+            if (user != null && user.IsActive == false)
+            {
+                return Json(CreateResponse(
+                    success: false,
+                    errors: new Dictionary<string, string>
+                    {
+                        ["Password"] = "This account has been deactivated"
+                    },
+                    message: "Account is deactivated",
+                    notify: true
+                ));
+            }
+
             var result = await signInManager.PasswordSignInAsync(
                 loginViewModel.UserName,
                 loginViewModel.Password,
@@ -193,6 +209,91 @@ namespace MVC.Controllers
                 message: "Settings updated successfully",
                 notify: true
             ));
+        }
+
+        // GET: Visar deaktiveringssidan
+        [Authorize]
+        [HttpGet]
+        public IActionResult Deactivate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> DeactivateAccount(DeactivateAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(ModelStateErrorResponse("Invalid deactivation request"));
+            }
+
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return Json(CreateResponse(
+                    success: false,
+                    message: "User not found",
+                    notify: true
+                ));
+            }
+
+            // Verifiera lösenord
+            var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
+
+            if (!passwordValid)
+            {
+                return Json(CreateResponse(
+                    success: false,
+                    errors: new Dictionary<string, string>
+                    {
+                        ["Password"] = "Invalid password"
+                    },
+                    notify: true
+                ));
+            }
+
+            try
+            {
+                // Deaktivera kontot
+                user.IsActive = false;
+
+                // Spara ändringar
+                var updateResult = await userManager.UpdateAsync(user);
+
+                if (!updateResult.Succeeded)
+                {
+                    return Json(CreateResponse(
+                        success: false,
+                        errors: updateResult.Errors.ToDictionary(e => "General", e => e.Description),
+                        notify: true
+                    ));
+                }
+
+                // Logga ut användaren
+                await signInManager.SignOutAsync();
+
+                return Json(CreateResponse(
+                    success: true,
+                    redirectUrl: Url.Action("LogIn", "Account") ?? "/"
+                ));
+
+            }
+            catch (Exception ex)
+            {
+                // Logga felet här om du har logging
+                return Json(CreateResponse(
+                    success: false,
+                    message: "An error occurred while deactivating your account. Please try again.",
+                    notify: true
+                ));
+            }
+        }
+
+        public IActionResult DeactivationConfirmed()
+        {
+            return View();
         }
 
     }

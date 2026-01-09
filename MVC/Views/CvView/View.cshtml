@@ -1,29 +1,41 @@
-﻿@model Models.User
+﻿@using BL.DTOs
+
+@model Models.User
 
 @{
     ViewData["Title"] = $"{Model.Name}'s CV";
+
+    // Helper function för att formatera match-typen
+    string GetMatchTypeDisplay(string matchedOn)
+    {
+        return matchedOn switch
+        {
+            "WorkPlace" => "Work Place",
+            "Institution" => "Education",
+            "Competence" => "Competence",
+            "WorkExperience" => "Work Experience",
+            _ => matchedOn
+        };
+    }
 }
 
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-4">
+
             <!-- Profilinformation -->
             <div class="card mb-4">
                 <div class="card-body">
                     @if (!string.IsNullOrEmpty(Model.Cv?.ProfileImage) && Model.Cv.ProfileImage != "/pfp/standard.png")
                     {
-                        <img src="@Model.Cv.ProfileImage"
-                             class="rounded-circle mb-3"
-                             style="width: 150px; height: 150px; object-fit: cover;"
-                             alt="Profilbild"
-                             onerror="this.src='/pfp/standard.png'">
+                        <img src="@Model.Cv.ProfileImage" class="rounded-circle mb-3"
+                            style="width: 150px; height: 150px; object-fit: cover;" alt="Profilbild"
+                            onerror="this.src='/pfp/standard.png'">
                     }
                     else
                     {
-                        <img src="/pfp/standard.png"
-                             class="rounded-circle mb-3"
-                             style="width: 150px; height: 150px; object-fit: cover;"
-                             alt="Standard profilbild">
+                        <img src="/pfp/standard.png" class="rounded-circle mb-3"
+                            style="width: 150px; height: 150px; object-fit: cover;" alt="Standard profilbild">
                     }
 
                     <h2>@Model.Name</h2>
@@ -45,7 +57,8 @@
                         <span class="badge bg-success">Offentlig profil</span>
                     }
 
-                    @if (User.Identity!.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
+                    @if (User.Identity!.IsAuthenticated &&
+                                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
                     {
                         <div class="mt-3">
                             <a asp-action="MyCV" class="btn btn-primary">Redigera mitt CV</a>
@@ -70,6 +83,49 @@
                         {
                             <span class="badge bg-primary me-1 mb-1">@competence.Name</span>
                         }
+                    </div>
+                </div>
+            }
+
+            <!-- Liknande profiler -->
+            @if (ViewBag.HasRelevantProfiles == true)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Similar Profiles</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="similar-profiles">
+                            @foreach (var profile in ViewBag.RelevantProfiles as List<RelevantProfileDto>)
+                            {
+                                <div class="similar-profile-item mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <div class="similar-profile-avatar">
+                                                @profile.UserName.Substring(0, 1).ToUpper()
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <a href="@Url.Action("View", "CV", new { id = profile.UserId })"
+                                                class="similar-profile-name">
+                                                @profile.UserName
+                                            </a>
+                                            <div class="similar-profile-match">
+                                                <small class="text-muted">
+                                                    Matched on: @GetMatchTypeDisplay(profile.MatchedOn)
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <a href="@Url.Action("View", "CV", new { id = profile.UserId })"
+                                                class="btn btn-sm btn-outline-primary">
+                                                Show
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             }
@@ -108,7 +164,8 @@
                                 @if (work.StartDate.HasValue || work.EndDate.HasValue)
                                 {
                                     <p class="text-muted mb-1">
-                                        @work.StartDate?.ToString("yyyy-MM-dd") - @(work.EndDate?.ToString("yyyy-MM-dd") ?? "Pågående")
+                                        @work.StartDate?.ToString("yyyy-MM-dd") - @(work.EndDate?.ToString("yyyy-MM-dd") ??
+                                        "Pågående")
                                     </p>
                                 }
                                 @if (!string.IsNullOrEmpty(work.Description))
@@ -140,7 +197,8 @@
                                 @if (edu.StartDate.HasValue || edu.EndDate.HasValue)
                                 {
                                     <p class="text-muted mb-1">
-                                        @edu.StartDate?.ToString("yyyy-MM-dd") - @(edu.EndDate?.ToString("yyyy-MM-dd") ?? "Pågående")
+                                        @edu.StartDate?.ToString("yyyy-MM-dd") - @(edu.EndDate?.ToString("yyyy-MM-dd") ??
+                                        "Pågående")
                                     </p>
                                 }
                                 @if (!string.IsNullOrEmpty(edu.Description))
@@ -182,7 +240,8 @@
             }
 
             <!-- Profilvisningar (endast för ägaren) -->
-            @if (User.Identity!.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
+            @if (User.Identity!.IsAuthenticated &&
+                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
             {
                 <div class="card">
                     <div class="card-header">
@@ -209,7 +268,9 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        h2, h5, h6 {
+        h2,
+        h5,
+        h6 {
             color: var(--text-color);
         }
 
@@ -220,6 +281,58 @@
         .badge {
             padding: 0.5em 0.8em;
             font-size: 0.9em;
+        }
+
+        /* Liknande profiler styling */
+        .similar-profile-item {
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .similar-profile-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .similar-profile-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .similar-profile-name {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .similar-profile-name:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .similar-profile-match {
+            font-size: 0.85rem;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
     </style>
 }

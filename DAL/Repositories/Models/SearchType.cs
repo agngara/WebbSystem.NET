@@ -5,5 +5,8 @@ public enum SearchType
 {
     Name,
     Username,
-    CompetenceName,
+    Competence,
+    WorkPlace,
+    Institution,
+    Relevance
 }

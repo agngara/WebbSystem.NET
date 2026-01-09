@@ -1,4 +1,5 @@
 ﻿(() => {
+    console.log
     class NotifyUI {
         #element
         #timeout
@@ -24,8 +25,6 @@
                 this.#element = null
                 clearTimeout(this.#timeout)
             }
-            console.log("cc")
-
             const div = document.createElement("div");
             div.classList = cssClass
 
@@ -65,6 +64,7 @@
                             console.log(data)
 
                             //our api Structure
+                            console.log("innn")
                             if (data && typeof data === 'object') {
 
                                 if (data.notify === true) {
@@ -97,6 +97,31 @@
         // Pass through if not POST
         return originalFetch.apply(this, args);
     };
+
+
+    window.handleFormSubmit = function(formId) {
+        const form = document.getElementById(formId);
+        if (!form) {
+            console.error(`Form with id "${formId}" not found`);
+            return;
+        }
+
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+            } catch (error) {
+                console.error('Form submission error:', error);
+            }
+        });
+    };
 })();
+
 
 
