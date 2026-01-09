@@ -39,6 +39,8 @@
                     </div>
                     <div class="card-body"> 
                         <a class="custom-button" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
+                        <a class="custom-button" asp-controller="Project" asp-action="Details" asp-route-projectId="@project.Id">See More</a>
+
                     </div>
                 </div>
             }
