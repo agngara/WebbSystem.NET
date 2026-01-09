@@ -22,7 +22,7 @@ namespace MVC.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IWorkPlaceRepository _workplaceRepository;
 
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository )
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository)
         {
             _context = context;
             _userManager = userManager;
@@ -93,9 +93,9 @@ namespace MVC.Controllers
                 .Include(u => u.Cv)
                     .ThenInclude(cv => cv!.Competences)
                 .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Educations)
+                    .ThenInclude(cv => cv!.Educations).ThenInclude(e => e.Institution)
                 .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.WorkExperiences)
+                    .ThenInclude(cv => cv!.WorkExperiences).ThenInclude(W => W.WorkPlace)
                 .Include(u => u.ProjectUsers)
                     .ThenInclude(pu => pu.Project)
                 .FirstOrDefaultAsync(u => u.Id == userId);
@@ -155,6 +155,7 @@ namespace MVC.Controllers
             CV? cv = _context.CVs
                             .Include(c => c.Competences)
                             .Include(c => c.WorkExperiences)
+                            .ThenInclude(w => w.WorkPlace)
                             .Include(c => c.Educations)
                             .Include(c => c.User)
                             .FirstOrDefault(c => c.Id == cvId);
@@ -169,7 +170,7 @@ namespace MVC.Controllers
 
             foreach (WorkExperience w in cv.WorkExperiences)
             {
-                WorkPlace? workplace = await _workplaceRepository.GetWorkPlaceFromIdAsync(w.WorkPlaceId);
+                WorkPlace? workplace = w.WorkPlace;
                 if (workplace == null)
                 {
                     break;
@@ -332,6 +333,7 @@ namespace MVC.Controllers
                 {
                     Title = work.Title.Trim(),
                     WorkPlace = workPlace,
+                    WorkPlaceId = work.Id,
                     Description = work.Description?.Trim(),
                     StartDate = work.StartDate,
                     EndDate = work.EndDate,

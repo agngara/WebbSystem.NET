@@ -19,6 +19,7 @@ namespace Models
 
         [ForeignKey(nameof(WorkPlaceId))]
         public WorkPlace? WorkPlace { get; set; }
+
         [XmlIgnore]
         public required int CvId { get; set; }
         [XmlIgnore]
