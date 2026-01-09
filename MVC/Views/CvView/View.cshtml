@@ -64,6 +64,10 @@
                             <a asp-action="MyCV" class="btn btn-primary">Redigera mitt CV</a>
                         </div>
                     }
+                    @if (Model.Cv?.Id != null)
+                    {
+                        <a class="custom-button" asp-action="Export" asp-route-cvId="@Model.Cv?.Id">Download Profile</a>
+                    }
                 </div>
             </div>
 

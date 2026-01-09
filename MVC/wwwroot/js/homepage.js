@@ -1,4 +1,16 @@
-﻿
+﻿// Textformatter for cutting off long card-texts
+var maxCharLength = 100;
+
+const descriptions = document.querySelectorAll(".card-text");
+const descriptionscount = descriptions.length;
+
+for (let i = 0; i < descriptionscount; i++) {
+    const textLength = descriptions[i].textContent.length;
+
+    if (textLength > maxCharLength) {
+        descriptions[i].textContent = descriptions[i].textContent.slice(0, maxCharLength) + "...";
+    }
+}
 
 // Start of parallax scroll script
 
@@ -23,4 +35,5 @@ rightArrow.addEventListener("click", () => {
 document.getElementById("slide-1-arrow-left").addEventListener("click", () => {
     scrollContainerCv.scrollBy(-700, 0);
 })
+
 

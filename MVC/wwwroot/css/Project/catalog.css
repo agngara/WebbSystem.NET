@@ -1,10 +1,12 @@
 ﻿
-
+.content-wrapper {
+    align-items: start;
+}
 
 .slide-title {
     display: block;
     text-align: left;
-    margin: 5rem 5rem 2rem 3rem;
+    margin: 5rem 5rem 2rem 8rem;
     place-items: start;
 }
 
@@ -69,6 +71,7 @@
     border: var(--bs-list-group-border-width) solid var(--bg-color);
 }
 
+
 .create-project-popup {
     visibility: hidden;
     position: fixed;
@@ -79,20 +82,9 @@
     background-color: var(--bg-lighter-color);
     border-radius: 20px;
     padding: 3rem 6rem;
-    border: 5px solid var(--card-middle-color);
+    border: 3px solid var(--card-middle-color);
 }
 
-.edit-project-popup {
-    position: fixed;
-    top: 10%;
-    left: auto;
-    width: 70%;
-    height: 70%;
-    background-color: var(--bg-lighter-color);
-    border-radius: 20px;
-    padding: 3rem 6rem;
-    border: 5px solid var(--card-middle-color);
-}
 
 .icon-btn {
     background: none;
@@ -127,6 +119,10 @@
 
 #create-title, #edit-title {
     grid-column: 1;
+}
+
+#fileHelp {
+    color: var(--text-lighter-color);
 }
 
 

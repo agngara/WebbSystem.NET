@@ -3,7 +3,9 @@
 @{
     ViewData["title"] = "LinkedOut";
 }
-<link rel="stylesheet" href="~/css/homepage.css"/>
+
+<link rel="stylesheet" href="~/css/homepage.css" />
+
 <script src="~/js/homepage.js" defer></script>
 
 <section class="homepage-landing">
@@ -37,7 +39,8 @@
 
 <section class="slider-window">
     <div class="arrow-left" id="slide-1-arrow-left">
-        <img src="~/Assets/UI-Images/left_arrow_big.png" alt="Left arrow">
+        <img src="~/Assets/UI-Images/left_arrow_big.png" alt="Right arrow">
+
     </div>
     <div class="arrow-right" id="slide-1-arrow-right">
         <img src="~/Assets/UI-Images/right_arrow_big.png" alt="Right arrow">
@@ -110,7 +113,7 @@
         @foreach (Models.Project project in Model.LatestProjects)
         {
             <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
-                <img src="~/Assets/UI-Images/project_placeholder_image.jpg" class="card-img-top" alt="Placeholder-imag">
+                <img src="@project.ImageUrl" class="card-img-top" alt="Placeholder-imag">
                 <div class="card-body">
                     <h5 class="card-title">@project.Titel</h5>
                     <p class="card-text">Created by @project.Creator.Name</p>
@@ -150,13 +153,15 @@
                         }
                         else
                         {
-                            <button class="custom-button">Edit</button>
+                            <a class="custom-button" asp-controller="Project" asp-action="Edit">Edit</a>
                         }
-                        <button class="custom-button">See More</button>
+                        <a class="custom-button" asp-controller="Project" asp-action="Details">See More</a>
                     }
                 </div>
             </div>
         }
+
+
 
     </section>
 </section>

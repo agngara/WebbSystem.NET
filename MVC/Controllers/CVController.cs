@@ -6,8 +6,12 @@ using Models;
 using System.Security.Claims;
 using DAL;
 using System.IO;
+using System.Xml.Serialization;
+using DAL.Repositories.Interfaces;
+using MVC.Models.CVs;
 using BL.Interfaces;
 using BL.DTOs;
+
 
 namespace MVC.Controllers
 {
@@ -19,12 +23,20 @@ namespace MVC.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly ISearchService _searchService;
 
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, ISearchService searchService)
+
+        private readonly IUserRepository _userRepository;
+        private readonly IWorkPlaceRepository _workplaceRepository;
+
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository, ISearchService searchService)
+
         {
             _context = context;
             _userManager = userManager;
             _environment = environment;
+            _userRepository = userRepository;
+            _workplaceRepository = workPlaceRepository;
             _searchService = searchService;
+
         }
 
         // Visa CV för en specifik användare
@@ -135,9 +147,9 @@ namespace MVC.Controllers
                 .Include(u => u.Cv)
                     .ThenInclude(cv => cv!.Competences)
                 .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Educations)
+                    .ThenInclude(cv => cv!.Educations).ThenInclude(e => e.Institution)
                 .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.WorkExperiences)
+                    .ThenInclude(cv => cv!.WorkExperiences).ThenInclude(W => W.WorkPlace)
                 .Include(u => u.ProjectUsers)
                     .ThenInclude(pu => pu.Project)
                 .FirstOrDefaultAsync(u => u.Id == userId);
@@ -189,6 +201,69 @@ namespace MVC.Controllers
             ViewBag.ProfileViews = user.Cv?.ProfileViews ?? 0;
             return View("~/Views/CvView/Edit.cshtml", viewModel);
         }
+
+        // Export CV-File
+        
+        public async Task<IActionResult> Export(int cvId)
+        {
+            CV? cv = _context.CVs
+                            .Include(c => c.Competences)
+                            .Include(c => c.WorkExperiences)
+                            .ThenInclude(w => w.WorkPlace)
+                            .Include(c => c.Educations)
+                            .Include(c => c.User)
+                            .FirstOrDefault(c => c.Id == cvId);
+                                    
+            User? user = await _userRepository.GetUserById(cv.UserId);
+
+            if (user == null || cv == null) 
+            {
+                return BadRequest();
+            }
+            List<WorkExperienceFileModel> viewWorkExperiences = new List<WorkExperienceFileModel>();
+
+            foreach (WorkExperience w in cv.WorkExperiences)
+            {
+                WorkPlace? workplace = w.WorkPlace;
+                if (workplace == null)
+                {
+                    break;
+                }
+
+                WorkExperienceFileModel workExperienceFileModel = new WorkExperienceFileModel()
+                {
+                    Title = w.Title,
+                    Description = w.Description,
+                    StartDate = w.StartDate,
+                    EndDate = w.EndDate,
+                    WorkPlaceName = workplace.Name,
+                            
+                };
+
+                viewWorkExperiences.Add(workExperienceFileModel);
+            }
+
+            // Fix workplace name
+            CvFileModel fileModel = new CvFileModel()
+            {
+                Name = user.Name,
+                Description = cv.Description,
+                WorkExperiences = viewWorkExperiences,
+                Competences = cv.Competences,
+                Educations = cv.Educations,
+            };
+
+            XmlSerializer serializer = new XmlSerializer(typeof(CvFileModel));
+
+            using var memoryStream = new MemoryStream();
+
+            serializer.Serialize(memoryStream, fileModel);
+            
+            memoryStream.Position = 0;
+
+            return File(memoryStream.ToArray(), "application/xml", Guid.NewGuid().ToString());
+        }
+
 
         // Uppdatera CV
         [HttpPost]
@@ -312,6 +387,7 @@ namespace MVC.Controllers
                 {
                     Title = work.Title.Trim(),
                     WorkPlace = workPlace,
+                    WorkPlaceId = work.Id,
                     Description = work.Description?.Trim(),
                     StartDate = work.StartDate,
                     EndDate = work.EndDate,
