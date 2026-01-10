@@ -15,7 +15,7 @@
         public string? OtherUserName { get; set; }
         public string? OtherUserEmail { get; set; }
         public string LastMessageText { get; set; }
-
+        public string? OtherUserProfileImageUrl { get; set; }
         public DateTime? LastMessageAt { get; set; }
         public string? NewMessageText { get; set; }
         public int UnreadMessage { get; set; }
