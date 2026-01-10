@@ -159,7 +159,7 @@
                         @*If project creator, display edit-buttons*@
                         else
                         {
-                            <a class="custom-button" asp-controller="Project" asp-action="Edit">Edit</a>
+                            <a class="custom-button" asp-controller="Project" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
                         }
                         <a class="custom-button" asp-controller="Project" asp-action="Details" asp-route-projectId="@project.Id">See More</a>
                     }
