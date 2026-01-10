@@ -37,6 +37,7 @@ namespace DAL.Repositories
             return _context.Projects                            
                             .Include(p => p.ProjectUsers)
                             .ThenInclude(pu => pu.User)
+                            .Include(p => p.Creator)
                             .ToListAsync();
         }
 

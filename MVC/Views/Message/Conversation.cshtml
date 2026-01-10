@@ -11,7 +11,7 @@
 <head>
 
     <link rel="stylesheet" href="~/css/Message/message.css" />
-    <script src="~/js/project.js" defer></script>
+   
 </head>
 <body>
 
@@ -59,7 +59,7 @@
 
                         <div class="content">
                             <div class="top">
-                                <span class="name">@u.DisplayName</span>
+                                <span class="name">@u.UserId</span>
                             </div>
                             <div class="preview">Skicka ett meddelande som gäst</div>
                         </div>
@@ -80,16 +80,22 @@
                        asp-route-otherUserId="@u.UserId"
                        class="conversation-item">
 
+
                         <div class="conversation-profilpic">
-                            @((u.DisplayName ?? "U")[0])
+
+                       
+                  
+                               <div class="conversation-texts">
+                    <div class="conversation-top-row">
+                        <span class="conversation-name">@u.DisplayName</span>
+                    </div>
+                    <div class="conversation-preview">@u.Email</div>
+                </div>
+
+                                  
                         </div>
 
-                        <div class="conversation-texts">
-                            <div class="conversation-top-row">
-                                <span class="conversation-name">@u.DisplayName</span>
-                            </div>
-                            <div class="conversation-last-message">@u.Email</div>
-                        </div>
+                       
                     </a>
                 }
             }
@@ -104,71 +110,83 @@
             {
                 foreach (var conv in Model.Items)
                 {
-                    if (conv.IsGuest)
-                    {
-                        <a asp-action="Guest"
-                           asp-route-id="@conv.GuestId"
-                           class="conversation-item guest">
 
-                            <div class="avatar">
-                                <i class="bi bi-fingerprint"></i>
-                            </div>
+                        var action = conv.IsGuest ? "Guest" : "Chat";
+                        var route = conv.IsGuest ? conv.GuestId : conv.ConversationId;
 
-                            <div class="content">
-                                <div class="top">
-                                    <span class="name">@conv.GuestName</span>
-                                    @if (conv.LastMessageAt.HasValue)
-                                    {
-                                        <span class="date">
-                                            @conv.LastMessageAt.Value.ToLocalTime().ToString("dd MMM")
-                                        </span>
-                                    }
-                                </div>
+                        <a asp-action="@action" 
+                            asp-route-id="@route"
+                        
+                            class="conversation-item @(conv.IsGuest ? "is-guest" : "is-user")">
 
-                                <div class="preview">@conv.LastMessageText</div>
-                            </div>
 
-                            @if (conv.UnreadMessage > 0)
-                            {
-                                <span class="unread-dot"></span>
-                            }
-                        </a>
-                    }
-                    else
-                    {
-                        <a asp-action="Chat"
-                           asp-route-id="@conv.ConversationId"
-                           class="conversation-item">
+                            <div class= "conversation-profilpic">
+                                @if (conv.IsGuest)
+                                {
+                                    <i class="bi bi-fingerprint"></i>
+                                }
+                                else if (!string.IsNullOrWhiteSpace(conv.OtherUserProfileImageUrl))
+                                {
+                                    <img src="@conv.OtherUserProfileImageUrl" class="profile-img" alt="Profile image" />
+                                }
+                                else
+                                {
+                                    var initial = (string.IsNullOrWhiteSpace(conv.OtherUserName)
+                                    ? conv.OtherUserEmail
+                                    : conv.OtherUserName)?[0] ?? 'U';
 
-                            <div class="conversation-profilpic">
-                                @conv.OtherUserEmail?[0]
+                                    <span class="profile-initial">@initial</span>
+                                }
+
                             </div>
 
                             <div class="conversation-texts">
                                 <div class="conversation-top-row">
                                     <span class="conversation-name">
-                                        @(string.IsNullOrWhiteSpace(conv.OtherUserName)
-                                                                ? conv.OtherUserEmail
-                                                                : conv.OtherUserName)
-                                    </span>
+                                            @if (conv.IsGuest)
+                                            {
+                                                @conv.GuestName
+                                            }
 
-                                    @if (conv.UnreadMessage > 0)
-                                    {
-                                        <i class="bi bi-envelope-plus-fill"></i>
-                                    }
+                                            else
+                                            {
+                                            @(string.IsNullOrWhiteSpace(conv.OtherUserName)
+                                                                        ? conv.OtherUserEmail
+                                                                        : conv.OtherUserName)
 
-                                    @if (conv.LastMessageAt.HasValue)
-                                    {
-                                        <span class="conversation-date">
-                                            @conv.LastMessageAt.Value.ToLocalTime().ToString("dd MMM")
+
+                                            }
                                         </span>
-                                    }
+
+
+
+
+                                    <div class="conversation-meta">
+                                        @if (conv.UnreadMessage > 0)
+                                        {
+                                            <i class="bi bi-envelope-plus-fill"></i>
+                                        }
+
+                                        @if (conv.LastMessageAt.HasValue)
+                                        {
+                                            <span class="conversation-date">
+                                                @conv.LastMessageAt.Value.ToLocalTime().ToString("dd MMM")
+                                            </span>
+                                        }
+                                    </div>
                                 </div>
 
-                                <div class="conversation-last-message">@conv.LastMessageText</div>
+                                <div class="conversation-preview">@conv.LastMessageText</div>
                             </div>
+
+
+
+
+
+
                         </a>
-                    }
+                    
+                    
                 }
             }
         }

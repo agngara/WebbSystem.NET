@@ -18,16 +18,28 @@ namespace DAL.Repositories
 
     public async Task AddGuestMessageAsync(string toUserId, string guestName, string text)
     {
-        _context.GuestMessages.Add(new GuestMessage
-        {
-            ToUserId = toUserId,
-            GuestName = guestName.Trim(),
-            Text = text.Trim(),
-            SentAt = DateTime.UtcNow,
-            IsRead = false
-        });
 
-        await _context.SaveChangesAsync();
+
+            try
+            {
+                _context.GuestMessages.Add(new GuestMessage
+                {
+                    ToUserId = toUserId,
+                    GuestName = guestName.Trim(),
+                    Text = text.Trim(),
+                    SentAt = DateTime.UtcNow,
+                    IsRead = false
+                });
+                await _context.SaveChangesAsync();
+                
+            }
+
+            catch (Exception ex)
+
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+       
     }
 
     public async Task<List<GuestMessage>> GetInboxForUserAsync(string userId)

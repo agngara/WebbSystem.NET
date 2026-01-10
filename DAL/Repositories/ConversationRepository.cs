@@ -44,9 +44,14 @@ namespace DAL.Repositories
         public async Task<List<Conversation>> GetConversationsForUserAsync(string userId)
         {
             return await _context.Conversations
-                .Include(c => c.Participants).ThenInclude(p => p.User)
-                .Include(c => c.Messages)
+                
                 .Where(c => c.Participants.Any(p => p.UserId == userId))
+                .Include(c => c.Participants)
+                    .ThenInclude(p => p.User)
+                        .ThenInclude(u => u.Cv)
+
+                .Include(c => c.Messages)
+
                 .ToListAsync();
         }
 

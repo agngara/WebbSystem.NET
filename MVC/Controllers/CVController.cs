@@ -387,7 +387,6 @@ namespace MVC.Controllers
                 {
                     Title = work.Title.Trim(),
                     WorkPlace = workPlace,
-                    WorkPlaceId = work.Id,
                     Description = work.Description?.Trim(),
                     StartDate = work.StartDate,
                     EndDate = work.EndDate,
@@ -411,8 +410,8 @@ namespace MVC.Controllers
                     });
                 }
             }
-
             await _context.SaveChangesAsync();
+
 
             TempData["SuccessMessage"] = "CV har uppdaterats!";
             return RedirectToAction("MyCV");
