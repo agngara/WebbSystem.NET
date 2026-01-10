@@ -21,30 +21,16 @@ public class HomeController : Controller
         CVRepository CVrepo = new CVRepository(_context);
         ProjectRepository ProjectRepo = new ProjectRepository(_context);
 
+        List<Project> projects = await ProjectRepo.GetAmount(20);
+        projects.Reverse();
+
         HomepageViewModel viewModel = new HomepageViewModel
         {
             TopCVs = await CVrepo.GetTop20CVs(),
-            LatestProjects = await ProjectRepo.GetAllAsync()
+            LatestProjects = projects
         };
 
         return View(viewModel);
-    }
-
-    public async Task<IActionResult> Indexold()
-    {
-        var canConnect = await _context.Database.CanConnectAsync();
-
-        if (canConnect)
-        {
-            ViewBag.Message = "✅ Databas-anslutning fungerar!";
-            ViewBag.DatabaseName = _context.Database.GetDbConnection().Database;
-        }
-        else
-        {
-            ViewBag.Message = "❌ Kunde inte ansluta till databasen";
-        }
-
-        return View();
     }
 
     public IActionResult Privacy()

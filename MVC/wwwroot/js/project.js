@@ -51,9 +51,14 @@ card.addEventListener("click", () => {
 })
 
 var closeButton = document.getElementById("close-edit-window");
+if (closeButton) {
+    closeButton.addEventListener("click", () => {
+        addProjectWindow.style.visibility = "hidden";
+    })
+}
 
-closeButton.addEventListener("click", () => {
-    addProjectWindow.style.visibility = "hidden";
-})
-
-
+// UI Error-handeling
+// Denna bit kod ställde till det lite med annan kod
+//document.addEventListener('DOMContentLoaded', () => {
+//    handleFormSubmit("creation-form");
+//});

@@ -140,7 +140,24 @@ namespace MVC.Controllers
 
             string? imgUrl = viewModel.ImageUrl;
 
-            if (string.IsNullOrEmpty(imgUrl))
+            if (viewModel.ImageFile != null)
+            {
+                bool isValid = FileService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, viewModel.ImageFile.FileName);
+
+                if (!isValid)
+                {
+                    return Json(ModelStateErrorResponse("Filetype not allowed."));
+                }
+
+                if (viewModel.ImageFile.Length > 4000000)
+                {
+                    return Json(ModelStateErrorResponse("Uploaded file is too large."));
+                }
+
+                imgUrl = FileService.SaveFile(viewModel.ImageFile, "Assets/UserUploads/ProjectImages");
+
+            }
+            else
             {
                 imgUrl = p.ImageUrl;
             }

@@ -1,17 +1,105 @@
 ﻿@using MVC.Models.Projects
 @using Models;
+@using System.Security.Claims;
 @model ProjectViewModel
+@{
+    ViewData["Title"] = "Project: " + @Model.Titel;
+}
 
-<h1>@Model.Titel</h1>
-<h3>Created by: @Model.Creator.Name</h3>
-<p>@Model.Description</p>
+<link rel="stylesheet" href="~/css/Project/details.css" />
 
-<h3>Members</h3>
-<ul>
-    @foreach (User user in Model.Users)
-    {
-        <li>@user.Name</li>
-    }
-</ul>
+
+<div class="header-container" style="background-image: url('@Model.ImageUrl')">
+    <div class="header-overlay"></div>
+    <div class="title-box">
+        <h1>@Model.Titel</h1>
+        <h4>By @Model.Creator.Name</h4>
+    </div>
+</div>
+
+
+
+<section class="main-content">
+
+    <section class="button-group mb-4">
+        @*Displays buttons for anonymous users*@
+        @if (!User.Identity!.IsAuthenticated)
+        {
+            <a class="custom-button" asp-action="Login" asp-controller="Account">Join</a>
+            <a class="custom-button" asp-action="Login" asp-controller="Account">See More</a>
+        }
+        else
+        {
+            @*Otherwise, checks if user is or is not creator of project*@
+            if (User.FindFirstValue(ClaimTypes.NameIdentifier) != Model.CreatorId)
+            {
+                bool isJoined = false;
+                @*Loops through userlist to see if user is a participant of the project*@
+                foreach (var user in Model.Users)
+                {
+                    if (user.Id == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                    {
+                        isJoined = true;
+                        break;
+                    }
+                }
+                @*Displays joinbutton*@
+                if (isJoined == false)
+                {
+                    <a class="custom-button" asp-controller="Project" asp-action="Join" asp-route-projectId="@Model.ProjectId">Join</a>
+                }
+                @*Else, displays Leave-button*@
+                else
+                {
+                    <a class="custom-button" asp-controller="Project" asp-action="Leave" asp-route-projectId="@Model.ProjectId">Leave</a>
+                }
+            }
+            @*If project creator, display edit-buttons*@
+            else
+            {
+                <a class="custom-button" asp-controller="Project" asp-action="Edit" asp-route-id="@Model.ProjectId">Edit</a>
+            }
+        }
+    </section>  
+
+    <div class="card project-description">
+        <div class="card-header">
+            <h5>About</h5>
+        </div>
+            <div class="card-body">
+                <p>@Model.Description</p>
+            </div>
+    </div>
+
+    <div class="card project-members">
+        <div class="card-header">
+            <h5>Members</h5>
+        </div>
+        <div class="card-body">
+
+        @if (Model.Users.Count > 0)
+        {
+            @foreach (User user in Model.Users)
+            {
+                <div class="mb-3">
+                    <p>@user.Name</p>
+                </div>   
+            }
+        }
+            else if (Model.CreatorId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+        {
+            <div class="mb-3">
+                    <p>This project has no community members, <a asp-controller="Project" asp-action="Join" asp-route-projectId="@Model.ProjectId">will you be the first? :)</a></p>
+            </div>   
+        }
+
+        </div>
+
+
+
+    </div>
+</section>
+
+
 
 

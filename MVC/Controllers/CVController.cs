@@ -261,7 +261,7 @@ namespace MVC.Controllers
             
             memoryStream.Position = 0;
 
-            return File(memoryStream.ToArray(), "application/xml", Guid.NewGuid().ToString());
+            return File(memoryStream.ToArray(), "application/xml", $"{Guid.NewGuid()}.xml");
         }
 
 

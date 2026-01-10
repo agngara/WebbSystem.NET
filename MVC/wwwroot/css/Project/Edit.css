@@ -1,5 +1,7 @@
-﻿.edit-project-form {
+﻿
+.edit-project-form {
     margin-top: 5rem;
+    align-self: center;
 }
 
 .delete-btn {
