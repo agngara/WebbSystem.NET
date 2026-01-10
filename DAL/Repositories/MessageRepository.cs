@@ -48,11 +48,17 @@ public class MessageRepository : SqlServerRepository<Message>, IMessageRepositor
         await _context.SaveChangesAsync();
     }
 
+    public async Task<int> GetUnreadCountAsync(string userId)
+    {
+        var messages = await _context.Messages
+            .Where(m => m.Conversation.Participants.Any(p => p.UserId == userId)
+                        && m.SenderId != userId)
+            .Select(m => m.IsRead)
+            .ToListAsync();
 
-    //public async Task<int> GetUnreadCountAsync(string userId)
-    //{
-    //    return await _context.Messages
-    //        .Where(m => m.Receiver.Id == userId && !m.IsRead)
-    //        .CountAsync();
-    //}
+        var unreadCount = messages.Count(m => !m);
+        var totalMessages = messages.Count;
+
+        return unreadCount;
+    }
 }
