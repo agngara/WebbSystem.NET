@@ -51,9 +51,13 @@ namespace MVC.Controllers
 
                     vm.UserResults = users.Select(u => new UserSearchResultViewModel
                     {
+
+
                         UserId = u.Id,
                         Email = u.Email,
-                        DisplayName = string.IsNullOrWhiteSpace(u.Name) ? (u.Email ?? u.UserName ?? "User") : u.Name!
+                        DisplayName = string.IsNullOrWhiteSpace(u.Name) ? (u.Email ?? u.UserName ?? "User") : u.Name!,
+                      
+
                     }).ToList();
 
                     if (!vm.UserResults.Any())
@@ -96,6 +100,9 @@ namespace MVC.Controllers
                     OtherUserEmail = other?.Email,
                     LastMessageText = last?.Text,
                     LastMessageAt = last?.SendDateTime,
+                    OtherUserProfileImageUrl = other?.Cv?.ProfileImage,
+
+
                     UnreadMessage = c.Messages.Count(m => !m.IsRead && m.SenderId != currentUserId)
                 };
             }));
@@ -190,8 +197,11 @@ namespace MVC.Controllers
             {
                 model.IsGuest = true;
 
-                if (string.IsNullOrWhiteSpace(model.ToUserId))
+                if (string.IsNullOrWhiteSpace(model.ToUserId)) 
+                {
                     return RedirectToAction(nameof(Conversation));
+                }
+                    
 
                 if (string.IsNullOrWhiteSpace(model.GuestName))
                 {
@@ -205,11 +215,10 @@ namespace MVC.Controllers
 
                 }
 
-                if (!ModelState.IsValid)
-                    return View(model);
+             
 
                 await _guestRepo.AddGuestMessageAsync(model.ToUserId!, model.GuestName!, model.NewMessageText!);
-                return RedirectToAction(nameof(Conversation));
+                return RedirectToAction(nameof(Conversation),  new { toUserId = model.ToUserId }); 
             }
 
 

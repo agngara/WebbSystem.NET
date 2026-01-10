@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PinkedOut</title>
     <script type="importmap"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
@@ -50,6 +51,17 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-flex" asp-controller="Message" asp-action="Conversation">
+
+                                <div class="message-wrapper">
+                                    <img src="/Icons/Chat.svg" alt="Chat" />
+                                    @*  @await Component.InvokeAsync("UnreadMessages") *@
+                                </div>
+                                <p class="mobile-nav-text">Messages</p>
+                            </a>
+                        </li>
+
                         @if (User.Identity!.IsAuthenticated)
                         {
                             <li class="nav-item">
@@ -60,16 +72,7 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link text-dark link-flex" asp-controller="Message" asp-action="Conversation">
-
-                                    <div class="message-wrapper">
-                                        <img src="/Icons/Chat.svg" alt="Chat" />
-                                       @*  @await Component.InvokeAsync("UnreadMessages") *@
-                                    </div>
-                                    <p class="mobile-nav-text">Messages</p>
-                                </a>
-                            </li>
+                      
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark link-flex settings-icon" asp-controller="Account" asp-action="Settings">
