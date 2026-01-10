@@ -36,4 +36,17 @@ document.getElementById("slide-1-arrow-left").addEventListener("click", () => {
     scrollContainerCv.scrollBy(-700, 0);
 })
 
+// Start of project carousel scroll arrows
+const scrollContainerProject = document.getElementById("project-scroll-container");
+const rightArrow2 = document.getElementById("slide-1-arrow-left-2");
+
+rightArrow2.addEventListener("click", () => {
+    scrollContainerProject.scrollBy(700, 0);
+
+})
+
+document.getElementById("slide-1-arrow-right-2").addEventListener("click", () => {
+    scrollContainerProject.scrollBy(-700, 0);
+})
+
 

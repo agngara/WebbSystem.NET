@@ -49,7 +49,6 @@
     right: 0;
 }
 
-
 .scroll-card {
     margin: 20px;
 }
@@ -73,6 +72,7 @@
 
 
 .create-project-popup {
+    align-self:center;
     visibility: hidden;
     position: fixed;
     top: 10%;
@@ -80,11 +80,14 @@
     margin: auto;
     width: 70%;
     height: 70%;
+    min-height: 520px;
     background-color: var(--bg-lighter-color);
     border-radius: 20px;
     padding: 3rem 6rem;
     border: 3px solid var(--card-middle-color);
 }
+
+
 
 
 .icon-btn {
@@ -124,6 +127,10 @@
 
 #fileHelp {
     color: var(--text-lighter-color);
+}
+
+.bi {
+    font-size: 48px !important;
 }
 
 
