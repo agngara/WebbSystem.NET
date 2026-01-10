@@ -1,7 +1,4 @@
-﻿body {
-    overflow: hidden;
-}
-
+﻿
 .slide-title {
     display: block;
     text-align: left;
@@ -28,6 +25,7 @@
 
 .homepage-landing {
     margin-bottom: -20rem;
+    
 }
 
 #homepage-container {
@@ -202,7 +200,7 @@
 }
 
 .arrow-right {
-    right: 0;
+    right: 5px;
 }
 .material-symbols-outlined {
     font-size: 48px;
@@ -229,6 +227,7 @@
     color: var(--text-color);
     border: var(--bs-list-group-border-width) solid var(--bg-color);
 }
+
 
 
 
