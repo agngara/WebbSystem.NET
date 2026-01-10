@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>/*~~~~~~~~~~~~~~*/ - PinkedOut</title>
     <script type="importmap"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="/**/" />
     /*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~~~*/ /*~~~~~*/ /*~~*/
@@ -22,13 +23,15 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3">
             <div class="container-fluid">
                 <div class="nav-section" style="display:flex; justify-content: flex-start; align-items: center;">
-                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">PinkedOut</a>
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                        <img class="logotype" src="~/Assets/UI-Images/pinkedoutlogo.png" alt="¨Website logo">
+                    </a>
                     <img id="color-theme" src="/icons/Dark.svg" alt="color-theme-button" />
                 </div>
 
                 <div class="search-container">
                     <div class="search-input-wrapper">
-                        <input class="search-input" type="text" asp-action="Search" asp-controller="Search">
+                        <input class="search-input" type="text" asp-action="Search" asp-controller="Search" placeholder="Bob, React ...">
                         <img src="/icons/Search.svg" alt="Search icon">
                     </div>
                     <div class="search-results"></div>
@@ -48,6 +51,17 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link text-dark link-flex" asp-controller="Message" asp-action="Conversation">
+
+                                <div class="message-wrapper">
+                                    <img src="/Icons/Chat.svg" alt="Chat" />
+                                    /*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                                </div>
+                                <p class="mobile-nav-text">Messages</p>
+                            </a>
+                        </li>
+
                         ~~~ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
                         ~
                             <li class="nav-item">
@@ -58,15 +72,7 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link text-dark link-flex" href="#" id="messages-link">
-                                    <div class="message-wrapper">
-                                        <img src="/Icons/Chat.svg" alt="Chat" />
-                                        /*~~*/ /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-                                    </div>
-                                    <p class="mobile-nav-text">Messages</p>
-                                </a>
-                            </li>
+                      
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark link-flex settings-icon" asp-controller="Account" asp-action="Settings">
