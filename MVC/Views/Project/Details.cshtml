@@ -2,6 +2,9 @@
 @using Models;
 @using System.Security.Claims;
 @model ProjectViewModel
+@{
+    ViewData["Title"] = "Project: " + @Model.Titel;
+}
 
 <link rel="stylesheet" href="~/css/Project/details.css" />
 
