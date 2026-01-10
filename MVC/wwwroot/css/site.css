@@ -19,6 +19,11 @@
 
 }
 
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 :root {
     --error-color: red;
     --succeed-color: green;
@@ -46,6 +51,8 @@
 
     --card-middle-color: #230c12;
     --card-end-color: var(--bg-color);
+
+    --translucent-bg-color: rgba(0,0,0,0.5);
 }
 
 
@@ -80,6 +87,8 @@ span.navbar-toggler-icon {
 
     --card-middle-color: #edcadd;
     --card-end-color: var(--bg-color);
+
+    --translucent-bg-color: rgba(255, 255, 255, 0.5);
 }
 
 
@@ -144,10 +153,6 @@ html {
 }
 
 .card,
-.section-box,
-.profile-section,
-.experience-item,
-.education-item,
 .list-group-item,
 .project-item {
     background: linear-gradient( 135deg, var(--card-middle-color) 0%, var(--card-end-color) 100% );

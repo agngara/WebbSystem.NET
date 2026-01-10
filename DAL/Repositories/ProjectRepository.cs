@@ -46,10 +46,16 @@ namespace DAL.Repositories
         /// </summary>
         /// <param name="amountOfProjects"></param>
         /// <returns>A list of projects.</returns>
-        public List<Project> GetAmount(int amountOfProjects)
+        public async Task<List<Project>> GetAmount(int amountOfProjects)
         {
-            return _context.Projects.Take(amountOfProjects).ToList();
+            return await _context.Projects
+                   .Include(p => p.ProjectUsers)
+                   .ThenInclude(pu => pu.User)
+                   .Include(p => p.Creator)
+                   .Take(amountOfProjects)
+                   .ToListAsync();
         }
+
         /// <summary>
         /// Gets the projects where the entered userId is listed as member of the project.
         /// </summary>

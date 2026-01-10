@@ -15,7 +15,7 @@
         </button>
     </div>
     <div class="create-project-form">
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <form id="creation-form" asp-action="Create" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="Name" class="form-label">Project Name</label>
                 <input type="text" class="form-control" id="Name" asp-for="Name">
@@ -30,7 +30,7 @@
                 <div id="fileHelp" class="form-text">Max 2MB, JPG/PNG/GIF</div>
 
             </div>
-            <button type="submit" class="custom-button-accent">Submit</button>
+            <input class="custom-button-accent" type="submit" value="Create" asp-controller="Project" asp-action="Create"></>
         </form>
     </div>
 </section>
