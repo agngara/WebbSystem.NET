@@ -224,3 +224,17 @@ textarea[readonly] {
     background-image: none !important;
 }
 
+.profile-card-grid {
+    display: grid;
+    grid-template-columns: 90% 10%;
+}
+
+.profile-image {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.download-button {
+    grid-column: 2;
+    grid-row: 1;
+}
