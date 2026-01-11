@@ -26,7 +26,7 @@ public class HomeController : Controller
 
         HomepageViewModel viewModel = new HomepageViewModel
         {
-            TopCVs = await CVrepo.GetTop20PublicCVs(),
+            TopCVs = await CVrepo.GetTop20CVs(),
             LatestProjects = projects
         };
 

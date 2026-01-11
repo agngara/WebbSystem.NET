@@ -8,6 +8,6 @@ namespace MVC.Models.CVs
         public String Description { get; set; }
         public virtual List<WorkExperienceFileModel> WorkExperiences { get; set; } = [];
         public virtual List<Competence> Competences { get; set; } = [];
-        public virtual List<EducationFileModel> Educations { get; set; } = [];
+        public virtual List<Education> Educations { get; set; } = [];
     }
 }

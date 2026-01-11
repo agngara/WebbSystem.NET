@@ -23,17 +23,16 @@ namespace MVC.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly ISearchService _searchService;
 
-        private readonly IProjectRepository _projectRepository;
+
         private readonly IUserRepository _userRepository;
         private readonly IWorkPlaceRepository _workplaceRepository;
 
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IProjectRepository projectRepository, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository, ISearchService searchService)
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository, ISearchService searchService)
 
         {
             _context = context;
             _userManager = userManager;
             _environment = environment;
-            _projectRepository = projectRepository;
             _userRepository = userRepository;
             _workplaceRepository = workPlaceRepository;
             _searchService = searchService;
@@ -137,16 +136,7 @@ namespace MVC.Controllers
             ViewBag.RelevantProfiles = relevantProfiles;
             ViewBag.HasRelevantProfiles = relevantProfiles.Any();
 
-            List<Project> createdProjects = await _projectRepository.GetProjectsByCreator(user.Id);
-
-
-            CvViewModel cvViewModel = new CvViewModel()
-            {
-                User = user,
-                UserProjects = createdProjects,
-            };
-
-            return View("~/Views/CvView/View.cshtml", cvViewModel);
+            return View("~/Views/CvView/View.cshtml", user);
         }
 
         // Visa och redigera eget CV
@@ -221,7 +211,6 @@ namespace MVC.Controllers
                             .Include(c => c.WorkExperiences)
                             .ThenInclude(w => w.WorkPlace)
                             .Include(c => c.Educations)
-                            .ThenInclude(e => e.Institution)
                             .Include(c => c.User)
                             .FirstOrDefault(c => c.Id == cvId);
                                     
@@ -231,23 +220,14 @@ namespace MVC.Controllers
             {
                 return BadRequest();
             }
-
-            // The purpose of the following code is to convert workexperiences from the cv object into a filtered one.
             List<WorkExperienceFileModel> viewWorkExperiences = new List<WorkExperienceFileModel>();
 
             foreach (WorkExperience w in cv.WorkExperiences)
             {
                 WorkPlace? workplace = w.WorkPlace;
-
-                // Creates an empty workplace object to avoid a null reference if the user has left the workplace field empty. 
                 if (workplace == null)
                 {
-                    WorkPlace placeHolderWorkPlace = new WorkPlace()
-                    {
-                        Name = ""
-                    };
-
-                    workplace = placeHolderWorkPlace;
+                    break;
                 }
 
                 WorkExperienceFileModel workExperienceFileModel = new WorkExperienceFileModel()
@@ -263,43 +243,14 @@ namespace MVC.Controllers
                 viewWorkExperiences.Add(workExperienceFileModel);
             }
 
-            // Same as above but for educations.
-            List<EducationFileModel> viewEducations = new List<EducationFileModel>();
-
-            foreach (Education e in cv.Educations)
-            {
-                Institution? institution = e.Institution;
-
-                // Creates an empty institution object to avoid a null reference if the user has left the workplace field empty. 
-                if (institution == null)
-                {
-                    Institution placeHolderInstitution = new Institution()
-                    {
-                        Name = ""
-                    };
-
-                }
-
-                EducationFileModel educationFileModel = new EducationFileModel()
-                {
-                    ProgramOrCourseName = e.ProgramOrCourseName,
-                    Description = e.Description,
-                    InstitutionName = institution.Name,
-                    StartDate = e.StartDate,
-                    EndDate = e.EndDate,
-                };
-
-                viewEducations.Add(educationFileModel);
-            }
-
-
+            // Fix workplace name
             CvFileModel fileModel = new CvFileModel()
             {
                 Name = user.Name,
                 Description = cv.Description,
                 WorkExperiences = viewWorkExperiences,
                 Competences = cv.Competences,
-                Educations = viewEducations,
+                Educations = cv.Educations,
             };
 
             XmlSerializer serializer = new XmlSerializer(typeof(CvFileModel));
