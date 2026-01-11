@@ -13,7 +13,7 @@ namespace DAL.Repositories.Interfaces
 
         Task<List<Project>> GetAmount(int amountOfProjects);
 
-        Task<List<Project>> GetProjectsByMembers(string userId);
+        Task<List<Project>> GetProjectsByMember(string userId);
 
         Task<List<Project>> GetProjectsByCreator(string userId);
 

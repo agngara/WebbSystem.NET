@@ -2,6 +2,8 @@
 using DAL;
 using DAL.Repositories;
 using DAL.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
@@ -29,221 +31,329 @@ namespace MVC.Controllers
         }
         public async Task<IActionResult> Catalog()
         {
-            var user = await _userManager.GetUserAsync(User);
-            string userId;
-            List<Project> userProjects;
-            if (user != null)
+            try
             {
-                userId = user.Id;
-                userProjects = await _projectRepository.GetProjectsByCreator(userId);
 
+                var user = await _userManager.GetUserAsync(User);
+                string userId;
+                List<Project> userProjects;
+                if (user != null)
+                {
+                    userId = user.Id;
+                    userProjects = await _projectRepository.GetProjectsByCreator(userId);
+
+                }
+                else
+                {
+                    userProjects = new List<Project>();
+                }
+
+                List<Project> allProjects = await _projectRepository.GetAllAsync();
+
+                CatalogViewModel catalogViewModel = new CatalogViewModel
+                {
+                    AllProjects = allProjects,
+                    UserProjects = userProjects,
+
+                };
+
+                return View(catalogViewModel);
             }
-            else
+            catch (Exception ex) 
             {
-                userProjects = new List<Project>();
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
             }
-
-            List<Project> allProjects = await _projectRepository.GetAllAsync();
-
-            CatalogViewModel catalogViewModel = new CatalogViewModel
-            {
-                AllProjects = allProjects,
-                UserProjects = userProjects,
- 
-            };
-
-            return View(catalogViewModel);
 
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CreateProjectViewModel model)
         {
-            if (!ModelState.IsValid)
+            try 
             {
-                return Json(ModelStateErrorResponse("Invalid project creation :("));
-            }
-
-            //Here follows code regarding the project image.
-
-            string filePath = "/Assets/UI-Images/project_placeholder_image.jpg";
-
-            if (model.ImageFile != null)
-            {
-                bool isValid = FileService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, model.ImageFile.FileName);
-                
-                if (!isValid) 
-                { 
-                    return Json(ModelStateErrorResponse("Filetype not allowed.")); 
-                }
-
-                if (model.ImageFile.Length > 2000000)
+                if (!ModelState.IsValid)
                 {
-                    return Json(ModelStateErrorResponse("Uploaded file is too large."));
+                    return Json(ModelStateErrorResponse("Invalid project creation :("));
                 }
 
-                filePath = FileService.SaveFile(model.ImageFile, "Assets/UserUploads/ProjectImages");
+                //Here follows code regarding the project image.
+
+                string filePath = "/Assets/UI-Images/project_placeholder_image.jpg";
+
+                if (model.ImageFile != null)
+                {
+                    bool isValid = FileService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, model.ImageFile.FileName);
+
+                    if (!isValid)
+                    {
+                        return Json(ModelStateErrorResponse("Filetype not allowed."));
+                    }
+
+                    if (model.ImageFile.Length > 2000000)
+                    {
+                        return Json(ModelStateErrorResponse("Uploaded file is too large."));
+                    }
+
+                    filePath = FileService.SaveFile(model.ImageFile, "Assets/UserUploads/ProjectImages");
+
+                }
+
+
+                Project project = new Project
+                {
+                    CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    Creator = await _userRepository.GetUserById(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                    Titel = model.Name,
+                    Description = model.Description,
+                    ProjectUsers = new List<ProjectUser>(),
+                    ImageUrl = filePath
+
+                };
+
+                bool addResult = _projectRepository.AddProject(project);
+
+                if (!addResult)
+                {
+                    return Json(ModelStateErrorResponse("Something went wrong when saving project image, please try again :("));
+                }
+
+                return RedirectToAction("Catalog");
 
             }
-
-
-
-            Project project = new Project
+            catch (Exception ex)
             {
-                CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                Creator = await _userRepository.GetUserById(User.FindFirstValue(ClaimTypes.NameIdentifier)),
-                Titel = model.Name,
-                Description = model.Description,
-                ProjectUsers = new List<ProjectUser>(),
-                ImageUrl = filePath
-
-            };
-
-            bool addResult = _projectRepository.AddProject(project);
-
-            if (!addResult)
-            {
-                return Json(ModelStateErrorResponse("Something went wrong when saving project image, please try again :("));
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
             }
-
-            return RedirectToAction("Catalog");
-
-
-
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            
-            Project project = await _projectRepository.GetProjectAsync(id);
-
-            if (project == null)
+            try
             {
-                return Json(ModelStateErrorResponse("No project found, Yo :("));
+
+                Project project = await _projectRepository.GetProjectAsync(id);
+
+                if (project == null)
+                {
+                    return Json(ModelStateErrorResponse("No project found, Yo :("));
+                }
+
+
+                if (project.CreatorId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                {
+
+                    EditProjectViewModel viewModel = new EditProjectViewModel()
+                    {
+                        ProjectId = project.Id,
+                        Name = project.Titel,
+                        Description = project.Description,
+                        ImageUrl = project.ImageUrl,
+                        ImageFile = null
+                    };
+                    return View(viewModel);
+                }
+                else
+                {
+                    return StatusCode(401);
+                }
             }
-
-            EditProjectViewModel viewModel = new EditProjectViewModel()
+            catch (Exception ex) 
             {
-                ProjectId = project.Id,
-                Name = project.Titel,
-                Description = project.Description,
-                ImageUrl = project.ImageUrl,
-                ImageFile = null
-            };
-            return View(viewModel);
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
+            }
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(int id, EditProjectViewModel viewModel)
         {
-            Project p = await _projectRepository.GetProjectAsync(id);
-
-            string? imgUrl = viewModel.ImageUrl;
-
-            if (viewModel.ImageFile != null)
-            {
-                bool isValid = FileService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, viewModel.ImageFile.FileName);
-
-                if (!isValid)
+                try
                 {
-                    return Json(ModelStateErrorResponse("Filetype not allowed."));
-                }
 
-                if (viewModel.ImageFile.Length > 4000000)
-                {
-                    return Json(ModelStateErrorResponse("Uploaded file is too large."));
-                }
+                    Project dbProject = await _projectRepository.GetProjectAsync(viewModel.ProjectId);
+                    string userId = dbProject.CreatorId;
 
-                imgUrl = FileService.SaveFile(viewModel.ImageFile, "Assets/UserUploads/ProjectImages");
+                    // Checks if logged in user has the same ID as the one listed as creator in DB.
+                    if (userId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                    {
 
+                        if (!ModelState.IsValid)
+                        {
+                            return Json(ModelStateErrorResponse("Invalid changes, computer says no :("));
+                        }
+                        Project p = await _projectRepository.GetProjectAsync(id);
+
+                        string? imgUrl = viewModel.ImageUrl;
+
+                        if (viewModel.ImageFile != null)
+                        {
+                            bool isValid = FileService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, viewModel.ImageFile.FileName);
+
+                            if (!isValid)
+                            {
+                                return Json(ModelStateErrorResponse("Filetype not allowed."));
+                            }
+
+                            // Checks filesize in bytes.
+                            if (viewModel.ImageFile.Length > 4000000)
+                            {
+                                return Json(ModelStateErrorResponse("Uploaded file is too large."));
+                            }
+
+                            imgUrl = FileService.SaveFile(viewModel.ImageFile, "Assets/UserUploads/ProjectImages");
+
+                        }
+                        else
+                        {
+                            imgUrl = p.ImageUrl;
+                        }
+
+                        p.Id = id;
+                        p.CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        p.Creator = await _userRepository.GetUserById(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        p.Titel = viewModel.Name;
+                        p.Description = viewModel.Description;
+                        p.ImageUrl = imgUrl;
+
+
+                        _projectRepository.UpdateProject(p);
+                        return RedirectToAction("Catalog");
+                    }
+                    // Or else, a forbidden status code is sent. 
+                    else
+                    {
+                        return StatusCode(401);
+                    }
             }
-            else
+            catch (Exception ex)
             {
-                imgUrl = p.ImageUrl;
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
             }
-
-                p.Id = id;
-                p.CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                p.Creator = await _userRepository.GetUserById(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                p.Titel = viewModel.Name;
-                p.Description = viewModel.Description;
-                p.ImageUrl = imgUrl;
             
-
-            _projectRepository.UpdateProject(p);
-            return RedirectToAction("Catalog");
         }
         
         public IActionResult Delete(int id)
         {
-            _projectRepository.DeleteProject(id);
+            try
+            {
+                _projectRepository.DeleteProject(id);
 
-            return RedirectToAction("Catalog");
+                return RedirectToAction("Catalog");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
+            }
         }
 
         public IActionResult Join(int projectId)
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (!_projectUserRepository.AddUserToProject(userId, projectId))
+            try
             {
-                return Json(ModelStateErrorResponse("Could not join project, because there is already a user assigned to the project with id: " + projectId));
-            }
-            else
-            {
-                var referer = Request.Headers["Referer"].ToString();
-
-                if (!string.IsNullOrEmpty(referer))
+                if (User.Identity?.IsAuthenticated == false)
                 {
-                    return Redirect(referer);
+                    return RedirectToAction("Login", "Account");
                 }
 
-                return RedirectToAction("Catalog");
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (!_projectUserRepository.AddUserToProject(userId, projectId))
+                {
+                    return Json(ModelStateErrorResponse("Could not join project, because there is already a user assigned to the project with id: " + projectId));
+                }
+                else
+                {
+                    var referer = Request.Headers["Referer"].ToString();
+
+                    if (!string.IsNullOrEmpty(referer))
+                    {
+                        return Redirect(referer);
+                    }
+
+                    return RedirectToAction("Catalog");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
             }
         }
         public IActionResult Leave(int projectId)
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (!_projectUserRepository.RemoveUserFromProject(userId, projectId))
+            try
             {
-                return Json(ModelStateErrorResponse("Could not leave project, because there were no user with Id: " + userId + " to remove."));
-            }
-            else
-            {
-                var referer = Request.Headers["Referer"].ToString();
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                if (!string.IsNullOrEmpty(referer))
+                if (!_projectUserRepository.RemoveUserFromProject(userId, projectId))
                 {
-                    return Redirect(referer);
+                    return Json(ModelStateErrorResponse("Could not leave project, because there were no user with Id: " + userId + " to remove."));
                 }
-                return RedirectToAction("Catalog");
+                else
+                {
+                    var referer = Request.Headers["Referer"].ToString();
+
+                    if (!string.IsNullOrEmpty(referer))
+                    {
+                        return Redirect(referer);
+                    }
+                    return RedirectToAction("Catalog");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
             }
         }
 
         public async Task<IActionResult> Details(int projectId)
         {
-
-
-            List<User> users = _projectUserRepository.GetAllUsersByProject(projectId);
-
-            Project project = await _projectRepository.GetProjectAsync(projectId);
-
-            User creator = await _userRepository.GetUserById(project.CreatorId);
-
-            ProjectViewModel viewModel = new ProjectViewModel
+            try
             {
-                ProjectId = project.Id,
-                CreatorId = project.CreatorId,
-                Creator = creator,
-                Titel = project.Titel, 
-                Description = project.Description,
-                ImageUrl = project.ImageUrl,
-                Users = users
-            };
+               
+                List<User> filteredUsers = new List<User>();
 
-            return View(viewModel);
+                List<User> rawUsers = _projectUserRepository.GetAllUsersByProject(projectId);
+
+                // This statement filters out private users if the browsing user is anonymous. 
+                if (User.Identity?.IsAuthenticated == false)
+                {
+
+                   filteredUsers  = rawUsers.Where(u => u.IsPrivate == false).ToList();
+                }
+                else
+                {
+                    filteredUsers = rawUsers;
+                }
+
+                    Project project = await _projectRepository.GetProjectAsync(projectId);
+
+                User creator = await _userRepository.GetUserById(project.CreatorId);
+
+                ProjectViewModel viewModel = new ProjectViewModel
+                {
+                    ProjectId = project.Id,
+                    CreatorId = project.CreatorId,
+                    Creator = creator,
+                    Titel = project.Titel,
+                    Description = project.Description,
+                    ImageUrl = project.ImageUrl,
+                    Users = filteredUsers
+                };
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
+            }
         }
-
     }
 }

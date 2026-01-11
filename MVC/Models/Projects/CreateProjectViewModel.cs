@@ -11,6 +11,7 @@ namespace MVC.Models.Projects
         [Required(ErrorMessage = "Please Enter a Project Description.")]
         [StringLength(2000)]
         public string Description { get; set; }
+
         public IFormFile? ImageFile { get; set; }
 
     }
