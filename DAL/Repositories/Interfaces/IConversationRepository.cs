@@ -13,7 +13,5 @@ namespace DAL.Repositories.Interfaces
         Task<List<Conversation>> GetConversationsForUserAsync(string userId);
         Task<Conversation?> GetConversationWithMessagesAsync(int conversationId);
         Task<bool> UserIsParticipantAsync(int conversationId, string userId);
-
-       
     }
 }

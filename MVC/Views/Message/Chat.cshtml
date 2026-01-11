@@ -13,7 +13,6 @@
 <head>
 
     <link rel="stylesheet" href="~/css/Message/message.css" />
-    <script src="~/js/message.js" defer></script>
 </head>
 <body>
 
@@ -37,13 +36,12 @@
             @if (Model.IsGuest)
             {
                 <div class="chat-system-message">
-                    <i class="bi bi-incognito"></i>
+                    <i class="bi bi-info-circle"></i>
                     <span>
                         You are sending this message as a guest.
                         The user cannot reply to you, therefore please include your contact information if you want to be reached.
                     </span>
                 </div>
-
             }
             else
             {
@@ -55,43 +53,6 @@
                             <div class="meta">
                                 @msg.SentAt.ToLocalTime().ToString("dd MMM HH:mm")
 
-                                @if (!msg.IsMine)
-                                {
-                                    
-                                    <div class="delete-wrapper">
-                                    <button type="button"
-                                                class="btn btn-sm btn-secondary p-1"
-                                            onclick="toggleDelete(@msg.MessageId)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-
-                                        <form id="delete-form-@msg.MessageId"
-                                            asp-action="DeleteMessage"
-                                              method="post"   
-                                              class="delete-confirm hidden">
-
-
-                                            @Html.AntiForgeryToken()
-
-                                            <input type="hidden" name="messageId" value="@msg.MessageId" />
-                                            <input type="hidden" name="conversationId" value="@Model.ConversationId" />
-
-                                            <span>Delete this message?</span>
-
-                                            <button type="submit" class="btn btn-sm btn-secondary">
-                                                Delete
-                                            </button>
-
-                                            <button type="button"
-                                                    class="btn btn-sm btn-secondary"
-                                                    onclick="toggleDelete(@msg.MessageId)">
-                                                Regret
-                                            </button>
-                                        </form>
-                                    </div>
-                                 }
-
-                                
                                 @if (msg.IsMine)
                                 {
                                     <span class="read">

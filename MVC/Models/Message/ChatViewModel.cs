@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MVC.Models.Message
+﻿namespace MVC.Models.Message
 {
     public class ChatViewModel
     {
@@ -10,10 +8,8 @@ namespace MVC.Models.Message
 
         public int ConversationId { get; set; }
 
-        [Required]
-        public string ToUserId { get; set; }
-        
-        [Required]
+
+        public string? ToUserId { get; set; }
         public string? GuestName { get; set; }
 
         public string? OtherUserName { get; set; }
@@ -21,7 +17,6 @@ namespace MVC.Models.Message
         public string LastMessageText { get; set; }
         public string? OtherUserProfileImageUrl { get; set; }
         public DateTime? LastMessageAt { get; set; }
-        [Required]
         public string? NewMessageText { get; set; }
         public int UnreadMessage { get; set; }
 

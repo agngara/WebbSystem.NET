@@ -68,8 +68,6 @@ namespace DAL.Repositories
             return await _context.Conversations
                 .AnyAsync(c => c.Id == conversationId && c.Participants.Any(p => p.UserId == userId));
         }
-
-      
     }
 }
 

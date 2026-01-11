@@ -19,8 +19,7 @@
 
 }
 
-html,
-body {
+html, body {
     max-width: 100%;
     overflow-x: hidden;
 }
@@ -53,7 +52,7 @@ body {
     --card-middle-color: #230c12;
     --card-end-color: var(--bg-color);
 
-    --translucent-bg-color: rgba(0, 0, 0, 0.5);
+    --translucent-bg-color: rgba(0,0,0,0.5);
 }
 
 
@@ -156,7 +155,7 @@ html {
 .card,
 .list-group-item,
 .project-item {
-    background: linear-gradient(135deg, var(--card-middle-color) 0%, var(--card-end-color) 100%);
+    background: linear-gradient( 135deg, var(--card-middle-color) 0%, var(--card-end-color) 100% );
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 16px;
@@ -164,11 +163,11 @@ html {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.card:hover,
-.section-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
+    .card:hover,
+    .section-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
 
 .btn:focus,
 .btn:active:focus,
@@ -212,7 +211,6 @@ input[type="submit"] {}
     border-color: var(--accent-color);
     color: var(--bg-lighter-color);
 }
-
 .custom-button-large {
     padding: 10px 40px;
     border-radius: 20px;
@@ -337,7 +335,9 @@ nav {
 }
 
 
-.search-input-wrapper img {}
+.search-input-wrapper img {
+    cursor: pointer;
+}
 
 .search-input {
     outline: none;
@@ -451,7 +451,7 @@ nav {
 
 .notification {
     position: fixed;
-    z-index: 2000;
+    z-index: 100;
     top: 60px;
     right: 0;
     margin: 10px;

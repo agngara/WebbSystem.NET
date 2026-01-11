@@ -90,12 +90,7 @@ namespace MVC.Controllers
             var items = convs.Select((Func<Conversation, ChatViewModel>)(c =>
             {
                 var other = c.Participants.FirstOrDefault(p => p.UserId != currentUserId)?.User;
-
-                var vivibleMessages = c.Messages
-                    .Where(m => m.SenderId == currentUserId || !m.MessageISDeleteed);
-
-                var last = vivibleMessages
-                           .OrderByDescending(m => m.SendDateTime).FirstOrDefault();
+                var last = c.Messages.OrderByDescending(m => m.SendDateTime).FirstOrDefault();
 
                 return new ChatViewModel
                 {
@@ -108,7 +103,7 @@ namespace MVC.Controllers
                     OtherUserProfileImageUrl = other?.Cv?.ProfileImage,
 
 
-                    UnreadMessage = c.Messages.Count(m => !m.IsRead && m.SenderId != currentUserId && !m.MessageISDeleteed)
+                    UnreadMessage = c.Messages.Count(m => !m.IsRead && m.SenderId != currentUserId)
                 };
             }));
 
@@ -134,68 +129,61 @@ namespace MVC.Controllers
             });
         }
 
-        //[AllowAnonymous]
-        //[HttpGet]
-        //public async Task<IActionResult> Chat(int? id, string? toUserId)
-        //{
-        //    var isAuth = User.Identity?.IsAuthenticated == true;
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> Chat(int? id, string? toUserId)
+        {
+            var isAuth = User.Identity?.IsAuthenticated == true;
 
 
-        //    if (!isAuth)
-        //    {
-        //        if (string.IsNullOrWhiteSpace(toUserId))
-        //            return RedirectToAction(nameof(Conversation));
+            if (!isAuth)
+            {
+                if (string.IsNullOrWhiteSpace(toUserId))
+                    return RedirectToAction(nameof(Conversation));
 
-        //        var toUser = await _userRepo.GetById(toUserId);
-        //        if (toUser == null) return NotFound();
+                var toUser = await _userRepo.GetById(toUserId);
+                if (toUser == null) return NotFound();
 
-        //        return View(new ChatViewModel
-        //        {
-        //            IsGuest = true,
-        //            ToUserId = toUserId,
-        //            OtherUserName = toUser.Name,
-        //            OtherUserEmail = toUser.Email
-        //        });
-        //    }
+                return View(new ChatViewModel
+                {
+                    IsGuest = true,
+                    ToUserId = toUserId,
+                    OtherUserName = toUser.Name,
+                    OtherUserEmail = toUser.Email
+                });
+            }
 
-        //    if (id == null) return NotFound();
-        //    var currentUserId = _userManager.GetUserId(User)!;
+            if (id == null) return NotFound();
+            var currentUserId = _userManager.GetUserId(User)!;
 
-        //    if (!await _convRepo.UserIsParticipantAsync(id.Value, currentUserId))
-        //        return Forbid();
+            if (!await _convRepo.UserIsParticipantAsync(id.Value, currentUserId))
+                return Forbid();
 
-        //    var conversation = await _convRepo.GetConversationWithMessagesAsync(id.Value);
-        //    if (conversation == null) return NotFound();
+            var conversation = await _convRepo.GetConversationWithMessagesAsync(id.Value);
+            if (conversation == null) return NotFound();
 
-        //    await _msgRepo.MarkAsReadAsync(conversation.Id, currentUserId);
+            await _msgRepo.MarkAsReadAsync(conversation.Id, currentUserId);
 
-        //    var other = conversation.Participants.FirstOrDefault(p => p.UserId != currentUserId)?.User;
+            var other = conversation.Participants.FirstOrDefault(p => p.UserId != currentUserId)?.User;
 
-        //    var visibleMessages = conversation.Messages
-        //        .Where(m => m.SenderId== currentUserId || !m.MessageISDeleteed)
-        //        .OrderBy(m => m.SendDateTime)
-        //        .ToList();
-
-        //    return View(new ChatViewModel
-        //    {
-        //        IsGuest = false,
-        //        ConversationId = conversation.Id,
-        //        OtherUserName = other?.Name,
-        //        OtherUserEmail = other?.Email,
-        //        Messages = visibleMessages
-        //            .OrderBy(m => m.SendDateTime)
-        //            .Select(m => new MessageBubbleViewModel
-        //            {
-                        
-        //                MessageId = m.Id,
-        //                Text = m.Text,
-        //                IsMine = m.SenderId == currentUserId,
-        //                SentAt = m.SendDateTime,
-        //                IsRead = m.IsRead,
-        //                ReadAt = m.ReadAt
-        //            }).ToList()
-        //    });
-        //}
+            return View(new ChatViewModel
+            {
+                IsGuest = false,
+                ConversationId = conversation.Id,
+                OtherUserName = other?.Name,
+                OtherUserEmail = other?.Email,
+                Messages = conversation.Messages
+                    .OrderBy(m => m.SendDateTime)
+                    .Select(m => new MessageBubbleViewModel
+                    {
+                        Text = m.Text,
+                        IsMine = m.SenderId == currentUserId,
+                        SentAt = m.SendDateTime,
+                        IsRead = m.IsRead,
+                        ReadAt = m.ReadAt
+                    }).ToList()
+            });
+        }
 
 
         [AllowAnonymous]
@@ -229,9 +217,8 @@ namespace MVC.Controllers
 
              
 
-
                 await _guestRepo.AddGuestMessageAsync(model.ToUserId!, model.GuestName!, model.NewMessageText!);
-                return RedirectToAction(nameof(Chat),  new { toUserId = model.ToUserId }); 
+                return RedirectToAction(nameof(Conversation),  new { toUserId = model.ToUserId }); 
             }
 
 
@@ -274,104 +261,9 @@ namespace MVC.Controllers
             var guest = await _guestRepo.GetByIdForUserAsync(id, currentUserId);
             if (guest == null) return NotFound();
 
-
             await _guestRepo.MarkAsReadAsync(id, currentUserId);
             return View(guest);
         }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> DeleteMessage(int messageId, int conversationId)
-        {
-            var currentId = _userManager.GetUserId(User)!;
-
-            await _msgRepo.DeleteMessageAsync(messageId, currentId);
-
-            return RedirectToAction(nameof(Chat), new { id = conversationId });
-
-        }
-
-
-
-
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> Chat(int? id, string? toUserId)
-        {
-            var isAuth = User.Identity?.IsAuthenticated == true;
-
-            //  kräver toUserId
-            if (!isAuth)
-            {
-                if (string.IsNullOrWhiteSpace(toUserId))
-                    return RedirectToAction(nameof(Conversation));
-
-                var toUser = await _userRepo.GetById(toUserId);
-                if (toUser == null) return NotFound();
-
-                return View(new ChatViewModel
-                {
-                    IsGuest = true,
-                    ToUserId = toUserId,
-                    OtherUserName = toUser.Name,
-                    OtherUserEmail = toUser.Email,
-                    Messages = new List<MessageBubbleViewModel>() 
-                });
-            }
-
-            var currentUserId = _userManager.GetUserId(User)!;
-
-            if (!string.IsNullOrWhiteSpace(toUserId))
-            {
-                if (toUserId == currentUserId)
-                    return RedirectToAction("Conversation");
-
-                return await OpenOrCreateAndRedirect(currentUserId, toUserId);
-            }
-
-         
-            if (id == null) return NotFound();
-
-            if (!await _convRepo.UserIsParticipantAsync(id.Value, currentUserId))
-                return Forbid();
-
-            var conversation = await _convRepo.GetConversationWithMessagesAsync(id.Value);
-            if (conversation == null) return NotFound();
-
-            await _msgRepo.MarkAsReadAsync(conversation.Id, currentUserId);
-
-            var other = conversation.Participants.FirstOrDefault(p => p.UserId != currentUserId)?.User;
-
-            var visibleMessages = conversation.Messages
-                .Where(m => m.SenderId == currentUserId || !m.MessageISDeleteed)
-                .OrderBy(m => m.SendDateTime)
-                .ToList();
-
-            return View(new ChatViewModel
-            {
-                IsGuest = false,
-                ConversationId = conversation.Id,
-                OtherUserName = other?.Name,
-                OtherUserEmail = other?.Email,
-                Messages = visibleMessages.Select(m => new MessageBubbleViewModel
-                {
-                    MessageId = m.Id,
-                    Text = m.Text,
-                    IsMine = m.SenderId == currentUserId,
-                    SentAt = m.SendDateTime,
-                    IsRead = m.IsRead,
-                    ReadAt = m.ReadAt
-                }).ToList()
-            });
-        }
-
-
-
-
-
-
     }
 }
 
