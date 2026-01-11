@@ -42,29 +42,20 @@
         {
             if (!Model.UserResults.Any())
             {
-                <p>Search on a user by entering a name och email</p>
+                <p>Search on a user by entering a name</p>
             }
             else
             {
-                foreach (var u in Model.UserResults)
-                {
-                    <a asp-controller="Message"
-                       asp-action="Chat"
-                       asp-route-toUserId="@u.UserId"
-                       class="conversation-item guest">
-
-                        <div class="avatar">
-                            @((u.DisplayName ?? "U")[0])
-                        </div>
-
-                        <div class="content">
-                            <div class="top">
-                                <span class="name">@u.UserId</span>
-                            </div>
-                            <div class="preview">Skicka ett meddelande som gäst</div>
-                        </div>
-                    </a>
-                }
+               
+                
+               @if (ViewBag.SearchError != null)
+                    {
+                        <div class="alert alert-warning">@ViewBag.SearchError</div>
+                    }
+                
+                
+                
+         
             }
         }
         else
@@ -89,7 +80,7 @@
                     <div class="conversation-top-row">
                         <span class="conversation-name">@u.DisplayName</span>
                     </div>
-                    <div class="conversation-preview">@u.Email</div>
+                    <div class="conversation-preview">@u.DisplayName</div>
                 </div>
 
                                   
@@ -123,7 +114,7 @@
                             <div class= "conversation-profilpic">
                                 @if (conv.IsGuest)
                                 {
-                                    <i class="bi bi-fingerprint"></i>
+                                    <i class="bi bi-incognito"></i>
                                 }
                                 else if (!string.IsNullOrWhiteSpace(conv.OtherUserProfileImageUrl))
                                 {

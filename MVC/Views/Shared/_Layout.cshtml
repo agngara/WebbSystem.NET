@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    <header>
+    <header style="position: fixed; z-index: 1000;">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3">
             <div class="container-fluid">
                 <div class="nav-section" style="display:flex; justify-content: flex-start; align-items: center;">
@@ -57,7 +57,7 @@
 
                                 <div class="message-wrapper">
                                     <img src="/Icons/Chat.svg" alt="Chat" />
-                                    @*  @await Component.InvokeAsync("UnreadMessages") *@
+                                    @await Component.InvokeAsync("UnreadMessages")
                                 </div>
                                 <p class="mobile-nav-text">Messages</p>
                             </a>
@@ -98,7 +98,7 @@
             </div>
         </nav>
     </header>
-    <main role="main" class="content-wrapper">
+    <main role="main" class="content-wrapper" style="margin-top: 67px;">
         @RenderBody()
     </main>
 

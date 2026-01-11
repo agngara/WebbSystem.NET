@@ -337,6 +337,9 @@ namespace DAL.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("MessageISDeleteed")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("ReadAt")
                         .HasColumnType("datetime2");
 

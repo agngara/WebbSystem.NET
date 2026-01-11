@@ -123,25 +123,25 @@ input[type="file"] {
 
 /* Knappar i CV-edit */
 .cv-edit-container .btn,
-.cv-edit-container .custom-button {
+.cv-edit-container .custom-button .chat-buttom {
     background-color: var(--btn-bg-color);
     color: var(--btn-text-color);
     border: 2px solid var(--btn-border-color);
 }
 
-    .cv-edit-container .btn-primary,
-    .cv-edit-container .custom-button.primary {
-        background-color: var(--btn-primary-bg-color);
-        color: var(--btn-primary-text-color);
-        border-color: var(--btn-primary-border-color);
-    }
+.cv-edit-container .btn-primary,
+.cv-edit-container .custom-button.primary .chat-buttom {
+    background-color: var(--btn-primary-bg-color);
+    color: var(--btn-primary-text-color);
+    border-color: var(--btn-primary-border-color);
+}
 
-    .cv-edit-container .btn:hover,
-    .cv-edit-container .custom-button:hover {
-        background-color: var(--accent-color);
-        border-color: var(--accent-color);
-        color: var(--bg-lighter-color);
-    }
+.cv-edit-container .btn:hover,
+.cv-edit-container .custom-button:hover .chat-buttom:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--bg-lighter-color);
+}
 
 /* ==================== */
 /* CHECKBOX & RADIO */
