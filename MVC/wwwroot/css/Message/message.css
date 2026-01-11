@@ -50,6 +50,11 @@
 		margin-top: 2px;
 	}
 
+.guest-message {
+
+
+}
+
 
 
 /*  ALLA KONkVERSATIONNER */
@@ -60,6 +65,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	background-color: var( --bg-color);
 }
 
 
@@ -72,6 +78,7 @@
 
 .messages-search {
 	justify-self: anchor-center;
+	
 }
 
 	.messages-search button:hover {
@@ -89,6 +96,7 @@
 		border: none;
 		outline: none;
 		box-shadow: none;
+	 border: 1.5px solid var(--accent-color);
 	}
 
 	.messages-search button {
@@ -103,7 +111,7 @@
 .conversation-lista {
 	width: 70%;
 	max-width: 900px;
-	background: #ffeef8;
+	background: var(--bg-lighter-color);
 	border-radius: 1rem;
 	box-shadow: 0 4px 18px rgba(0,0,0,0.08);
 	overflow: hidden;
@@ -113,26 +121,26 @@
 	display: flex;
 	padding: 0.9rem 1.2rem;
 	text-decoration: none;
-	
 	align-items: center;
+	border-top: 4px solid var(--bg-color);
 }
 
 
 
 
 	.conversation-item:nth-child(odd) {
-		background: #fef2f5;
+		background: var(--bg-lighter-color);
 	}
 
 	.conversation-item:hover {
-		background: #fdd3ec;
+		background: linear-gradient( 135deg, var(--card-middle-color) 0%, var(--card-end-color) 100% );
 	}
 
-.conversation-profilpic  {
+.conversation-profilpic {
 	width: 42px;
 	height: 42px;
 	border-radius: 50%;
-	background: #ed4c9d;
+	background: var( --accent-color);
 	color: white;
 	display: flex;
 	align-items: center;
@@ -172,11 +180,14 @@
 			}
 
 		.conversation-name {
-			font-weight: 600;
-			color: #292626;
+		font-weight: 600;
+		color: var( --text-lighter-color)
 		}
 
-		.conversation-date {
+			.conversation-preview {
+			color: var( --text-color);
+		}
+				.conversation-date {
 			font-size: 0.8rem;
 			color: #777;
 		}
@@ -265,26 +276,27 @@
 
 			.chat-row.theirs .text {
 				justify-content: flex-start;
-				color: black;
+				color: var( --text-color);
 			}
 
-		.chat-bubble {
-			max-width: 100%;
-			padding: 0.6rem 0.9rem;
-			border-radius: 1.3rem;
-			background: #ffffff;
-			box-shadow: 0 2px 8px #0a0a0a3b;
-			font-size: 0.95rem;
-		}
+			.chat-bubble {
+				max-width: 100%;
+				padding: 0.6rem 0.9rem;
+				border-radius: 1.3rem;
+				background: var(--bg-color);
+	
+				box-shadow: 0 2px 8px #0a0a0a3b;
+				font-size: 0.95rem;
+			}
 
 		.chat-row.mine .chat-bubble {
 			background: #dc2376bf;
 			border-bottom-right-radius: 0.2rem;
 		}
 
-		.chat-row.theirs .chat-bubble text {
-			background: #ffffff;
-			border-bottom-left-radius: 0.2rem;
+		.chat-row.theirs .chat-bubble  {
+		
+		border-bottom-left-radius: 0.2rem;
 		}
 
 		.chat-input-area {
