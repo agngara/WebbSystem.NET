@@ -1,8 +1,6 @@
 ﻿
 /*Gäst-läge*/
-
-
-	.guest-name-wrapper {
+.guest-name-wrapper {
 		display: flex;
 		align-items: center;
 		gap: 6px;
@@ -10,12 +8,12 @@
 		border-radius: 999px;
 		background: #fff0f7;
 		border: 1.5px solid var(--accent-color);
-	}
+}
 
-	.guest-name-wrapper i {
+.guest-name-wrapper i {
 		color: #dc2376;
 		font-size: 16px;
-	}
+}
 
 
 
@@ -77,33 +75,58 @@
 
 	}
 
+.messages-search input {
+	padding: 0.6rem 1rem;
+	border-radius: 999px;
+	color: black;
+	outline: none;
+	box-shadow: none;
+	border: 1.5px solid var(--accent-color);
+}
 	.messages-search {
 		justify-self: anchor-center;
-	
 	}
 
-	.messages-search button:hover {
-		background: #f296bf;
-		transform: scale(1.05);
-	}
+		.messages-search button:hover {
+			background: #f296bf;
+			transform: scale(1.05);
+		}
 
-	.messages-search i {
-		color: white;
-	}
+		.messages-search i {
+			color: white;
+		}
 
 	.input .text {
+		color: black;
+	}
 
-		color: black;
-	}
-	
-	.messages-search input {
-		padding: 0.6rem 1rem;
-		border-radius: 999px;
-		color: black;
-		outline: none;
-		box-shadow: none;
-		border: 1.5px solid var(--accent-color);
-	}
+/*.delete-icon-secondary {
+	color: #fff;
+	border-radius: 0.2rem;
+	background-color: #6c757d;
+	width: 28px;
+	height: 28px;
+	transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+	.delete-icon-secondary:hover {
+			
+		
+		transform: scale(1.05)
+			
+		}*/
+
+
+
+
+.messages-search input {
+	padding: 0.6rem 1rem;
+	border-radius: 999px;
+	color: black;
+	outline: none;
+	box-shadow: none;
+	border: 1.5px solid var(--accent-color);
+}
 
 	.messages-search button {
 		padding: 0.6rem 1rem;
@@ -206,7 +229,7 @@
 
 		.chat-layout {
 			background: var(--bg-lighter-color);
-			max-width: 700px;
+			max-width: 800px;
 			margin: 40px auto;
 			width: 100%;
 			display: flex;
@@ -263,9 +286,7 @@
 			display: flex;
 		}
 
-			.chat-row i {
-				color: #f0e6e6;
-			}
+			
 
 			.chat-row.mine {
 				justify-content: flex-end;
@@ -276,17 +297,21 @@
 				}
 
 				.chat-row.mine .meta {
-					color: #f0e6e6;
+					color: white;
 				}
 
+			
 
 			.chat-row.theirs .text {
 				justify-content: flex-start;
 				color: var( --text-color);
 			}
+			.chat-row i {
+				color: #f0e6e6;
+			}
 
 			.chat-bubble {
-				max-width: 100%;
+				max-width: 500px;
 				padding: 0.6rem 0.9rem;
 				border-radius: 1.3rem;
 				background: var(--bg-color);
@@ -344,4 +369,28 @@
 			.chat-input-area button:hover {
 				background: #f5c4e3;
 				transform: scale(1.05);
+			}
+
+			.delete-wrapper {
+				opacity: 0;
+				transition: opacity 0.15s ease;
+			}
+
+			.chat-row:hover .delete-wrapper {
+				opacity: 1;
+			}
+
+			.hidden {
+				display: none !important;
+			}
+
+			.delete-wrapper {
+				margin-top: 4px;
+			}
+
+			.delete-confirm {
+				display: flex;
+				gap: 6px;
+				align-items: center;
+				font-size: 0.85rem;
 			}

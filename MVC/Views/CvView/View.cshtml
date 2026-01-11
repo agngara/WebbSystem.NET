@@ -70,6 +70,22 @@
                             <a class="custom-button" id="download-profile-btn" asp-action="Export" asp-route-cvId="@Model.Cv?.Id">Download Profile</a>
                         </div>
                     }
+
+                    @if (!(User.Identity?.IsAuthenticated == true &&
+                                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id))
+                    {
+                        <div class="mt-3">
+                            <a asp-controller="Message"
+                               asp-action="Chat"
+                               asp-route-toUserId="@Model.Id"
+                               class="custom-button"
+                               title="chat">
+                                <i class="bi bi-chat-dots chat-icon"></i>
+                                @* <span class="ms-1">Chat</span> *@
+                            </a>
+                        </div>
+                    }
+
                 </div>
             </div>
 

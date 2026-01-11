@@ -7,5 +7,7 @@ public interface IMessageRepository : IRepository<Message>
     Task AddMessageAsync(int conversationId, string senderId, string text);
     Task MarkAsReadAsync(int conversationId, string currentUserId);
     public Task<int> GetUnreadCountAsync(string userId);
+
+    Task DeleteMessageAsync(int messageId, string currentUserId);
 }
 
