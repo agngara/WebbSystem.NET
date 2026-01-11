@@ -23,16 +23,17 @@ namespace MVC.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly ISearchService _searchService;
 
-
+        private readonly IProjectRepository _projectRepository;
         private readonly IUserRepository _userRepository;
         private readonly IWorkPlaceRepository _workplaceRepository;
 
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository, ISearchService searchService)
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IProjectRepository projectRepository, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository, ISearchService searchService)
 
         {
             _context = context;
             _userManager = userManager;
             _environment = environment;
+            _projectRepository = projectRepository;
             _userRepository = userRepository;
             _workplaceRepository = workPlaceRepository;
             _searchService = searchService;
@@ -136,7 +137,16 @@ namespace MVC.Controllers
             ViewBag.RelevantProfiles = relevantProfiles;
             ViewBag.HasRelevantProfiles = relevantProfiles.Any();
 
-            return View("~/Views/CvView/View.cshtml", user);
+            List<Project> createdProjects = await _projectRepository.GetProjectsByCreator(user.Id);
+
+
+            CvViewModel cvViewModel = new CvViewModel()
+            {
+                User = user,
+                UserProjects = createdProjects,
+            };
+
+            return View("~/Views/CvView/View.cshtml", cvViewModel);
         }
 
         // Visa och redigera eget CV

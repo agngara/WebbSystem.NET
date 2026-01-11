@@ -41,6 +41,8 @@ namespace MVC.Controllers
                 {
                     userId = user.Id;
                     userProjects = await _projectRepository.GetProjectsByCreator(userId);
+                    userProjects.Reverse();
+
 
                 }
                 else
@@ -157,7 +159,7 @@ namespace MVC.Controllers
                 }
                 else
                 {
-                    return StatusCode(401);
+                    return Unauthorized();
                 }
             }
             catch (Exception ex) 
@@ -222,10 +224,10 @@ namespace MVC.Controllers
                         _projectRepository.UpdateProject(p);
                         return RedirectToAction("Catalog");
                     }
-                    // Or else, a forbidden status code is sent. 
+                    // Or else, a unauthorized status code is sent. 
                     else
                     {
-                        return StatusCode(401);
+                        return Unauthorized();
                     }
             }
             catch (Exception ex)
