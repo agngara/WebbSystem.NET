@@ -75,16 +75,8 @@
                 </div>
 
                 <div class="card-body">
-                    @*Displays buttons for anonymous users*@
-                    @if (!User.Identity!.IsAuthenticated)
-                    {
-                        <a class="custom-button" asp-action="Login" asp-controller="Account">Join</a>
-                        <a class="custom-button" asp-action="Login" asp-controller="Account">See More</a>
-                    }
-                    else
-                    {
                         @*Otherwise, checks if user is or is not creator of project*@
-                        if (User.FindFirstValue(ClaimTypes.NameIdentifier) != project.CreatorId)
+                        @if (User.FindFirstValue(ClaimTypes.NameIdentifier) != project.CreatorId)
                         {
                             bool isJoined = false;
                             @*Loops through userlist to see if user is a participant of the project*@
@@ -111,7 +103,6 @@
                             
                         }
                         <a class="custom-button" asp-controller="Project" asp-action="Details" asp-route-projectId="@project.Id">See More</a>
-                    }
                 </div>
             </div>
         }

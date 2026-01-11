@@ -1,9 +1,9 @@
 ﻿@using BL.DTOs
 
-@model Models.User
+@model MVC.Models.CVs.CvViewModel;
 
 @{
-    ViewData["Title"] = $"{Model.Name}'s CV";
+    ViewData["Title"] = $"{Model.User.Name}'s CV";
 
     // Helper function för att formatera match-typen
     string GetMatchTypeDisplay(string matchedOn)
@@ -53,17 +53,17 @@
                         }
                     </div>
 
-                    <h2>@Model.Name</h2>
-                    @if (!string.IsNullOrEmpty(Model.Address))
+                    <h2>@Model.User.Name</h2>
+                    @if (!string.IsNullOrEmpty(Model.User.Address))
                     {
-                        <p><i class="fas fa-map-marker-alt"></i> @Model.Address</p>
+                        <p><i class="fas fa-map-marker-alt"></i> @Model.User.Address</p>
                     }
-                    @if (!string.IsNullOrEmpty(Model.Email))
+                    @if (!string.IsNullOrEmpty(Model.User.Email))
                     {
-                        <p><i class="fas fa-envelope"></i> @Model.Email</p>
+                        <p><i class="fas fa-envelope"></i> @Model.User.Email</p>
                     }
 
-                    @if (Model.IsPrivate == true)
+                    @if (Model.User.IsPrivate == true)
                     {
                         <span class="badge bg-warning">Privat profil</span>
                     }
@@ -73,7 +73,7 @@
                     }
 
                     @if (User.Identity!.IsAuthenticated &&
-                                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
+                                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.User.Id)
                     {
                         <div class="mt-3">
                             <a asp-action="MyCV" class="btn btn-primary">Redigera mitt CV</a>
@@ -105,14 +105,14 @@
             </div>
 
             <!-- Kompetenser -->
-            @if (Model.Cv?.Competences?.Any() == true)
+            @if (Model.User.Cv?.Competences?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>Kompetenser</h5>
                     </div>
                     <div class="card-body">
-                        @foreach (var competence in Model.Cv.Competences)
+                        @foreach (var competence in Model.User.Cv.Competences)
                         {
                             <span class="badge bg-primary me-1 mb-1">@competence.Name</span>
                         }
@@ -166,27 +166,27 @@
 
         <div class="col-md-8">
             <!-- Beskrivning -->
-            @if (!string.IsNullOrEmpty(Model.Cv?.Description))
+            @if (!string.IsNullOrEmpty(Model.User.Cv?.Description))
             {
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>Om mig</h5>
                     </div>
                     <div class="card-body">
-                        <p>@Model.Cv.Description</p>
+                        <p>@Model.User.Cv.Description</p>
                     </div>
                 </div>
             }
 
             <!-- Arbetserfarenhet -->
-            @if (Model.Cv?.WorkExperiences?.Any() == true)
+            @if (Model.User.Cv?.WorkExperiences?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>Arbetserfarenhet</h5>
                     </div>
                     <div class="card-body">
-                        @foreach (var work in Model.Cv.WorkExperiences)
+                        @foreach (var work in Model.User.Cv.WorkExperiences)
                         {
                             <div class="mb-3">
                                 <h6>@work.Title</h6>
@@ -212,14 +212,14 @@
             }
 
             <!-- Utbildning -->
-            @if (Model.Cv?.Educations?.Any() == true)
+            @if (Model.User.Cv?.Educations?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>Utbildning</h5>
                     </div>
                     <div class="card-body">
-                        @foreach (var edu in Model.Cv.Educations)
+                        @foreach (var edu in Model.User.Cv.Educations)
                         {
                             <div class="mb-3">
                                 <h6>@edu.ProgramOrCourseName</h6>
@@ -245,7 +245,7 @@
             }
 
             <!-- Projekt -->
-            @if (Model.ProjectUsers?.Any() == true)
+            @if (Model.User.ProjectUsers?.Any() == true || Model.UserProjects?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
@@ -253,7 +253,25 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            @foreach (var projectUser in Model.ProjectUsers)
+
+                            <!-- Projects the user has created -->
+                            @foreach (var project in Model.UserProjects)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6>@project.Titel</h6>
+                                            @if (!string.IsNullOrEmpty(project.Description))
+                                            {
+                                                <p class="small">@project.Description</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Projects the user is a member of -->
+                            @foreach (var projectUser in Model.User.ProjectUsers)
                             {
                                 <div class="col-md-6 mb-3">
                                     <div class="card h-100">
@@ -274,14 +292,14 @@
 
             <!-- Profilvisningar (endast för ägaren) -->
             @if (User.Identity!.IsAuthenticated &&
-                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
+                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.User.Id)
             {
                 <div class="card">
                     <div class="card-header">
                         <h5>Statistik</h5>
                     </div>
                     <div class="card-body">
-                        <p>Den här profilen har visats <strong>@(Model.Cv?.ProfileViews ?? 0)</strong> gånger</p>
+                        <p>Den här profilen har visats <strong>@(Model.User.Cv?.ProfileViews ?? 0)</strong> gånger</p>
                     </div>
                 </div>
             }
