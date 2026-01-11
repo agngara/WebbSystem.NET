@@ -2,20 +2,22 @@
 /*Gäst-läge*/
 
 
-.guest-name-wrapper {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	padding: 0.4rem 0.7rem;
-	border-radius: 999px;
-	background: #fff0f7;
-	border: 1.5px solid var(--accent-color);
-}
+	.guest-name-wrapper {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		padding: 0.4rem 0.7rem;
+		border-radius: 999px;
+		background: #fff0f7;
+		border: 1.5px solid var(--accent-color);
+	}
 
 	.guest-name-wrapper i {
 		color: #dc2376;
 		font-size: 16px;
 	}
+
+
 
 	.guest-name-wrapper input {
 		border: none;
@@ -23,6 +25,7 @@
 		outline: none;
 		font-size: 0.9rem;
 		width: 110px;
+		color: black;
 	}
 
 	.guest-name-wrapper:focus-within {
@@ -30,19 +33,19 @@
 		box-shadow: 0 0 0 3px rgba(220, 35, 118, 0.15);
 	}
 
-.chat-system-message {
-	max-width: 720px;
-	margin: 1rem auto 0.5rem auto;
-	padding: 0.8rem 1.2rem;
-	border-radius: 1rem;
-	background: #fff4fa;
-	color: #7a4a60;
-	font-size: 0.9rem;
-	display: flex;
-	align-items: flex-start;
-	gap: 0.6rem;
-	box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
+	.chat-system-message {
+		max-width: 720px;
+		margin: 1rem auto 0.5rem auto;
+		padding: 0.8rem 1.2rem;
+		border-radius: 1rem;
+		background: #fff4fa;
+		color: #7a4a60;
+		font-size: 0.9rem;
+		display: flex;
+		align-items: flex-start;
+		gap: 0.6rem;
+		box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+	}
 
 	.chat-system-message i {
 		color: #dc2376;
@@ -50,36 +53,34 @@
 		margin-top: 2px;
 	}
 
-.guest-message {
-
-
-}
 
 
 
-/*  ALLA KONkVERSATIONNER */
 
-.mesages-layout {
-	width: 100%;
-	padding: 2rem 0;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	background-color: var( --bg-color);
-}
+	/*  ALLA KONkVERSATIONNER */
+
+	.mesages-layout {
+		width: 100%;
+		padding: 2rem 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		background-color: var( --bg-color);
+	}
 
 
 
-.messages-header {
-	width: 70%;
-	max-width: 900px;
-	margin-bottom: 1rem;
-}
+	.messages-header {
+		width: 70%;
+		max-width: 900px;
+		margin-bottom: 1rem;
 
-.messages-search {
-	justify-self: anchor-center;
+	}
+
+	.messages-search {
+		justify-self: anchor-center;
 	
-}
+	}
 
 	.messages-search button:hover {
 		background: #f296bf;
@@ -90,13 +91,18 @@
 		color: white;
 	}
 
+	.input .text {
+
+		color: black;
+	}
+	
 	.messages-search input {
 		padding: 0.6rem 1rem;
 		border-radius: 999px;
-		border: none;
+		color: black;
 		outline: none;
 		box-shadow: none;
-	 border: 1.5px solid var(--accent-color);
+		border: 1.5px solid var(--accent-color);
 	}
 
 	.messages-search button {
@@ -316,6 +322,7 @@
 				padding: 0.6rem 1rem;
 				outline: none;
 				box-shadow: none;
+				color: black;
 			}
 
 
