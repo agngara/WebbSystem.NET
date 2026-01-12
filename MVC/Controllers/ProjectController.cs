@@ -1,14 +1,10 @@
 ﻿using BL.Services;
-using DAL;
-using DAL.Repositories;
 using DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Models;
 using MVC.Models.Projects;
-using System.Diagnostics.Eventing.Reader;
 using System.Security.Claims;
 
 
@@ -179,8 +175,8 @@ namespace MVC.Controllers
             try
             {
 
-                Project dbProject = await _projectRepository.GetProjectAsync(viewModel.ProjectId);
-                string userId = dbProject.CreatorId;
+                Project p = await _projectRepository.GetProjectAsync(id);
+                string userId = p.CreatorId;
 
                 // Checks if logged in user has the same ID as the one listed as creator in DB.
                 if (userId == User.FindFirstValue(ClaimTypes.NameIdentifier))
@@ -190,7 +186,7 @@ namespace MVC.Controllers
                     {
                         return Json(ModelStateErrorResponse("Invalid changes, computer says no :("));
                     }
-                    Project p = await _projectRepository.GetProjectAsync(id);
+
 
                     string? imgUrl = viewModel.ImageUrl;
 
@@ -233,10 +229,10 @@ namespace MVC.Controllers
                         ));
                 
                         }
-                // Or else, a forbidden status code is sent. 
+                // Or else, an unauthorized status code is sent. 
                 else
                 {
-                    return StatusCode(401);
+                    return Unauthorized();
                 }
             }
             catch (Exception ex)
