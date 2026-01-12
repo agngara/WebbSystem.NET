@@ -74,7 +74,12 @@
 
                                 if (data.redirectUrl) {
                                     setTimeout(() => {
-                                        window.location.href = data.redirectUrl;
+                                        if (data.redirectUrl === "refresh") {
+                                            location.reload();
+                                        }
+                                        else {
+                                            window.location.href = data.redirectUrl;
+                                        }
                                     }, data.Notify ? 1000 : 0);
                                 }
                             }
