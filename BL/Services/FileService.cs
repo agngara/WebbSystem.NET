@@ -54,5 +54,31 @@ namespace BL.Services
                 return "";
             }
         }
+
+        public static bool DeleteFile(string fileDirectory, string fileName)
+        {
+            string wwwRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            string fullPath = Path.Combine(wwwRoot, fileDirectory.TrimStart('/', '\\'), fileName);
+
+            try
+            {
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                    return true;
+                }
+                else 
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return false;
+            }
+
+        }
     }
 }

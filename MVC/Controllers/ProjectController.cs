@@ -243,11 +243,25 @@ namespace MVC.Controllers
 
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
+
+                // Code for deleting project image. 
+                Project project = await _projectRepository.GetProjectAsync(id);
+                if (project.ImageUrl != "/Assets/UI-Images/project_placeholder_image.jpg")
+                {
+                    bool imageRemovalStatus = FileService.DeleteFile("Assets/UserUploads/ProjectImages", Path.GetFileName(project.ImageUrl));
+                    if (!imageRemovalStatus)
+                    {
+                        return StatusCode(500);
+                    }
+                }
+
                 _projectRepository.DeleteProject(id);
+
+
 
                 return Json(CreateResponse(
                 success: true,
