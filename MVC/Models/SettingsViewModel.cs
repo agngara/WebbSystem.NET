@@ -9,6 +9,9 @@ namespace MVC.Models
         public string? Name { get; set; }
 
         [StringLength(50)]
+        public string? Email { get; set; }
+
+        [StringLength(50)]
         public string? Address { get; set; }
 
         public bool IsPrivate { get; set; }

@@ -23,7 +23,7 @@ namespace MVC.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly ISearchService _searchService;
 
-        private readonly IProjectRepository _projectRepository;
+
         private readonly IUserRepository _userRepository;
         private readonly IWorkPlaceRepository _workplaceRepository;
         private readonly ICvRepository _cvRepository;
@@ -35,7 +35,6 @@ namespace MVC.Controllers
             _context = context;
             _userManager = userManager;
             _environment = environment;
-            _projectRepository = projectRepository;
             _userRepository = userRepository;
             _workplaceRepository = workPlaceRepository;
             _searchService = searchService;
@@ -43,430 +42,373 @@ namespace MVC.Controllers
 
         }
 
-        // Visa CV för en specifik användare
         [AllowAnonymous]
         public async Task<IActionResult> View(string id)
         {
-            var user = await _context.Users
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Competences)
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Educations)
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.WorkExperiences)
-                    .ThenInclude(we => we.WorkPlace)
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Educations)
-                    .ThenInclude(e => e.Institution)
-                .Include(u => u.ProjectUsers)
-                    .ThenInclude(pu => pu.Project)
-                .FirstOrDefaultAsync(u => u.Id == id);
-
-            if (user == null)
+            try
             {
-                return NotFound("Användaren hittades inte");
-            }
+                var user = await _context.Users
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.Competences)
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.Educations)
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.WorkExperiences)
+                        .ThenInclude(we => we.WorkPlace)
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.Educations)
+                        .ThenInclude(e => e.Institution)
+                    .Include(u => u.ProjectUsers)
+                        .ThenInclude(pu => pu.Project)
+                    .FirstOrDefaultAsync(u => u.Id == id);
 
-            if (user.IsActive == false)
-            {
-                return Unauthorized("This account is deactivated");
-            }
-
-            // Kontrollera om profilen är privat
-            if (user.IsPrivate == true)
-            {
-                if (User.Identity.IsAuthenticated == false)
+                if (user == null)
                 {
-                    return Unauthorized("Den här profilen är privat. Logga in för att se den.");
+                    return NotFound("Användaren hittades inte");
                 }
 
-                // Kontrollera om den aktuella användaren är samma som profilen
-                //var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                //if (currentUserId != user.Id)
-                //{
-                //   return Forbid("Du har inte behörighet att se denna privata profil");
-                //}
-            }
-
-
-            // Öka profilvisningar om det är en annan användare
-            if (User.Identity!.IsAuthenticated)
-            {
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (currentUserId != user.Id && user.Cv != null)
+                if (user.IsActive == false)
                 {
-                    user.Cv.ProfileViews++;
-                    await _context.SaveChangesAsync();
+                    return Unauthorized("This account is deactivated");
                 }
-            }
 
-            // ⭐⭐ NYTT: Hämta relevanta profiler ⭐⭐
-            List<RelevantProfileDto> relevantProfiles = new List<RelevantProfileDto>();
-
-            if (user.Cv != null)
-            {
-                try
+                if (user.IsPrivate == true)
                 {
-                    // Hämta den inloggade användarens ID (om någon är inloggad)
+                    if (User.Identity.IsAuthenticated == false)
+                    {
+                        return Unauthorized("Den här profilen är privat. Logga in för att se den.");
+                    }
+                }
+
+                if (User.Identity!.IsAuthenticated)
+                {
                     var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                    // Om ingen är inloggad, använd en tom sträng
-                    currentUserId = currentUserId ?? "";
-
-                    // Hämta relevanta profiler för denna användare
-                    // Exkludera både profilanvändaren OCH den inloggade användaren
-                    relevantProfiles = await _searchService.SearchRelevantProfiles(
-                        currentUserId: currentUserId,
-                        profileUserId: id  // Detta är profilen vi är inne på
-                    );
-
-                    Console.WriteLine($"Found {relevantProfiles.Count} relevant profiles for user {id}");
-
-                    // Extra säkerhetskontroll: Filtrera bort båda användarna manuellt också
-                    relevantProfiles = relevantProfiles
-                        .Where(p => p.UserId != id && p.UserId != currentUserId)
-                        .ToList();
-
-                    Console.WriteLine($"After manual filtering: {relevantProfiles.Count} profiles");
+                    if (currentUserId != user.Id && user.Cv != null)
+                    {
+                        user.Cv.ProfileViews++;
+                        await _context.SaveChangesAsync();
+                    }
                 }
-                catch (Exception ex)
+
+                List<RelevantProfileDto> relevantProfiles = new List<RelevantProfileDto>();
+
+                if (user.Cv != null)
                 {
-                    Console.WriteLine($"Error getting relevant profiles: {ex.Message}");
-                    // Fortsätt utan relevanta profiler om det går fel
+                    try
+                    {
+                        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        currentUserId = currentUserId ?? "";
+
+                        relevantProfiles = await _searchService.SearchRelevantProfiles(
+                            currentUserId: currentUserId,
+                            profileUserId: id
+                        );
+
+                        relevantProfiles = relevantProfiles
+                            .Where(p => p.UserId != id && p.UserId != currentUserId)
+                            .ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error getting relevant profiles: {ex.Message}");
+                    }
                 }
+
+                ViewBag.RelevantProfiles = relevantProfiles;
+                ViewBag.HasRelevantProfiles = relevantProfiles.Any();
+
+                return View("~/Views/CvView/View.cshtml", user);
             }
-
-            // Skicka med relevanta profiler till vyn
-            ViewBag.RelevantProfiles = relevantProfiles;
-            ViewBag.HasRelevantProfiles = relevantProfiles.Any();
-
-            List<Project> createdProjects = await _projectRepository.GetProjectsByCreator(user.Id);
-
-
-            CvViewModel cvViewModel = new CvViewModel()
+            catch (Exception ex)
             {
-                User = user,
-                UserProjects = createdProjects,
-            };
-
-            return View("~/Views/CvView/View.cshtml", cvViewModel);
+                return StatusCode(500, new { error = "An error occurred while loading the CV. Please try again later." });
+            }
         }
 
-        // Visa och redigera eget CV
         public async Task<IActionResult> MyCV()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _context.Users
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Competences)
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Educations).ThenInclude(e => e.Institution)
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.WorkExperiences).ThenInclude(W => W.WorkPlace)
-                .Include(u => u.ProjectUsers)
-                    .ThenInclude(pu => pu.Project)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
+            try
             {
-                return NotFound();
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await _context.Users
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.Competences)
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.Educations).ThenInclude(e => e.Institution)
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.WorkExperiences).ThenInclude(W => W.WorkPlace)
+                    .Include(u => u.ProjectUsers)
+                        .ThenInclude(pu => pu.Project)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var allProjects = await _context.Projects.ToListAsync();
+
+                var viewModel = new CvEditModel
+                {
+                    Id = user.Cv?.Id,
+                    Description = user.Cv?.Description ?? "",
+                    ExistingProfileImage = user.Cv?.ProfileImage,
+                    Competences = user.Cv?.Competences.Select(c => new CompetenceViewModel
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    }).ToList() ?? new(),
+                    Educations = user.Cv?.Educations.Select(e => new EducationViewModel
+                    {
+                        Id = e.Id,
+                        ProgramOrCourseName = e.ProgramOrCourseName ?? "",
+                        InstitutionName = e.Institution?.Name,
+                        Description = e.Description,
+                        StartDate = e.StartDate,
+                        EndDate = e.EndDate
+                    }).ToList() ?? new(),
+                    WorkExperiences = user.Cv?.WorkExperiences.Select(w => new WorkExperienceViewModel
+                    {
+                        Id = w.Id,
+                        Title = w.Title,
+                        CompanyName = w.WorkPlace?.Name,
+                        Description = w.Description,
+                        StartDate = w.StartDate,
+                        EndDate = w.EndDate
+                    }).ToList() ?? new(),
+                    AvailableProjects = allProjects.Select(p => new ProjectOptionViewModel
+                    {
+                        Id = p.Id,
+                        Title = p.Titel,
+                        IsSelected = user.ProjectUsers.Any(pu => pu.ProjectId == p.Id)
+                    }).ToList()
+                };
+
+                ViewBag.ProfileViews = user.Cv?.ProfileViews ?? 0;
+                return View("~/Views/CvView/Edit.cshtml", viewModel);
             }
-
-            // Hämta alla tillgängliga projekt
-            var allProjects = await _context.Projects.ToListAsync();
-
-            var viewModel = new CvEditModel
+            catch (Exception ex)
             {
-                Id = user.Cv?.Id,
-                Description = user.Cv?.Description ?? "",
-                ExistingProfileImage = user.Cv?.ProfileImage,
-                Competences = user.Cv?.Competences.Select(c => new CompetenceViewModel
-                {
-                    Id = c.Id,
-                    Name = c.Name
-                }).ToList() ?? new(),
-                Educations = user.Cv?.Educations.Select(e => new EducationViewModel
-                {
-                    Id = e.Id,
-                    ProgramOrCourseName = e.ProgramOrCourseName ?? "",
-                    InstitutionName = e.Institution?.Name,
-                    Description = e.Description,
-                    StartDate = e.StartDate,
-                    EndDate = e.EndDate
-                }).ToList() ?? new(),
-                WorkExperiences = user.Cv?.WorkExperiences.Select(w => new WorkExperienceViewModel
-                {
-                    Id = w.Id,
-                    Title = w.Title,
-                    CompanyName = w.WorkPlace?.Name,
-                    Description = w.Description,
-                    StartDate = w.StartDate,
-                    EndDate = w.EndDate
-                }).ToList() ?? new(),
-                AvailableProjects = allProjects.Select(p => new ProjectOptionViewModel
-                {
-                    Id = p.Id,
-                    Title = p.Titel,
-                    IsSelected = user.ProjectUsers.Any(pu => pu.ProjectId == p.Id)
-                }).ToList()
-            };
-
-            ViewBag.ProfileViews = user.Cv?.ProfileViews ?? 0;
-            return View("~/Views/CvView/Edit.cshtml", viewModel);
+                return StatusCode(500, new { error = "An error occurred while loading your CV. Please try again later." });
+            }
         }
 
-        // Export CV-File
-        
+
         public async Task<IActionResult> Export(int cvId)
         {
-            CV? cv = _context.CVs
-                            .Include(c => c.Competences)
-                            .Include(c => c.WorkExperiences)
-                            .ThenInclude(w => w.WorkPlace)
-                            .Include(c => c.Educations)
-                            .ThenInclude(e => e.Institution)
-                            .Include(c => c.User)
-                            .FirstOrDefault(c => c.Id == cvId);
-                                    
-            User? user = await _userRepository.GetUserById(cv.UserId);
-
-            if (user == null || cv == null) 
+            try
             {
-                return BadRequest();
-            }
+                CV? cv = _context.CVs
+                                .Include(c => c.Competences)
+                                .Include(c => c.WorkExperiences)
+                                .ThenInclude(w => w.WorkPlace)
+                                .Include(c => c.Educations)
+                                .Include(c => c.User)
+                                .FirstOrDefault(c => c.Id == cvId);
 
-            // The purpose of the following code is to convert workexperiences from the cv object into a filtered one.
-            List<WorkExperienceFileModel> viewWorkExperiences = new List<WorkExperienceFileModel>();
+                User? user = await _userRepository.GetUserById(cv.UserId);
 
-            foreach (WorkExperience w in cv.WorkExperiences)
-            {
-                WorkPlace? workplace = w.WorkPlace;
-
-                // Creates an empty workplace object to avoid a null reference if the user has left the workplace field empty. 
-                if (workplace == null)
+                if (user == null || cv == null)
                 {
-                    WorkPlace placeHolderWorkPlace = new WorkPlace()
-                    {
-                        Name = ""
-                    };
-
-                    workplace = placeHolderWorkPlace;
+                    return BadRequest();
                 }
 
-                WorkExperienceFileModel workExperienceFileModel = new WorkExperienceFileModel()
+                List<WorkExperienceFileModel> viewWorkExperiences = new List<WorkExperienceFileModel>();
+
+                foreach (WorkExperience w in cv.WorkExperiences)
                 {
-                    Title = w.Title,
-                    Description = w.Description,
-                    StartDate = w.StartDate,
-                    EndDate = w.EndDate,
-                    WorkPlaceName = workplace.Name,
-                            
-                };
-
-                viewWorkExperiences.Add(workExperienceFileModel);
-            }
-
-            // Same as above but for educations.
-            List<EducationFileModel> viewEducations = new List<EducationFileModel>();
-
-            foreach (Education e in cv.Educations)
-            {
-                Institution? institution = e.Institution;
-
-                // Creates an empty institution object to avoid a null reference if the user has left the workplace field empty. 
-                if (institution == null)
-                {
-                    Institution placeHolderInstitution = new Institution()
+                    WorkPlace? workplace = w.WorkPlace;
+                    if (workplace == null)
                     {
-                        Name = ""
+                        break;
+                    }
+
+                    WorkExperienceFileModel workExperienceFileModel = new WorkExperienceFileModel()
+                    {
+                        Title = w.Title,
+                        Description = w.Description,
+                        StartDate = w.StartDate,
+                        EndDate = w.EndDate,
+                        WorkPlaceName = workplace.Name,
                     };
 
+                    viewWorkExperiences.Add(workExperienceFileModel);
                 }
 
-                EducationFileModel educationFileModel = new EducationFileModel()
+                CvFileModel fileModel = new CvFileModel()
                 {
-                    ProgramOrCourseName = e.ProgramOrCourseName,
-                    Description = e.Description,
-                    InstitutionName = institution.Name,
-                    StartDate = e.StartDate,
-                    EndDate = e.EndDate,
+                    Name = user.Name,
+                    Description = cv.Description,
+                    WorkExperiences = viewWorkExperiences,
+                    Competences = cv.Competences,
+                    Educations = cv.Educations,
                 };
 
-                viewEducations.Add(educationFileModel);
+                XmlSerializer serializer = new XmlSerializer(typeof(CvFileModel));
+
+                using var memoryStream = new MemoryStream();
+
+                serializer.Serialize(memoryStream, fileModel);
+
+                memoryStream.Position = 0;
+
+                return File(memoryStream.ToArray(), "application/xml", $"{Guid.NewGuid()}.xml");
             }
-
-
-            CvFileModel fileModel = new CvFileModel()
+            catch (Exception ex)
             {
-                Name = user.Name,
-                Description = cv.Description,
-                WorkExperiences = viewWorkExperiences,
-                Competences = cv.Competences,
-                Educations = viewEducations,
-            };
-
-            XmlSerializer serializer = new XmlSerializer(typeof(CvFileModel));
-
-            using var memoryStream = new MemoryStream();
-
-            serializer.Serialize(memoryStream, fileModel);
-            
-            memoryStream.Position = 0;
-
-            return File(memoryStream.ToArray(), "application/xml", $"{Guid.NewGuid()}.xml");
+                return StatusCode(500, new { error = "An error occurred while exporting the CV. Please try again later." });
+            }
         }
 
-
-        // Uppdatera CV
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCV(CvEditModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                var allProjects = await _context.Projects.ToListAsync();
-                model.AvailableProjects = allProjects.Select(p => new ProjectOptionViewModel
+                if (!ModelState.IsValid)
                 {
-                    Id = p.Id,
-                    Title = p.Titel,
-                    IsSelected = model.SelectedProjects?.Any(sp => sp.ProjectId == p.Id && sp.IsSelected) == true
-                }).ToList();
-
-                ViewBag.ProfileViews = 0;
-                return View("~/Views/CvView/Edit.cshtml", model);
-            }
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _context.Users
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Competences)
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.Educations)
-                .Include(u => u.Cv)
-                    .ThenInclude(cv => cv!.WorkExperiences)
-                .Include(u => u.ProjectUsers)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            // Skapa eller uppdatera CV
-            if (user.Cv == null)
-            {
-                user.Cv = new CV
-                {
-                    UserId = userId,
-                    User = user,
-                    Description = model.Description,
-                    ProfileImage = string.IsNullOrEmpty(model.ProfileImageBase64)
-                        ? "/pfp/standard.png"
-                        : await SaveBase64ImageAsync(model.ProfileImageBase64)
-                };
-                _context.CVs.Add(user.Cv);
-            }
-            else
-            {
-                user.Cv.Description = model.Description;
-
-                // Hantera profilbild
-                if (!string.IsNullOrEmpty(model.ProfileImageBase64))
-                {
-                    user.Cv.ProfileImage = await SaveBase64ImageAsync(model.ProfileImageBase64);
-                }
-            }
-
-            // Uppdatera kompetenser
-            user.Cv.Competences.Clear();
-            foreach (var comp in model.Competences.Where(c => !string.IsNullOrWhiteSpace(c.Name)))
-            {
-                user.Cv.Competences.Add(new Competence
-                {
-                    Name = comp.Name.Trim(),
-                    CvId = user.Cv.Id,
-                    Cv = user.Cv
-                });
-            }
-
-            // Uppdatera utbildningar
-            user.Cv.Educations.Clear();
-            foreach (var edu in model.Educations.Where(e => !string.IsNullOrWhiteSpace(e.ProgramOrCourseName)))
-            {
-                Institution? institution = null;
-                if (!string.IsNullOrWhiteSpace(edu.InstitutionName))
-                {
-                    institution = await _context.Institutions
-                        .FirstOrDefaultAsync(i => i.Name.ToLower() == edu.InstitutionName.Trim().ToLower());
-
-                    if (institution == null)
+                    var allProjects = await _context.Projects.ToListAsync();
+                    model.AvailableProjects = allProjects.Select(p => new ProjectOptionViewModel
                     {
-                        institution = new Institution { Name = edu.InstitutionName.Trim() };
-                        _context.Institutions.Add(institution);
-                    }
+                        Id = p.Id,
+                        Title = p.Titel,
+                        IsSelected = model.SelectedProjects?.Any(sp => sp.ProjectId == p.Id && sp.IsSelected) == true
+                    }).ToList();
+
+                    ViewBag.ProfileViews = 0;
+                    return View("~/Views/CvView/Edit.cshtml", model);
                 }
 
-                user.Cv.Educations.Add(new Education
-                {
-                    ProgramOrCourseName = edu.ProgramOrCourseName.Trim(),
-                    Institution = institution,
-                    Description = edu.Description?.Trim(),
-                    StartDate = edu.StartDate,
-                    EndDate = edu.EndDate,
-                    CvId = user.Cv.Id,
-                    Cv = user.Cv
-                });
-            }
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await _context.Users
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.Competences)
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.Educations)
+                    .Include(u => u.Cv)
+                        .ThenInclude(cv => cv!.WorkExperiences)
+                    .Include(u => u.ProjectUsers)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
 
-            // Uppdatera arbetserfarenheter
-            user.Cv.WorkExperiences.Clear();
-            foreach (var work in model.WorkExperiences.Where(w => !string.IsNullOrWhiteSpace(w.Title)))
-            {
-                WorkPlace? workPlace = null;
-                if (!string.IsNullOrWhiteSpace(work.CompanyName))
+                if (user == null)
                 {
-                    workPlace = await _context.WorkPlaces
-                        .FirstOrDefaultAsync(wp => wp.Name.ToLower() == work.CompanyName.Trim().ToLower());
-
-                    if (workPlace == null)
-                    {
-                        workPlace = new WorkPlace { Name = work.CompanyName.Trim() };
-                        _context.WorkPlaces.Add(workPlace);
-                    }
+                    return NotFound();
                 }
 
-                user.Cv.WorkExperiences.Add(new WorkExperience
+                if (user.Cv == null)
                 {
-                    Title = work.Title.Trim(),
-                    WorkPlace = workPlace,
-                    Description = work.Description?.Trim(),
-                    StartDate = work.StartDate,
-                    EndDate = work.EndDate,
-                    CvId = user.Cv.Id,
-                    Cv = user.Cv
-                });
-            }
-
-            // Uppdatera valda projekt
-            user.ProjectUsers.Clear();
-            if (model.SelectedProjects != null)
-            {
-                foreach (var selectedProject in model.SelectedProjects.Where(sp => sp.IsSelected))
-                {
-                    user.ProjectUsers.Add(new ProjectUser
+                    user.Cv = new CV
                     {
                         UserId = userId,
-                        ProjectId = selectedProject.ProjectId,
                         User = user,
-                        Project = await _context.Projects.FindAsync(selectedProject.ProjectId)
+                        Description = model.Description,
+                        ProfileImage = string.IsNullOrEmpty(model.ProfileImageBase64)
+                            ? "/pfp/standard.png"
+                            : await SaveBase64ImageAsync(model.ProfileImageBase64)
+                    };
+                    _context.CVs.Add(user.Cv);
+                }
+                else
+                {
+                    user.Cv.Description = model.Description;
+
+                    if (!string.IsNullOrEmpty(model.ProfileImageBase64))
+                    {
+                        user.Cv.ProfileImage = await SaveBase64ImageAsync(model.ProfileImageBase64);
+                    }
+                }
+
+                user.Cv.Competences.Clear();
+                foreach (var comp in model.Competences.Where(c => !string.IsNullOrWhiteSpace(c.Name)))
+                {
+                    user.Cv.Competences.Add(new Competence
+                    {
+                        Name = comp.Name.Trim(),
+                        CvId = user.Cv.Id,
+                        Cv = user.Cv
                     });
                 }
+
+                user.Cv.Educations.Clear();
+                foreach (var edu in model.Educations.Where(e => !string.IsNullOrWhiteSpace(e.ProgramOrCourseName)))
+                {
+                    Institution? institution = null;
+                    if (!string.IsNullOrWhiteSpace(edu.InstitutionName))
+                    {
+                        institution = await _context.Institutions
+                            .FirstOrDefaultAsync(i => i.Name.ToLower() == edu.InstitutionName.Trim().ToLower());
+
+                        if (institution == null)
+                        {
+                            institution = new Institution { Name = edu.InstitutionName.Trim() };
+                            _context.Institutions.Add(institution);
+                        }
+                    }
+
+                    user.Cv.Educations.Add(new Education
+                    {
+                        ProgramOrCourseName = edu.ProgramOrCourseName.Trim(),
+                        Institution = institution,
+                        Description = edu.Description?.Trim(),
+                        StartDate = edu.StartDate,
+                        EndDate = edu.EndDate,
+                        CvId = user.Cv.Id,
+                        Cv = user.Cv
+                    });
+                }
+
+                user.Cv.WorkExperiences.Clear();
+                foreach (var work in model.WorkExperiences.Where(w => !string.IsNullOrWhiteSpace(w.Title)))
+                {
+                    WorkPlace? workPlace = null;
+                    if (!string.IsNullOrWhiteSpace(work.CompanyName))
+                    {
+                        workPlace = await _context.WorkPlaces
+                            .FirstOrDefaultAsync(wp => wp.Name.ToLower() == work.CompanyName.Trim().ToLower());
+
+                        if (workPlace == null)
+                        {
+                            workPlace = new WorkPlace { Name = work.CompanyName.Trim() };
+                            _context.WorkPlaces.Add(workPlace);
+                        }
+                    }
+
+                    user.Cv.WorkExperiences.Add(new WorkExperience
+                    {
+                        Title = work.Title.Trim(),
+                        WorkPlace = workPlace,
+                        Description = work.Description?.Trim(),
+                        StartDate = work.StartDate,
+                        EndDate = work.EndDate,
+                        CvId = user.Cv.Id,
+                        Cv = user.Cv
+                    });
+                }
+
+                user.ProjectUsers.Clear();
+                if (model.SelectedProjects != null)
+                {
+                    foreach (var selectedProject in model.SelectedProjects.Where(sp => sp.IsSelected))
+                    {
+                        user.ProjectUsers.Add(new ProjectUser
+                        {
+                            UserId = userId,
+                            ProjectId = selectedProject.ProjectId,
+                            User = user,
+                            Project = await _context.Projects.FindAsync(selectedProject.ProjectId)
+                        });
+                    }
+                }
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "CV har uppdaterats!";
+                return RedirectToAction("MyCV");
             }
-            await _context.SaveChangesAsync();
-
-
-            TempData["SuccessMessage"] = "CV har uppdaterats!";
-            return RedirectToAction("MyCV");
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while updating the CV. Please try again later." });
+            }
         }
 
         private async Task<string> SaveBase64ImageAsync(string base64String)
@@ -486,7 +428,6 @@ namespace MVC.Controllers
 
                 var fileName = $"{Guid.NewGuid()}{fileExtension}";
 
-                // RÄTT SÖKVÄG: wwwroot/pfp/
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pfp", fileName);
 
                 var directory = Path.GetDirectoryName(filePath);
@@ -507,95 +448,135 @@ namespace MVC.Controllers
 
         private string GetImageExtension(byte[] bytes)
         {
-            if (bytes.Length > 2 && bytes[0] == 0xFF && bytes[1] == 0xD8)
-                return ".jpg";
-            if (bytes.Length > 3 && bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47)
-                return ".png";
-            if (bytes.Length > 4 && bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
-                return ".gif";
+            try
+            {
+                if (bytes.Length > 2 && bytes[0] == 0xFF && bytes[1] == 0xD8)
+                    return ".jpg";
+                if (bytes.Length > 3 && bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47)
+                    return ".png";
+                if (bytes.Length > 4 && bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
+                    return ".gif";
 
-            return ".jpg";
+                return ".jpg";
+            }
+            catch
+            {
+                return ".jpg";
+            }
         }
 
-        // Redigera profilinformation
         public async Task<IActionResult> EditProfile()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
+            try
             {
-                return NotFound();
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var viewModel = new ProfileViewModel
+                {
+                    Name = user.Name,
+                    Address = user.Address,
+                    IsPrivate = user.IsPrivate ?? false,
+                    Email = user.Email
+                };
+
+                return View("~/Views/CvView/EditProfile.cshtml", viewModel);
             }
-
-            var viewModel = new ProfileViewModel
+            catch (Exception ex)
             {
-                Name = user.Name,
-                Address = user.Address,
-                IsPrivate = user.IsPrivate ?? false,
-                Email = user.Email
-            };
-
-            return View("~/Views/CvView/EditProfile.cshtml", viewModel);
+                return StatusCode(500, new { error = "An error occurred while loading profile settings. Please try again later." });
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile(ProfileViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
+                if (!ModelState.IsValid)
+                {
+                    return View("~/Views/CvView/EditProfile.cshtml", model);
+                }
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.Name = model.Name;
+                user.Address = model.Address;
+                user.IsPrivate = model.IsPrivate;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Profil har uppdaterats!";
+                    return RedirectToAction("EditProfile");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
                 return View("~/Views/CvView/EditProfile.cshtml", model);
             }
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return StatusCode(500, new { error = "An error occurred while updating profile. Please try again later." });
             }
-
-            user.Name = model.Name;
-            user.Address = model.Address;
-            user.IsPrivate = model.IsPrivate;
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (result.Succeeded)
-            {
-                TempData["SuccessMessage"] = "Profil har uppdaterats!";
-                return RedirectToAction("EditProfile");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-            return View("~/Views/CvView/EditProfile.cshtml", model);
         }
 
-        // Hjälpmetod för att lägga till tomma rader i formuläret (AJAX)
         [HttpPost]
         public IActionResult AddCompetenceRow([FromBody] List<CompetenceViewModel> currentCompetences)
         {
-            currentCompetences.Add(new CompetenceViewModel());
-            return PartialView("_CompetenceRow", currentCompetences.Last());
+            try
+            {
+                currentCompetences.Add(new CompetenceViewModel());
+                return PartialView("_CompetenceRow", currentCompetences.Last());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while adding competence row." });
+            }
         }
 
         [HttpPost]
         public IActionResult AddEducationRow([FromBody] List<EducationViewModel> currentEducations)
         {
-            currentEducations.Add(new EducationViewModel());
-            return PartialView("_EducationRow", currentEducations.Last());
+            try
+            {
+                currentEducations.Add(new EducationViewModel());
+                return PartialView("_EducationRow", currentEducations.Last());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while adding education row." });
+            }
         }
 
         [HttpPost]
         public IActionResult AddWorkExperienceRow([FromBody] List<WorkExperienceViewModel> currentWorkExperiences)
         {
-            currentWorkExperiences.Add(new WorkExperienceViewModel());
-            return PartialView("_WorkExperienceRow", currentWorkExperiences.Last());
+            try
+            {
+                currentWorkExperiences.Add(new WorkExperienceViewModel());
+                return PartialView("_WorkExperienceRow", currentWorkExperiences.Last());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while adding work experience row." });
+            }
         }
     }
 }

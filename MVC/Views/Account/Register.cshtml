@@ -2,9 +2,7 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/account.css" />
 }
-
 <div id="errorMessages" class="text-danger"></div>
-
 <div class="login-wrapper register-wrapper">
     <div class="login-left-box">
         <h1>Join <span>PinkedOut</span></h1>
@@ -14,7 +12,6 @@
     <form id="registerForm" class="login-form" method="post" asp-action="Register">
         <div class="create-account-wrapper">
             <h2 class="login-header">Register Account</h2>
-
             <div class="input-outer">
                 <label for="username">Username</label>
                 <div class="input-wrapper">
@@ -28,6 +25,13 @@
                     <input id="name" asp-for="Name" type="text" placeholder="">
                 </div>
                 <p id="error-Name" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <input id="email" asp-for="Email" type="email" placeholder="">
+                </div>
+                <p id="error-Email" class="error-text"></p>
             </div>
             <div class="input-outer">
                 <label for="address">Address</label>

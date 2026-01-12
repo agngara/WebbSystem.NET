@@ -18,11 +18,17 @@ namespace DAL.Repositories
 
         public bool AddProject(Project project)
         {
-
-            _context.Add(project);
-            _context.SaveChanges();
-            return true;
-            
+            try
+            {
+                _context.Add(project);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return false;
+            }
         }
 
         public Task<List<Project>> GetAllAsync()
@@ -54,8 +60,8 @@ namespace DAL.Repositories
         /// Gets the projects where the entered userId is listed as member of the project.
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns>A list of projects</returns>
-        public async Task<List<Project>> GetProjectsByMember(string userId)
+        /// <returns></returns>
+        public async Task<List<Project>> GetProjectsByMembers(string userId)
         {
 
             return await _context.Projects
@@ -67,11 +73,7 @@ namespace DAL.Repositories
 
 
         }
-        /// <summary>
-        /// Gets projects by a certain member
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns>A list of projects</returns>
+
         public async Task<List<Project>> GetProjectsByCreator(string userId)
         {
             return await _context.Projects
@@ -88,26 +90,40 @@ namespace DAL.Repositories
 
         public bool UpdateProject(Project project)
         {
-            _context.Projects.Update(project);
-            _context.SaveChanges();
-            return true;
+            try
+            {
+                _context.Projects.Update(project);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return false;
+            }
         }
-        
 
         public bool DeleteProject(int id)
         {
-
-            Project? project = _context.Projects.Find(id);
-
-            if (project != null)
+            try
             {
-                _context.Remove(project);
-                _context.SaveChanges();
-                return true;
+                Project? project = _context.Projects.Find(id);
 
+                if (project != null)
+                {
+                    _context.Remove(project);
+                    _context.SaveChanges();
+                    return true;
+
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine(ex);
                 return false;
             }
         }

@@ -21,86 +21,94 @@ public class SearchService : ISearchService
 
     public async Task<List<SearchResultDto>> Search(string query, bool isAuthenticated)
     {
-        var searchTerms = ParseSearchQuery(query);
-
-        // Dictionary för att hålla koll på vilka termer varje användare matchar
-        var userMatchCount = new Dictionary<string, int>();
-        var allResults = new Dictionary<string, ScoredResult<User>>();
-
-        // Sök på namn/användarnamn för varje term
-        foreach (var term in searchTerms)
+        try
         {
-            var userResults = await _userRepo.SearchByNameOrUsername(term, limit * 2, isAuthenticated);
+            var searchTerms = ParseSearchQuery(query);
 
-            foreach (var result in userResults)
+            // Dictionary för att hålla koll på vilka termer varje användare matchar
+            var userMatchCount = new Dictionary<string, int>();
+            var allResults = new Dictionary<string, ScoredResult<User>>();
+
+            // Sök på namn/användarnamn för varje term
+            foreach (var term in searchTerms)
             {
-                if (allResults.ContainsKey(result.Entity.Id))
-                {
-                    // Användaren finns redan - öka poängen
-                    allResults[result.Entity.Id].Score += result.Score;
-                    userMatchCount[result.Entity.Id]++;
-                }
-                else
-                {
-                    allResults[result.Entity.Id] = result;
-                    userMatchCount[result.Entity.Id] = 1;
-                }
-            }
-        }
+                var userResults = await _userRepo.SearchByNameOrUsername(term, limit * 2, isAuthenticated);
 
-        // Sök på kompetenser för varje term
-        foreach (var term in searchTerms)
-        {
-            var competenceResults = await _competenceRepo.SearchByCompetenceForUsers(term, limit * 2, isAuthenticated);
-
-            foreach (var result in competenceResults)
-            {
-                if (allResults.ContainsKey(result.Entity.Id))
+                foreach (var result in userResults)
                 {
-                    // Användaren finns redan - öka poängen
-                    allResults[result.Entity.Id].Score += result.Score;
-                    userMatchCount[result.Entity.Id]++;
-                    // Uppdatera MatchedOn om kompetens har högre prioritet
-                    if (result.MatchedOn == SearchType.Competence)
+                    if (allResults.ContainsKey(result.Entity.Id))
                     {
-                        allResults[result.Entity.Id].MatchedOn = SearchType.Competence;
+                        // Användaren finns redan - öka poängen
+                        allResults[result.Entity.Id].Score += result.Score;
+                        userMatchCount[result.Entity.Id]++;
+                    }
+                    else
+                    {
+                        allResults[result.Entity.Id] = result;
+                        userMatchCount[result.Entity.Id] = 1;
                     }
                 }
-                else
+            }
+
+            // Sök på kompetenser för varje term
+            foreach (var term in searchTerms)
+            {
+                var competenceResults = await _competenceRepo.SearchByCompetenceForUsers(term, limit * 2, isAuthenticated);
+
+                foreach (var result in competenceResults)
                 {
-                    allResults[result.Entity.Id] = result;
-                    userMatchCount[result.Entity.Id] = 1;
+                    if (allResults.ContainsKey(result.Entity.Id))
+                    {
+                        // Användaren finns redan - öka poängen
+                        allResults[result.Entity.Id].Score += result.Score;
+                        userMatchCount[result.Entity.Id]++;
+                        // Uppdatera MatchedOn om kompetens har högre prioritet
+                        if (result.MatchedOn == SearchType.Competence)
+                        {
+                            allResults[result.Entity.Id].MatchedOn = SearchType.Competence;
+                        }
+                    }
+                    else
+                    {
+                        allResults[result.Entity.Id] = result;
+                        userMatchCount[result.Entity.Id] = 1;
+                    }
                 }
             }
-        }
 
-        // Filtrera bort användare som inte matchar ALLA termer
-        var requiredMatches = searchTerms.Count;
-        var completeMatches = allResults
-            .Where(kvp => userMatchCount[kvp.Key] >= requiredMatches)
-            .Select(kvp => kvp.Value)
-            .OrderByDescending(r => r.Score)
-            .Take(limit)
-            .ToList();
+            // Filtrera bort användare som inte matchar ALLA termer
+            var requiredMatches = searchTerms.Count;
+            var completeMatches = allResults
+                .Where(kvp => userMatchCount[kvp.Key] >= requiredMatches)
+                .Select(kvp => kvp.Value)
+                .OrderByDescending(r => r.Score)
+                .Take(limit)
+                .ToList();
 
-        Console.WriteLine($"startof service: {completeMatches.Count}");
+            Console.WriteLine($"startof service: {completeMatches.Count}");
 
-        List<SearchResultDto> returnedResults = new();
-        foreach (var res in completeMatches)
-        {
-            var dto = new SearchResultDto()
+            List<SearchResultDto> returnedResults = new();
+            foreach (var res in completeMatches)
             {
-                Id = res.Entity.Id,
-                DisplayName = res.MatchedOn == SearchType.Name
-                    ? res.Entity.Name
-                    : res.Entity.UserName ?? res.Entity.Name,
-                MatchedOn = res.MatchedOn.ToString()
-            };
-            returnedResults.Add(dto);
-        }
+                var dto = new SearchResultDto()
+                {
+                    Id = res.Entity.Id,
+                    DisplayName = res.MatchedOn == SearchType.Name
+                        ? res.Entity.Name
+                        : res.Entity.UserName ?? res.Entity.Name,
+                    MatchedOn = res.MatchedOn.ToString()
+                };
+                returnedResults.Add(dto);
+            }
 
-        Console.WriteLine($"service: {returnedResults.Count}");
-        return returnedResults;
+            Console.WriteLine($"service: {returnedResults.Count}");
+            return returnedResults;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR in Search: {ex.Message}");
+            return new List<SearchResultDto>();
+        }
     }
 
     private List<string> ParseSearchQuery(string query)
@@ -164,7 +172,7 @@ public class SearchService : ISearchService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"ERROR: {ex.Message}");
+            Console.WriteLine($"ERROR in SearchRelevantProfiles: {ex.Message}");
             return new List<RelevantProfileDto>();
         }
     }
