@@ -52,31 +52,32 @@ public class MessageRepository : SqlServerRepository<Message>, IMessageRepositor
 
     public async Task<int> GetUnreadCountAsync(string userId)
     {
-        var messages = await _context.Messages
+        var unreadMessages = await _context.Messages
             .Where(m => m.Conversation.Participants.Any(p => p.UserId == userId)
-                        && m.SenderId != userId)
-            .Select(m => m.IsRead)
-            .ToListAsync();
+                        && m.SenderId != userId
+                        && !m.IsRead)
+            .CountAsync();
 
-        var unreadCount = messages.Count(m => !m);
-        var totalMessages = messages.Count;
+        var unreadGuestMessages = await _context.GuestMessages
+            .Where(gm => gm.ToUserId == userId && !gm.IsRead)
+            .CountAsync();
 
-        return unreadCount;
+        return unreadMessages + unreadGuestMessages;
     }
 
     public async Task DeleteMessageAsync(int messageId, string currentId)
     {
-        var message = await _context.Messages 
+        var message = await _context.Messages
             .Include(m => m.Conversation)
                 .ThenInclude(c => c.Participants)
-            .FirstOrDefaultAsync(m => m.Id  == messageId);
+            .FirstOrDefaultAsync(m => m.Id == messageId);
 
         if (message == null) return;
 
         var isParticipant = message.Conversation.Participants.Any(p => p.UserId == currentId);
         if (!isParticipant) return;
 
-        if (message.SenderId ==  currentId) return;
+        if (message.SenderId == currentId) return;
 
         message.MessageISDeleteed = true;
 
