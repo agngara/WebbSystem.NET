@@ -8,6 +8,10 @@ namespace DAL.Repositories.Interfaces
     public interface IWorkPlaceRepository
     {
         Task<WorkPlace?> GetWorkPlaceFromIdAsync(int? workplaceId);
+
+        Task<WorkPlace?> GetWorkPlaceFromNameAsync(string name);
+
+        Task AddWorkPlaceAsync(WorkPlace workPlace);
         
     }
 }

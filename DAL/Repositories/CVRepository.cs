@@ -1,17 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
+using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace DAL.Repositories
 {
-    public class CVRepository
+    public class CVRepository : ICvRepository
     {
         private readonly AppDbContext _context;
 
         public CVRepository(AppDbContext appDbContext) {
             _context = appDbContext;
+        }
+
+        public async Task<CV> GetCvById(int id)
+        {
+            return await _context.CVs
+                    .Include(c => c.Competences)
+                    .Include(c => c.WorkExperiences)
+                    .ThenInclude(w => w.WorkPlace)
+                    .Include(c => c.Educations)
+                    .ThenInclude(e => e.Institution)
+                    .Include(c => c.User)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
         }
 
         /// <summary>
@@ -54,10 +69,11 @@ namespace DAL.Repositories
             .Take(20)
             .ToListAsync();
         }
+
+        public async void AddCv(CV cv)
+        {
+            _context.CVs.Add(cv);
+            _context.SaveChanges();
+        }
     }
-
-
-    
-
-
 }

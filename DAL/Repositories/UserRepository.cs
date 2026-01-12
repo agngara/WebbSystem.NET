@@ -310,4 +310,27 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
         public List<int> InstitutionIds { get; set; } = new();
         public List<string> CompetenceNames { get; set; } = new();
     }
+    /// <summary>
+    /// This method was added to outsource some db-questions from the CV-controller, hence the CV prefix in the name.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<User?> CVgetUserById(string id)
+    {
+        return await _context.Users
+        .Include(u => u.Cv)
+            .ThenInclude(cv => cv!.Competences)
+        .Include(u => u.Cv)
+            .ThenInclude(cv => cv!.Educations)
+        .Include(u => u.Cv)
+            .ThenInclude(cv => cv!.WorkExperiences)
+            .ThenInclude(we => we.WorkPlace)
+        .Include(u => u.Cv)
+            .ThenInclude(cv => cv!.Educations)
+            .ThenInclude(e => e.Institution)
+        .Include(u => u.ProjectUsers)
+            .ThenInclude(pu => pu.Project)
+        .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
 }
