@@ -1,4 +1,5 @@
 ﻿(() => {
+    console.log
     class NotifyUI {
         #element
         #timeout
@@ -60,8 +61,10 @@
                         const contentType = response.headers.get('content-type');
                         if (contentType && contentType.includes('application/json')) {
                             const data = await clonedResponse.json();
+                            console.log(data)
 
                             //our api Structure
+                            console.log("innn")
                             if (data && typeof data === 'object') {
 
                                 if (data.notify === true) {
@@ -72,9 +75,9 @@
                                     }
                                 }
 
-                                if (data.redirectUrl) {
+                                if (data.RedirectUrl) {
                                     setTimeout(() => {
-                                        window.location.href = data.redirectUrl;
+                                        window.location.href = data.RedirectUrl;
                                     }, data.Notify ? 1000 : 0);
                                 }
                             }

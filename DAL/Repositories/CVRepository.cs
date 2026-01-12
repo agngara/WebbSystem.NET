@@ -43,12 +43,22 @@ namespace DAL.Repositories
                         .OrderByDescending(c => c.ProfileViews)
                         .Take(20)
                         .ToListAsync();
-            
+        }
+
+        /// <summary>
+        /// This method is used to get 20 rows of only public and active profiles.
+        /// </summary>
+        /// <returns>A list of non-private and active profiles.</returns>
+        public async Task<List<CV>> GetTop20PublicCVs()
+        {
+            return await _context.CVs.Include(c => c.Competences)
+            .Include(c => c.WorkExperiences)
+            .Include(c => c.Educations)
+            .Include(c => c.User)
+            .Where(c => c.User.IsActive == true && c.User.IsPrivate == false)
+            .OrderByDescending(c => c.ProfileViews)
+            .Take(20)
+            .ToListAsync();
         }
     }
-
-
-    
-
-
-}
+ }

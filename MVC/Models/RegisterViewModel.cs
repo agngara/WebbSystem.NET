@@ -17,11 +17,6 @@ namespace MVC.Models
         [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Name can only contain letters and numbers")]
         public required string Name { get; set; }
 
-        [Required(ErrorMessage = "Please Enter an Email")]
-        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
-        [StringLength(100)]
-        public required string Email { get; set; }
-
         [Required(ErrorMessage = "Please Enter a Address")]
         [StringLength(50)]
         public string? Address { get; set; }

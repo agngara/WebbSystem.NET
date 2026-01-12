@@ -14,20 +14,16 @@ public class SearchController : Controller
         _serachService = searchService;
     }
 
+
     [HttpPost]
     public async Task<IActionResult> Search([FromBody] SearchRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        try
-        {
-            var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-            var results = await _serachService.Search(request.Query, isAuthenticated);
-            return Ok(results);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { error = "An error occurred while processing your search. Please try again later." });
-        }
+        var isAuthenticated = false;
+        if (User.Identity.IsAuthenticated) isAuthenticated = true;
+
+        var results = await _serachService.Search(request.Query, isAuthenticated);
+        return Ok(results);
     }
 }

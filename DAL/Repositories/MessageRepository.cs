@@ -48,38 +48,11 @@ public class MessageRepository : SqlServerRepository<Message>, IMessageRepositor
         await _context.SaveChangesAsync();
     }
 
-    public async Task<int> GetUnreadCountAsync(string userId)
-    {
-        var unreadMessages = await _context.Messages
-            .Where(m => m.Conversation.Participants.Any(p => p.UserId == userId)
-                        && m.SenderId != userId
-                        && !m.IsRead)
-            .CountAsync();
 
-        var unreadGuestMessages = await _context.GuestMessages
-            .Where(gm => gm.ToUserId == userId && !gm.IsRead)
-            .CountAsync();
-
-        return unreadMessages + unreadGuestMessages;
-    }
-
-    public async Task DeleteMessageAsync(int messageId, string currentId)
-    {
-        var message = await _context.Messages
-            .Include(m => m.Conversation)
-                .ThenInclude(c => c.Participants)
-            .FirstOrDefaultAsync(m => m.Id == messageId);
-
-        if (message == null) return;
-
-        var isParticipant = message.Conversation.Participants.Any(p => p.UserId == currentId);
-        if (!isParticipant) return;
-
-        if (message.SenderId == currentId) return;
-
-        message.MessageISDeleteed = true;
-
-        await _context.SaveChangesAsync();
-
-    }
+    //public async Task<int> GetUnreadCountAsync(string userId)
+    //{
+    //    return await _context.Messages
+    //        .Where(m => m.Receiver.Id == userId && !m.IsRead)
+    //        .CountAsync();
+    //}
 }

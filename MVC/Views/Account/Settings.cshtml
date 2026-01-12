@@ -1,25 +1,21 @@
 @model SettingsViewModel
+
 @section Styles {
     <link rel="stylesheet" href="~/css/account.css" />
 }
+
 <div class="login-form">
     <div class="create-account-wrapper ">
         <form id="registerForm" class="login-form" method="post" asp-action="UpdateSettings"
             style="display: flex; justify-content: flex-end; align-items: center; flex-direction: column; height: auto;">
             <h2 class="login-header">Edit Account Info</h2>
+
             <div class="input-outer">
                 <label for="name">Name</label>
                 <div class="input-wrapper">
                     <input id="name" asp-for="Name" type="text" placeholder="">
                 </div>
                 <p id="error-Name" class="error-text"></p>
-            </div>
-            <div class="input-outer">
-                <label for="email">Email</label>
-                <div class="input-wrapper">
-                    <input id="email" asp-for="Email" type="email" placeholder="">
-                </div>
-                <p id="error-Email" class="error-text"></p>
             </div>
             <div class="input-outer">
                 <label for="address">Address</label>
@@ -52,7 +48,9 @@
             <input type="submit" value="LOGOUT" class="login-btn"
                 style="background-color: var(--error-color); color: #ffffff; margin-top: 8px;">
         </form>
+
         <a asp-action="Deactivate" style="margin-top: 8px;">Deactivate Account</a>
     </div>
 </div>
+
 <script src="~/js/account.js"></script>

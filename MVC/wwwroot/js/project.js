@@ -57,6 +57,8 @@ if (closeButton) {
     })
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    handleFormSubmit("creation-form");
-});
+// UI Error-handeling
+// Denna bit kod ställde till det lite med annan kod
+//document.addEventListener('DOMContentLoaded', () => {
+//    handleFormSubmit("creation-form");
+//});

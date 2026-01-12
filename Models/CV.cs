@@ -16,7 +16,7 @@ namespace Models
         public string? ProfileImage { get; set; }
 
         public int ProfileViews { get; set; } = 0;
-
+        
         public virtual List<WorkExperience> WorkExperiences { get; set; } = [];
         public virtual List<Competence> Competences { get; set; } = [];
         public virtual List<Education> Educations { get; set; } = [];

@@ -6,30 +6,24 @@
 
 <div class="login-wrapper">
     <div class="login-left-box">
-        <h1><span>PinkedOut</span></h1>
+        <h1>Pinked Out</h1>
         <p>We make your CV <span>out</span>shine the compitition</p>
     </div>
 
-    <form id="registerForm" class="login-form" method="post" asp-action="LogIn">
+    <form class="login-form" method="post" asp-action="LogIn">
+
+
         <div class="login">
             <h2 class="login-header">USER LOGIN</h2>
 
-            <div class="input-outer">
-                <label for="username">Username</label>
-                <div class="input-wrapper">
-                    <input id="username" asp-for="/*~~~~*/" type="text" placeholder="">
-                    <img src="~/icons/User.svg" alt="User Logo">
-                </div>
-                <p id="error-UserName" class="error-text"></p>
+            <div class="input-wrapper">
+                <img src="~/icons/User.svg" alt="User Logo">
+                <input asp-for="/*~~~~*/" type="text" placeholder="Username...">
             </div>
 
-            <div class="input-outer">
-                <label for="password">Password</label>
-                <div class="input-wrapper">
-                    <input id="password" asp-for="/*~~~~*/" type="password" placeholder="">
-                    <img src="~/icons/Password.svg" alt="Password Logo">
-                </div>
-                <p id="error-Password" class="error-text"></p>
+            <div class="input-wrapper">
+                <img src="~/icons/Password.svg" alt="Password Logo">
+                <input asp-for="/*~~~~*/" type="password" placeholder="Password123...">
             </div>
 
             <div class="remember-register-wrapper">
@@ -44,11 +38,61 @@
             </div>
 
 
-            <input value="LOGIN" type="submit" class="login-btn">
+            <button type="submit" class="login-btn">LOGIN</button>
         </div>
 
     </form>
 </div>
 
-<script src="~/js/account.js"></script>
+<script>
+    let animIn = null;
+    let animOut = null;
+    let isSmall = true;
+    const element = document.querySelector(".login-left-box");
+
+    const animateIn = () => {
+        if (!element) return;
+        if (!isSmall) return;
+        if (animOut) animOut.cancel();
+
+        isSmall = false;
+        animIn = element.animate([
+            {opacity: 0, width: "0%", offset: 0},
+            {opacity: 0, width: "35%", offset: 0.2},
+            {opacity: 1, width: "100%", offset: 1}
+        ], {
+            duration: 1708,
+            fill: "forwards",
+            easing: "cubic-bezier(.22,.57,.6,.93)"
+        });
+    };
+
+    const animateOut = () => {
+        if (!element) return;
+        if (isSmall) return;
+        if (animIn) animIn.cancel();
+
+        isSmall = true;
+        element.opacity = 0;
+        element.width = 0;
+    };
+
+    window.addEventListener("load", () => {
+        if (window.innerWidth >= 900) {
+            animateIn();
+        } else if (element) {
+            element.style.opacity = 0;
+            element.style.width = "0%";
+        }
+    });
+
+    window.addEventListener("resize", () => {
+        if (!element) return;
+        if (window.innerWidth >= 900) {
+            animateIn();
+        } else {
+            animateOut();
+        }
+    });
+</script>
 
