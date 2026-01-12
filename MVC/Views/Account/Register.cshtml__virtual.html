@@ -1,0 +1,64 @@
+/*~~*/ /*~~~~~~~~~~~~~*/
+/*~~~~*/ /*~~*/ ~
+    <link rel="stylesheet" href="~/css/account.css" />
+~
+<div id="errorMessages" class="text-danger"></div>
+<div class="login-wrapper register-wrapper">
+    <div class="login-left-box">
+        <h1>Join <span>PinkedOut</span></h1>
+        <p class="reg-wrap">Create your <span>CV</span>, showcase <span>projects</span>, and <span>connect</span> with
+            opportunities</p>
+    </div>
+    <form id="registerForm" class="login-form" method="post" asp-action="Register">
+        <div class="create-account-wrapper">
+            <h2 class="login-header">Register Account</h2>
+            <div class="input-outer">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <input id="username" asp-for="/*~~~~*/" type="text" placeholder="">
+                </div>
+                <p id="error-UserName" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <label for="name">Name</label>
+                <div class="input-wrapper">
+                    <input id="name" asp-for="/**/" type="text" placeholder="">
+                </div>
+                <p id="error-Name" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <input id="email" asp-for="/*~*/" type="email" placeholder="">
+                </div>
+                <p id="error-Email" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <label for="address">Address</label>
+                <div class="input-wrapper">
+                    <input id="address" asp-for="/*~~~*/" type="text" placeholder="My Street 123...">
+                </div>
+                <p id="error-Address" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input id="password" asp-for="/*~~~~*/" type="password" placeholder="">
+                    <img src="~/icons/Password.svg" alt="Password Logo">
+                </div>
+                <p id="error-Password" class="error-text"></p>
+            </div>
+            <div class="input-outer">
+                <label for="confirm-password">Confirm Password</label>
+                <div class="input-wrapper">
+                    <input id="confirm-password" asp-for="/*~~~~~~~~~~~*/" type="password" placeholder="">
+                    <img src="~/icons/Password.svg" alt="Password Logo">
+                </div>
+                <p id="error-ConfirmPassword" class="error-text"></p>
+            </div>
+            <input type="submit" value="REGISTER" class="login-btn">
+        </div>
+    </form>
+</div>
+<script src="~/js/account.js"></script>
+

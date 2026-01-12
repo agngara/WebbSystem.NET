@@ -116,6 +116,7 @@ namespace MVC.Controllers
                 {
                     Name = registerViewModel.Name,
                     UserName = registerViewModel.UserName,
+                    Email = registerViewModel.Email,
                     Address = registerViewModel.Address
                 };
 
@@ -178,6 +179,7 @@ namespace MVC.Controllers
                 var settingsViewModel = new SettingsViewModel()
                 {
                     Name = user.Name,
+                    Email = user.Email ?? "",
                     Address = user.Address ?? "",
                     IsPrivate = user.IsPrivate ?? false,
                 };
@@ -228,6 +230,7 @@ namespace MVC.Controllers
                 }
 
                 user.Name = settingsViewModel.Name!;
+                user.Email = settingsViewModel.Email;
                 user.Address = settingsViewModel.Address;
                 user.IsPrivate = settingsViewModel.IsPrivate;
 
