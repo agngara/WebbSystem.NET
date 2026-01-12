@@ -39,6 +39,7 @@ namespace MVC.Controllers
                 {
                     userId = user.Id;
                     userProjects = await _projectRepository.GetProjectsByCreator(userId);
+                    userProjects.Reverse();
 
                 }
                 else
