@@ -1,5 +1,4 @@
-﻿
-using DAL.Repositories.Interfaces;
+﻿using DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +7,8 @@ using MVC.Models.Message;
 
 namespace MVC.Controllers
 {
-   
-    public class MessageController : Controller
+
+    public class MessageController : BaseController
     {
         private readonly UserManager<User> _userManager;
         private readonly IUserRepository _userRepo;
@@ -56,7 +55,7 @@ namespace MVC.Controllers
                         UserId = u.Id,
                         Email = u.Email,
                         DisplayName = string.IsNullOrWhiteSpace(u.Name) ? (u.Email ?? u.UserName ?? "User") : u.Name!,
-                      
+
 
                     }).ToList();
 
@@ -186,7 +185,7 @@ namespace MVC.Controllers
         //            .OrderBy(m => m.SendDateTime)
         //            .Select(m => new MessageBubbleViewModel
         //            {
-                        
+
         //                MessageId = m.Id,
         //                Text = m.Text,
         //                IsMine = m.SenderId == currentUserId,
@@ -209,29 +208,35 @@ namespace MVC.Controllers
             {
                 model.IsGuest = true;
 
-                if (string.IsNullOrWhiteSpace(model.ToUserId)) 
+                if (string.IsNullOrWhiteSpace(model.ToUserId))
                 {
                     return RedirectToAction(nameof(Conversation));
                 }
-                    
 
-                if (string.IsNullOrWhiteSpace(model.GuestName))
+                if (string.IsNullOrWhiteSpace(model.GuestName) || model.GuestName == null)
                 {
-                    ModelState.AddModelError(nameof(model.GuestName), "Please your name");
-
+                    return Json(CreateResponse(
+                        success: false,
+                        message: "Please enter your name",
+                        notify: true
+                    ));
                 }
 
                 if (string.IsNullOrWhiteSpace(model.NewMessageText))
                 {
-                    ModelState.AddModelError(nameof(model.NewMessageText), "U have to write a message.");
+                    return Json(CreateResponse(
+                        success: false,
+                        message: "You have to write a message.",
+                        notify: true
+                    ));
 
                 }
-
-             
-
-
                 await _guestRepo.AddGuestMessageAsync(model.ToUserId!, model.GuestName!, model.NewMessageText!);
-                return RedirectToAction(nameof(Chat),  new { toUserId = model.ToUserId }); 
+
+                return Json(CreateResponse(
+                            success: true,
+                    redirectUrl: "refresh"
+                ));
             }
 
 
@@ -244,7 +249,10 @@ namespace MVC.Controllers
                 return Forbid();
 
             await _msgRepo.AddMessageAsync(model.ConversationId, currentUserId, model.NewMessageText);
-            return RedirectToAction(nameof(Chat), new { id = model.ConversationId });
+            return Json(CreateResponse(
+                        success: true,
+                redirectUrl: "refresh"
+            ));
         }
 
 
@@ -317,7 +325,7 @@ namespace MVC.Controllers
                     ToUserId = toUserId,
                     OtherUserName = toUser.Name,
                     OtherUserEmail = toUser.Email,
-                    Messages = new List<MessageBubbleViewModel>() 
+                    Messages = new List<MessageBubbleViewModel>()
                 });
             }
 
@@ -331,7 +339,7 @@ namespace MVC.Controllers
                 return await OpenOrCreateAndRedirect(currentUserId, toUserId);
             }
 
-         
+
             if (id == null) return NotFound();
 
             if (!await _convRepo.UserIsParticipantAsync(id.Value, currentUserId))

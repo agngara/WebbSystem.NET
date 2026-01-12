@@ -10,11 +10,13 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
 
     <link rel="stylesheet" href="~/css/Message/message.css" />
     <script src="~/js/message.js" defer></script>
 </head>
+
 <body>
 
     <div class="chat-layout">
@@ -40,7 +42,8 @@
                     <i class="bi bi-incognito"></i>
                     <span>
                         You are sending this message as a guest.
-                        The user cannot reply to you, therefore please include your contact information if you want to be reached.
+                        The user cannot reply to you, therefore please include your contact information if you want to be
+                        reached.
                     </span>
                 </div>
 
@@ -57,18 +60,15 @@
 
                                 @if (!msg.IsMine)
                                 {
-                                    
-                                    <div class="delete-wrapper">
-                                    <button type="button"
-                                                class="btn btn-sm btn-secondary p-1"
-                                            onclick="toggleDelete(@msg.MessageId)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
 
-                                        <form id="delete-form-@msg.MessageId"
-                                            asp-action="DeleteMessage"
-                                              method="post"   
-                                              class="delete-confirm hidden">
+                                    <div class="delete-wrapper">
+                                        <button type="button" class="btn btn-sm btn-secondary p-1"
+                                            onclick="toggleDelete(@msg.MessageId)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                        <form id="delete-form-@msg.MessageId" asp-action="DeleteMessage" method="post"
+                                            class="delete-confirm hidden">
 
 
                                             @Html.AntiForgeryToken()
@@ -82,16 +82,15 @@
                                                 Delete
                                             </button>
 
-                                            <button type="button"
-                                                    class="btn btn-sm btn-secondary"
-                                                    onclick="toggleDelete(@msg.MessageId)">
+                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                onclick="toggleDelete(@msg.MessageId)">
                                                 Regret
                                             </button>
                                         </form>
                                     </div>
-                                 }
+                                }
 
-                                
+
                                 @if (msg.IsMine)
                                 {
                                     <span class="read">
@@ -112,7 +111,7 @@
             }
         </div>
 
-        <form asp-action="Chat" method="post" class="chat-input-area">
+        <form id="chat-form" asp-action="Chat" method="post" class="chat-input-area">
             @Html.AntiForgeryToken()
 
 
@@ -123,9 +122,7 @@
             {
                 <div class="guest-name-wrapper">
                     <i class="bi bi-person-fill"></i>
-                    <input asp-for="GuestName"
-                           placeholder="Ditt namn"
-                           autocomplete="name" />
+                    <input asp-for="GuestName" placeholder="Ditt namn" autocomplete="name" />
                 </div>
             }
             else
@@ -144,4 +141,11 @@
     </div>
 
 </body>
+
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        handleFormSubmit("chat-form");
+    });
+</script>
