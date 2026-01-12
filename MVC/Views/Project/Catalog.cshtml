@@ -6,57 +6,60 @@
 }
 
 <!DOCTYPE html>
-    <html>
-    <head>
-        <title>LinkedOut</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"> 
-        <link rel="stylesheet" href="~/css/Project/catalog.css"/>
-        <script src="~/js/project.js" defer></script>
+<html>
+
+<head>
+    <title>LinkedOut</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/Project/catalog.css" />
+    <script src="~/js/project.js" defer></script>
 
 
 </head>
-    <body>
-        @if (User.Identity != null && User.Identity.IsAuthenticated)
-        {
-    <h2 class="slide-title">My Projects</h2>
-    <section class="slider-window">
-        <div class="arrow-left" id="slide-1-arrow-left-2">
+
+<body>
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <h2 class="slide-title">My Projects</h2>
+        <section class="slider-window">
+            <div class="arrow-left" id="slide-1-arrow-left-2">
                 <i class="bi bi-chevron-left"></i>
             </div>
-        <div class="arrow-right" id="slide-1-arrow-right-2">
+            <div class="arrow-right" id="slide-1-arrow-right-2">
                 <i class="bi bi-chevron-right"></i>
             </div>
-        <section class="scroll-container">
-            <div class="card mx-3 shadow-sm" id="new-project-card" style="width: 20rem; min-width: 20rem;">
-                <img src="~/Assets/UI-Images/addprojectimage3.png" class="card-img" alt="Placeholder-imag">
-                
-            </div>
-            @foreach (Models.Project project in Model.UserProjects)
-            {
-                <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
-                    <img src="@project.ImageUrl" class="card-img-top" alt="Placeholder-image">
-                    <div class="card-body">
-                        <h5 class="card-title">@project.Titel</h5>
-                        <p class="card-text">@project.Description</p>
-                    </div>
-                    <div class="card-body"> 
-                        <a class="custom-button" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
-                        <a class="custom-button" asp-controller="Project" asp-action="Details" asp-route-projectId="@project.Id">See More</a>
+            <section class="scroll-container">
+                <div class="card mx-3 shadow-sm" id="new-project-card" style="width: 20rem; min-width: 20rem;">
+                    <img src="~/Assets/UI-Images/addprojectimage3.png" class="card-img" alt="Placeholder-imag">
 
-                    </div>
                 </div>
-            }
+                @foreach (Models.Project project in Model.UserProjects)
+                {
+                    <div class="card mx-3 shadow-sm" style="width: 20rem; min-width: 20rem;">
+                        <img src="@project.ImageUrl" class="card-img-top" alt="Placeholder-image">
+                        <div class="card-body">
+                            <h5 class="card-title">@project.Titel</h5>
+                            <p class="card-text">@project.Description</p>
+                        </div>
+                        <div class="card-body">
+                            <a class="custom-button" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
+                            <a class="custom-button" asp-controller="Project" asp-action="Details"
+                                asp-route-projectId="@project.Id">See More</a>
 
+                        </div>
+                    </div>
+                }
+
+            </section>
         </section>
-    </section>
     }
     <h2 class="slide-title">All Projects</h2>
-        
+
     <section class="all-projects-container">
         @foreach (Models.Project project in Model.AllProjects)
         {
             String creator = "";
-            
+
             if (project.Creator != null)
             {
                 creator = project.Creator.Name;
@@ -76,7 +79,7 @@
 
                 <div class="card-body">
                     @*Displays buttons for anonymous users*@
-                    @if (!User.Identity!.IsAuthenticated)
+                            @if (!User.Identity!.IsAuthenticated)
                     {
                         <a class="custom-button" asp-action="Login" asp-controller="Account">Join</a>
                         <a class="custom-button" asp-action="Login" asp-controller="Account">See More</a>
@@ -84,11 +87,11 @@
                     else
                     {
                         @*Otherwise, checks if user is or is not creator of project*@
-                        if (User.FindFirstValue(ClaimTypes.NameIdentifier) != project.CreatorId)
+                                        if (User.FindFirstValue(ClaimTypes.NameIdentifier) != project.CreatorId)
                         {
                             bool isJoined = false;
                             @*Loops through userlist to see if user is a participant of the project*@
-                            foreach (var user in project.ProjectUsers)
+                                                    foreach (var user in project.ProjectUsers)
                             {
                                 if (user.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
                                 {
@@ -98,28 +101,32 @@
                             }
                             if (isJoined == false)
                             {
-                                <a class="custom-button" asp-controller="Project" asp-action="Join" asp-route-projectId="@project.Id">Join</a>
+                                <a class="custom-button" asp-controller="Project" asp-action="Join"
+                                    asp-route-projectId="@project.Id">Join</a>
                             }
                             else
                             {
-                                <a class="custom-button" asp-controller="Project" asp-action="Leave" asp-route-projectId="@project.Id">Leave</a>
+                                <a class="custom-button" asp-controller="Project" asp-action="Leave"
+                                    asp-route-projectId="@project.Id">Leave</a>
                             }
                         }
                         else
                         {
                             <a class="custom-button" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
-                            
+
                         }
-                        <a class="custom-button" asp-controller="Project" asp-action="Details" asp-route-projectId="@project.Id">See More</a>
+                        <a class="custom-button" asp-controller="Project" asp-action="Details"
+                            asp-route-projectId="@project.Id">See More</a>
                     }
                 </div>
             </div>
         }
-        
+
     </section>
     @*Injects project creation form*@
-    @await Html.PartialAsync("ProjectCreationForm", new CreateProjectViewModel {})  
+    @await Html.PartialAsync("ProjectCreationForm", new CreateProjectViewModel { })
 
 
-    </body>
-    </html>
+</body>
+
+</html>

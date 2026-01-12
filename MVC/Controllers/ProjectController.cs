@@ -49,7 +49,7 @@ namespace MVC.Controllers
             {
                 AllProjects = allProjects,
                 UserProjects = userProjects,
- 
+
             };
 
             return View(catalogViewModel);
@@ -70,10 +70,10 @@ namespace MVC.Controllers
             if (model.ImageFile != null)
             {
                 bool isValid = FileService.ValidateFiletype(new string[] { ".jpg", ".jpeg", ".png", ".gif" }, model.ImageFile.FileName);
-                
-                if (!isValid) 
-                { 
-                    return Json(ModelStateErrorResponse("Filetype not allowed.")); 
+
+                if (!isValid)
+                {
+                    return Json(ModelStateErrorResponse("Filetype not allowed."));
                 }
 
                 if (model.ImageFile.Length > 2000000)
@@ -105,16 +105,17 @@ namespace MVC.Controllers
                 return Json(ModelStateErrorResponse("Something went wrong when saving project image, please try again :("));
             }
 
-            return RedirectToAction("Catalog");
-
-
-
+            return Json(CreateResponse(
+                success: true,
+                message: "Creation successful!",
+                redirectUrl: Url.Action("Catalog", "Project") ?? "/"
+            ));
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            
+
             Project project = await _projectRepository.GetProjectAsync(id);
 
             if (project == null)
@@ -162,23 +163,31 @@ namespace MVC.Controllers
                 imgUrl = p.ImageUrl;
             }
 
-                p.Id = id;
-                p.CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                p.Creator = await _userRepository.GetUserById(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                p.Titel = viewModel.Name;
-                p.Description = viewModel.Description;
-                p.ImageUrl = imgUrl;
-            
+            p.Id = id;
+            p.CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            p.Creator = await _userRepository.GetUserById(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            p.Titel = viewModel.Name;
+            p.Description = viewModel.Description;
+            p.ImageUrl = imgUrl;
+
 
             _projectRepository.UpdateProject(p);
-            return RedirectToAction("Catalog");
+            return Json(CreateResponse(
+                success: true,
+                message: "Update successful!",
+                redirectUrl: Url.Action("Catalog", "Project") ?? "/"
+            ));
         }
-        
+
         public IActionResult Delete(int id)
         {
             _projectRepository.DeleteProject(id);
 
-            return RedirectToAction("Catalog");
+            return Json(CreateResponse(
+                success: true,
+                message: "Deletion successful!",
+                redirectUrl: Url.Action("Catalog", "Project") ?? "/"
+            ));
         }
 
         public IActionResult Join(int projectId)
@@ -236,7 +245,7 @@ namespace MVC.Controllers
                 ProjectId = project.Id,
                 CreatorId = project.CreatorId,
                 Creator = creator,
-                Titel = project.Titel, 
+                Titel = project.Titel,
                 Description = project.Description,
                 ImageUrl = project.ImageUrl,
                 Users = users
