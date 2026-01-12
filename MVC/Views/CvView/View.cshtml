@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = $"{Model.Name}'s CV";
 
-    // Helper function för att formatera match-typen
+    // Helper function to format match type
     string GetMatchTypeDisplay(string matchedOn)
     {
         return matchedOn switch
@@ -27,7 +27,7 @@
     <div class="row">
         <div class="col-md-4">
 
-            <!-- Profilinformation -->
+            <!-- Profile Information -->
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="profile-card-grid">
@@ -35,20 +35,22 @@
                                                 "/pfp/standard.png")
                         {
                             <img src="@Model.Cv.ProfileImage" class="rounded-circle mb-3 profile-image"
-                                style="width: 150px; height: 150px; object-fit: cover;" alt="Profilbild"
-                                onerror="this.src='/pfp/standard.png'">
+                                 style="width: 150px; height: 150px; object-fit: cover;" alt="Profile picture"
+                                 onerror="this.src='/pfp/standard.png'">
                         }
                         else
                         {
                             <img src="/pfp/standard.png" class="rounded-circle mb-3 profile-image"
-                                style="width: 150px; height: 150px; object-fit: cover;" alt="Standard profilbild">
+                                 style="width: 150px; height: 150px; object-fit: cover;" alt="Default profile picture">
                         }
                         @if (Model.Cv?.Id != null)
                         {
                             <div class="mt-3 download-button">
                                 <a class="custom-button" id="download-profile-btn" asp-action="Export"
-                                    asp-route-cvId="@Model.Cv?.Id"><i class="bi bi-box-arrow-down"
-                                        style="font-size: 14px !important;"></i></a>
+                                   asp-route-cvId="@Model.Cv?.Id">
+                                    <i class="bi bi-box-arrow-down"
+                                       style="font-size: 14px !important;"></i>
+                                </a>
                             </div>
                         }
                     </div>
@@ -65,18 +67,18 @@
 
                     @if (Model.IsPrivate == true)
                     {
-                        <span class="badge bg-warning">Privat profil</span>
+                        <span class="badge bg-warning">Private Profile</span>
                     }
                     else
                     {
-                        <span class="badge bg-success">Offentlig profil</span>
+                        <span class="badge bg-success">Public Profile</span>
                     }
 
                     @if (User.Identity!.IsAuthenticated &&
                                         User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
                     {
                         <div class="mt-3">
-                            <a asp-action="MyCV" class="btn btn-primary">Redigera mitt CV</a>
+                            <a asp-action="MyCV" class="btn btn-primary">Edit My CV</a>
                         </div>
                     }
                     @if (Model.Cv?.Id != null)
@@ -104,12 +106,12 @@
                 </div>
             </div>
 
-            <!-- Kompetenser -->
+            <!-- Skills -->
             @if (Model.Cv?.Competences?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5>Kompetenser</h5>
+                        <h5>Skills</h5>
                     </div>
                     <div class="card-body">
                         @foreach (var competence in Model.Cv.Competences)
@@ -120,7 +122,7 @@
                 </div>
             }
 
-            <!-- Liknande profiler -->
+            <!-- Similar Profiles -->
             @if (ViewBag.HasRelevantProfiles == true)
             {
                 <div class="card mb-4">
@@ -140,7 +142,7 @@
                                         </div>
                                         <div class="flex-grow-1 ms-3">
                                             <a href="@Url.Action("View", "CV", new { id = profile.UserId })"
-                                                class="similar-profile-name">
+                                               class="similar-profile-name">
                                                 @profile.UserName
                                             </a>
                                             <div class="similar-profile-match">
@@ -151,7 +153,7 @@
                                         </div>
                                         <div class="flex-shrink-0">
                                             <a href="@Url.Action("View", "CV", new { id = profile.UserId })"
-                                                class="btn btn-sm btn-outline-primary">
+                                               class="btn btn-sm btn-outline-primary">
                                                 Show
                                             </a>
                                         </div>
@@ -165,12 +167,12 @@
         </div>
 
         <div class="col-md-8">
-            <!-- Beskrivning -->
+            <!-- Description -->
             @if (!string.IsNullOrEmpty(Model.Cv?.Description))
             {
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5>Om mig</h5>
+                        <h5>About Me</h5>
                     </div>
                     <div class="card-body">
                         <p>@Model.Cv.Description</p>
@@ -178,12 +180,12 @@
                 </div>
             }
 
-            <!-- Arbetserfarenhet -->
+            <!-- Work Experience -->
             @if (Model.Cv?.WorkExperiences?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5>Arbetserfarenhet</h5>
+                        <h5>Work Experience</h5>
                     </div>
                     <div class="card-body">
                         @foreach (var work in Model.Cv.WorkExperiences)
@@ -198,9 +200,9 @@
                                 {
                                     <p class="text-muted mb-1">
                                         @work.StartDate?.ToString("yyyy-MM-dd") - @(work.EndDate?.ToString("yyyy-MM-dd") ??
-                                        "Pågående")
-                                    </p>
-                                }
+                                        "Ongoing")
+                        </p>
+                                                }
                                 @if (!string.IsNullOrEmpty(work.Description))
                                 {
                                     <p>@work.Description</p>
@@ -211,12 +213,12 @@
                 </div>
             }
 
-            <!-- Utbildning -->
+            <!-- Education -->
             @if (Model.Cv?.Educations?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5>Utbildning</h5>
+                        <h5>Education</h5>
                     </div>
                     <div class="card-body">
                         @foreach (var edu in Model.Cv.Educations)
@@ -231,9 +233,9 @@
                                 {
                                     <p class="text-muted mb-1">
                                         @edu.StartDate?.ToString("yyyy-MM-dd") - @(edu.EndDate?.ToString("yyyy-MM-dd") ??
-                                        "Pågående")
-                                    </p>
-                                }
+                                        "Ongoing")
+                        </p>
+                                                }
                                 @if (!string.IsNullOrEmpty(edu.Description))
                                 {
                                     <p>@edu.Description</p>
@@ -244,12 +246,12 @@
                 </div>
             }
 
-            <!-- Projekt -->
+            <!-- Projects -->
             @if (Model.ProjectUsers?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5>Projekt</h5>
+                        <h5>Projects</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -272,16 +274,16 @@
                 </div>
             }
 
-            <!-- Profilvisningar (endast för ägaren) -->
+            <!-- Profile Views (only for owner) -->
             @if (User.Identity!.IsAuthenticated &&
                         User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
             {
                 <div class="card">
                     <div class="card-header">
-                        <h5>Statistik</h5>
+                        <h5>Statistics</h5>
                     </div>
                     <div class="card-body">
-                        <p>Den här profilen har visats <strong>@(Model.Cv?.ProfileViews ?? 0)</strong> gånger</p>
+                        <p>This profile has been viewed <strong>@(Model.Cv?.ProfileViews ?? 0)</strong> times</p>
                     </div>
                 </div>
             }
@@ -316,17 +318,17 @@
             font-size: 0.9em;
         }
 
-        /* Liknande profiler styling */
+        /* Similar profiles styling */
         .similar-profile-item {
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .similar-profile-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
+            .similar-profile-item:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+                margin-bottom: 0;
+            }
 
         .similar-profile-avatar {
             width: 40px;
@@ -349,10 +351,10 @@
             margin-bottom: 2px;
         }
 
-        .similar-profile-name:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
-        }
+            .similar-profile-name:hover {
+                color: var(--primary-color);
+                text-decoration: underline;
+            }
 
         .similar-profile-match {
             font-size: 0.85rem;
@@ -363,9 +365,9 @@
             border-color: var(--primary-color);
         }
 
-        .btn-outline-primary:hover {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-        }
+            .btn-outline-primary:hover {
+                background-color: var(--primary-color);
+                color: var(--text-color);
+            }
     </style>
 }
