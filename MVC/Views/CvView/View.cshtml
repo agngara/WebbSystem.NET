@@ -1,9 +1,8 @@
 ﻿@using BL.DTOs
 
-@model Models.User
-
+@model MVC.Models.CVs.CvViewModel;
 @{
-    ViewData["Title"] = $"{Model.Name}'s CV";
+    ViewData["Title"] = $"{Model.User.Name}'s CV";
 
     // Helper function to format match type
     string GetMatchTypeDisplay(string matchedOn)
@@ -31,10 +30,10 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="profile-card-grid">
-                        @if (!string.IsNullOrEmpty(Model.Cv?.ProfileImage) && Model.Cv.ProfileImage !=
+                        @if (!string.IsNullOrEmpty(Model.User.Cv?.ProfileImage) && Model.User.Cv.ProfileImage !=
                                                 "/pfp/standard.png")
                         {
-                            <img src="@Model.Cv.ProfileImage" class="rounded-circle mb-3 profile-image"
+                            <img src="@Model.User.Cv.ProfileImage" class="rounded-circle mb-3 profile-image"
                                  style="width: 150px; height: 150px; object-fit: cover;" alt="Profile picture"
                                  onerror="this.src='/pfp/standard.png'">
                         }
@@ -43,11 +42,11 @@
                             <img src="/pfp/standard.png" class="rounded-circle mb-3 profile-image"
                                  style="width: 150px; height: 150px; object-fit: cover;" alt="Default profile picture">
                         }
-                        @if (Model.Cv?.Id != null)
+                        @if (Model.User.Cv?.Id != null)
                         {
                             <div class="mt-3 download-button">
                                 <a class="custom-button" id="download-profile-btn" asp-action="Export"
-                                   asp-route-cvId="@Model.Cv?.Id">
+                                   asp-route-cvId="@Model.User.Cv?.Id">
                                     <i class="bi bi-box-arrow-down"
                                        style="font-size: 14px !important;"></i>
                                 </a>
@@ -55,17 +54,17 @@
                         }
                     </div>
 
-                    <h2>@Model.Name</h2>
-                    @if (!string.IsNullOrEmpty(Model.Address))
+                    <h2>@Model.User.Name</h2>
+                    @if (!string.IsNullOrEmpty(Model.User.Address))
                     {
-                        <p><i class="fas fa-map-marker-alt"></i> @Model.Address</p>
+                        <p><i class="fas fa-map-marker-alt"></i> @Model.User.Address</p>
                     }
-                    @if (!string.IsNullOrEmpty(Model.Email))
+                    @if (!string.IsNullOrEmpty(Model.User.Email))
                     {
-                        <p><i class="fas fa-envelope"></i> @Model.Email</p>
+                        <p><i class="fas fa-envelope"></i> @Model.User.Email</p>
                     }
 
-                    @if (Model.IsPrivate == true)
+                    @if (Model.User.IsPrivate == true)
                     {
                         <span class="badge bg-warning">Private Profile</span>
                     }
@@ -75,26 +74,21 @@
                     }
 
                     @if (User.Identity!.IsAuthenticated &&
-                                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
+                                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.User.Id)
                     {
                         <div class="mt-3">
                             <a asp-action="MyCV" class="btn btn-primary">Edit My CV</a>
                         </div>
                     }
-                    @if (Model.Cv?.Id != null)
-                    {
-                        <div class="mt-3">
-                            <a class="custom-button" id="download-profile-btn" asp-action="Export" asp-route-cvId="@Model.Cv?.Id">Download Profile</a>
-                        </div>
-                    }
+
 
                     @if (!(User.Identity?.IsAuthenticated == true &&
-                                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id))
+                                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.User.Id))
                     {
                         <div class="mt-3">
                             <a asp-controller="Message"
                                asp-action="Chat"
-                               asp-route-toUserId="@Model.Id"
+                               asp-route-toUserId="@Model.User.Id"
                                class="custom-button"
                                title="chat">
                                 <i class="bi bi-chat-dots chat-icon"></i>
@@ -107,14 +101,14 @@
             </div>
 
             <!-- Skills -->
-            @if (Model.Cv?.Competences?.Any() == true)
+            @if (Model.User.Cv?.Competences?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>Skills</h5>
                     </div>
                     <div class="card-body">
-                        @foreach (var competence in Model.Cv.Competences)
+                        @foreach (var competence in Model.User.Cv.Competences)
                         {
                             <span class="badge bg-primary me-1 mb-1">@competence.Name</span>
                         }
@@ -168,27 +162,27 @@
 
         <div class="col-md-8">
             <!-- Description -->
-            @if (!string.IsNullOrEmpty(Model.Cv?.Description))
+            @if (!string.IsNullOrEmpty(Model.User.Cv?.Description))
             {
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>About Me</h5>
                     </div>
                     <div class="card-body">
-                        <p>@Model.Cv.Description</p>
+                        <p>@Model.User.Cv.Description</p>
                     </div>
                 </div>
             }
 
             <!-- Work Experience -->
-            @if (Model.Cv?.WorkExperiences?.Any() == true)
+            @if (Model.User.Cv?.WorkExperiences?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>Work Experience</h5>
                     </div>
                     <div class="card-body">
-                        @foreach (var work in Model.Cv.WorkExperiences)
+                        @foreach (var work in Model.User.Cv.WorkExperiences)
                         {
                             <div class="mb-3">
                                 <h6>@work.Title</h6>
@@ -214,14 +208,14 @@
             }
 
             <!-- Education -->
-            @if (Model.Cv?.Educations?.Any() == true)
+            @if (Model.User.Cv?.Educations?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>Education</h5>
                     </div>
                     <div class="card-body">
-                        @foreach (var edu in Model.Cv.Educations)
+                        @foreach (var edu in Model.User.Cv.Educations)
                         {
                             <div class="mb-3">
                                 <h6>@edu.ProgramOrCourseName</h6>
@@ -247,7 +241,7 @@
             }
 
             <!-- Projects -->
-            @if (Model.ProjectUsers?.Any() == true)
+            @if (Model.User.ProjectUsers?.Any() == true || Model.UserProjects?.Any() == true)
             {
                 <div class="card mb-4">
                     <div class="card-header">
@@ -255,7 +249,24 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            @foreach (var projectUser in Model.ProjectUsers)
+
+                            <!-- Projects the user has created -->
+                            @foreach (var project in Model.UserProjects)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6>@project.Titel</h6>
+                                            @if (!string.IsNullOrEmpty(project.Description))
+                                            {
+                                                <p class="small">@project.Description</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @foreach (var projectUser in Model.User.ProjectUsers)
                             {
                                 <div class="col-md-6 mb-3">
                                     <div class="card h-100">
@@ -276,14 +287,14 @@
 
             <!-- Profile Views (only for owner) -->
             @if (User.Identity!.IsAuthenticated &&
-                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id)
+                        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.User.Id)
             {
                 <div class="card">
                     <div class="card-header">
                         <h5>Statistics</h5>
                     </div>
                     <div class="card-body">
-                        <p>This profile has been viewed <strong>@(Model.Cv?.ProfileViews ?? 0)</strong> times</p>
+                        <p>This profile has been viewed <strong>@(Model.User.Cv?.ProfileViews ?? 0)</strong> times</p>
                     </div>
                 </div>
             }
