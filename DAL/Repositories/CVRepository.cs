@@ -42,6 +42,18 @@ namespace DAL.Repositories
                         .ToListAsync();
             
         }
+
+        public async Task<List<CV>> GetTop20PublicCVs()
+        {
+            return await _context.CVs.Include(c => c.Competences)
+            .Include(c => c.WorkExperiences)
+            .Include(c => c.Educations)
+            .Include(c => c.User)
+            .Where(c => c.User.IsActive == true && c.User.IsPrivate == false)
+            .OrderByDescending(c => c.ProfileViews)
+            .Take(20)
+            .ToListAsync();
+        }
     }
 
 
