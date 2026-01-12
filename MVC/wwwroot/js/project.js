@@ -60,3 +60,4 @@ if (closeButton) {
 document.addEventListener('DOMContentLoaded', () => {
     handleFormSubmit("creation-form");
 });
+

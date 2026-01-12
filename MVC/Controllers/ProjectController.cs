@@ -249,16 +249,17 @@ namespace MVC.Controllers
             {
                 _projectRepository.DeleteProject(id);
 
-                return RedirectToAction("Catalog");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex);
                 return Json(CreateResponse(
                 success: true,
                 message: "Deletion successful!",
                 redirectUrl: Url.Action("Catalog", "Project") ?? "/"
-            ));
+                ));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return StatusCode(500);
+
             }
         }
 
