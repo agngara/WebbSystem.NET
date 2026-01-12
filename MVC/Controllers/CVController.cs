@@ -26,8 +26,10 @@ namespace MVC.Controllers
         private readonly IProjectRepository _projectRepository;
         private readonly IUserRepository _userRepository;
         private readonly IWorkPlaceRepository _workplaceRepository;
+        private readonly ICvRepository _cvRepository;
 
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IProjectRepository projectRepository, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository, ISearchService searchService)
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, IProjectRepository projectRepository, 
+            IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository, ISearchService searchService, ICvRepository cvRepository)
 
         {
             _context = context;
@@ -37,6 +39,7 @@ namespace MVC.Controllers
             _userRepository = userRepository;
             _workplaceRepository = workPlaceRepository;
             _searchService = searchService;
+            _cvRepository = cvRepository;
 
         }
 

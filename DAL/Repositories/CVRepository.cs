@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace DAL.Repositories
 {
-    public class CVRepository
+    public class CVRepository : ICvRepository
     {
         private readonly AppDbContext _context;
 
         public CVRepository(AppDbContext appDbContext) {
             _context = appDbContext;
         }
+
+
 
         /// <summary>
         /// Gets all rows from the CV-table with related data joined in.

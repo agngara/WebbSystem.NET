@@ -4,22 +4,22 @@ using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 using DAL;
 using Models;
-using DAL.Repositories;
+using DAL.Repositories.Interfaces;
 
 namespace MVC;
 
 public class HomeController : Controller
 {
-    private readonly AppDbContext _context;
+    private ICvRepository CVrepo;
+    private IProjectRepository ProjectRepo;
 
-    public HomeController(AppDbContext context)
+    public HomeController(ICvRepository cvRepository, IProjectRepository projectRepository)
     {
-        _context = context;
+        CVrepo = cvRepository;
+        ProjectRepo = projectRepository;
     }
     public async Task<IActionResult> Index()
     {
-        CVRepository CVrepo = new CVRepository(_context);
-        ProjectRepository ProjectRepo = new ProjectRepository(_context);
 
         List<Project> projects = await ProjectRepo.GetAmount(20);
         projects.Reverse();
