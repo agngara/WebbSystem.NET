@@ -46,6 +46,7 @@ namespace DAL.Repositories
             return await _context.Conversations
                 
                 .Where(c => c.Participants.Any(p => p.UserId == userId))
+                .Where(c => c.Participants.Any(p => p.UserId != userId && p.User.IsActive))
                 .Include(c => c.Participants)
                     .ThenInclude(p => p.User)
                         .ThenInclude(u => u.Cv)
