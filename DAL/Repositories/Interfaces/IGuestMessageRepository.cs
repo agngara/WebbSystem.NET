@@ -11,5 +11,7 @@ namespace DAL.Repositories.Interfaces
         Task<List<GuestMessage>> GetInboxForUserAsync(string userId); 
         Task<GuestMessage?> GetByIdForUserAsync(int id, string userId);
         Task MarkAsReadAsync(int id, string userId);
+
+        Task DeleteMessageAsync(int guestMessageId, string currentUserId);
     }
 }

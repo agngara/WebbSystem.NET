@@ -40,7 +40,7 @@ namespace DAL.Repositories
     public async Task<List<GuestMessage>> GetInboxForUserAsync(string userId)
     {
         return await _context.GuestMessages
-            .Where(g => g.ToUserId == userId)
+            .Where(g => g.ToUserId == userId && !g.IsDeleteed)
             .OrderByDescending(g => g.SentAt)
             .ToListAsync();
     }
@@ -64,5 +64,17 @@ namespace DAL.Repositories
         }
     }
 
-}
+        public async Task DeleteMessageAsync(int guestMessageId, string currentId)
+        {
+            var guestMessage = await _context.GuestMessages
+                 .FirstOrDefaultAsync(g => g.Id == guestMessageId && g.ToUserId == currentId);
+
+            if (guestMessage == null) return; 
+
+            guestMessage.IsDeleteed = true;
+
+            await _context.SaveChangesAsync();
+
+        }
+    }
 }

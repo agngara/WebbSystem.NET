@@ -138,9 +138,9 @@ namespace MVC.Controllers
                 });
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Something went wrong while loading conversatios");
+                return StatusCode(500, ex.ToString());
 
             }
 
@@ -306,7 +306,38 @@ namespace MVC.Controllers
 
                 await _msgRepo.DeleteMessageAsync(messageId, currentId);
 
+
+
                 return RedirectToAction(nameof(Chat), new { id = conversationId });
+
+            }
+
+            catch (Exception)
+            {
+                return StatusCode(500, "Something went wrong while trying to delete a message");
+
+            }
+
+
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> DeleteGuestMessage(int guestMessageId)
+        {
+
+
+            try
+            {
+                var currentId = _userManager.GetUserId(User)!;
+
+            await _guestRepo.DeleteMessageAsync(guestMessageId, currentId);
+
+
+
+                return RedirectToAction("Conversation");
 
             }
 

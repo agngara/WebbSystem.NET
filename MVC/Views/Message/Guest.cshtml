@@ -9,32 +9,54 @@
 <head>
 
     <link rel="stylesheet" href="~/css/Message/message.css" />
+    <script src="~/js/message.js" defer></script>
 </head>
+
+
 <body>
 
-<div class="chat-header">
-    <a asp-action="Conversation" class="chat-back">
-        <i class="bi bi-arrow-left"></i>
-    </a>
+    <div class="chat-messages">
+        <div class="chat-row theirs">
+            <div class="chat-bubble">
+                <div class="text">@Model.Text</div>
 
-    <div>
-        <span class="guest-name">@Model.GuestName</span>
-        <div class="chat-">Guest Message</div>
-    </div>
-</div>
+                <div class="meta">
+                    @Model.SentAt.ToLocalTime().ToString("dd MMM HH:mm")
 
-<div class="chat-messages">
-    <div class="chat-row theirs">
-        <div class="chat-bubble">
-            <div class="text">@Model.Text</div>
-            <div class="meta">@Model.SentAt.ToLocalTime().ToString("dd MMM HH:mm")</div>
+                    <div class="delete-wrapper">
+                        <button type="button"
+                                class="btn btn-sm btn-secondary p-1"
+                                onclick="toggleDeleteGuest(@Model.Id)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        
+                        <form id="delete-guest-form-@Model.Id"
+                              asp-action="DeleteGuestMessage"
+                              method="post"
+                              class="delete-confirm hidden">
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" name="guestMessageId" value="@Model.Id" />
+
+                            <span>Delete this message?</span>
+
+                            <button type="submit" class="btn btn-sm btn-secondary">
+                                Delete
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-sm btn-secondary"
+                                    onclick="toggleDeleteGuest(@Model.Id)">
+                                Regret
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-</div>
 
-<div class="guest-message">
-    You been contected by a guest-user. U can not answer this message.
-</div>
 
 </body>
 </html>
