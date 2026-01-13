@@ -18,29 +18,53 @@ public class HomeController : Controller
     }
     public async Task<IActionResult> Index()
     {
-        CVRepository CVrepo = new CVRepository(_context);
-        ProjectRepository ProjectRepo = new ProjectRepository(_context);
-
-        List<Project> projects = await ProjectRepo.GetAmount(20);
-        projects.Reverse();
-
-        HomepageViewModel viewModel = new HomepageViewModel
+        try
         {
-            TopCVs = await CVrepo.GetTop20PublicCVs(),
-            LatestProjects = projects
-        };
+            CVRepository CVrepo = new CVRepository(_context);
+            ProjectRepository ProjectRepo = new ProjectRepository(_context);
 
-        return View(viewModel);
+            List<Project> projects = await ProjectRepo.GetAmount(20);
+            projects.Reverse();
+
+            HomepageViewModel viewModel = new HomepageViewModel
+            {
+                TopCVs = await CVrepo.GetTop20PublicCVs(),
+                LatestProjects = projects
+            };
+
+            return View(viewModel);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("An error occurd when fetching the homepage: " + ex);
+            return StatusCode(500);
+        }
     }
 
     public IActionResult Privacy()
     {
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("An error occured when fetching the privacy page: " + ex);
+            return StatusCode(500);
+        }
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        try
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("An error occured when displaying the error, good luck with that one. : " + ex);
+            return StatusCode(500); 
+        }
     }
 }
