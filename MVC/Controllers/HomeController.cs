@@ -26,6 +26,17 @@ public class HomeController : Controller
             List<Project> projects = await ProjectRepo.GetAmount(20);
             projects.Reverse();
 
+            foreach (Project project in projects)
+            {
+                if (project.Creator.IsActive == false)
+                {
+                    project.Creator = new User
+                    {
+                        Name = "Deactivated User"
+                    };
+                }
+            }
+
             HomepageViewModel viewModel = new HomepageViewModel
             {
                 TopCVs = await CVrepo.GetTop20PublicCVs(),
