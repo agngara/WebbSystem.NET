@@ -138,7 +138,7 @@ namespace MVC.Controllers
                 });
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Something went wrong while loading conversatios");
 
@@ -212,7 +212,7 @@ namespace MVC.Controllers
                 ));
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Something went wrong while trying to send a message");
             }
@@ -232,7 +232,7 @@ namespace MVC.Controllers
                 return await OpenOrCreateAndRedirect(currentUserId, otherUserId);
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Something went wrong while trying to create a conversation");
 
@@ -254,7 +254,7 @@ namespace MVC.Controllers
                 return RedirectToAction(nameof(Chat), new { id = newId });
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Something went wrong while trying to open och create w new conversation");
             }
@@ -281,7 +281,7 @@ namespace MVC.Controllers
                 return View(guest);
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500);
 
@@ -310,7 +310,7 @@ namespace MVC.Controllers
 
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Something went wrong while trying to delete a message");
 
@@ -400,7 +400,7 @@ namespace MVC.Controllers
 
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Could not send message.");
             }
