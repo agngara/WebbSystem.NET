@@ -107,7 +107,7 @@ namespace MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return Json(ModelStateErrorResponse("Invalid Account Registration"));
+                return Json(ModelStateErrorResponse("Invalid login"));
             }
 
             try
@@ -135,7 +135,7 @@ namespace MVC.Controllers
 
                 return Json(CreateResponse(
                     success: false,
-                    errors: result.Errors.ToDictionary(e => "General", e => e.Description),
+                    message: "Username already taken",
                     notify: true
                 ));
             }
