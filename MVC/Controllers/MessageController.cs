@@ -249,7 +249,10 @@ namespace MVC.Controllers
                 return Forbid();
 
             await _msgRepo.AddMessageAsync(model.ConversationId, currentUserId, model.NewMessageText);
-            return RedirectToAction(nameof(Chat), new { id = model.ConversationId });
+            return Json(CreateResponse(
+                        success: true,
+                redirectUrl: "refresh"
+            ));
         }
 
 

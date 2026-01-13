@@ -41,6 +41,9 @@ builder.Services.AddScoped<IWorkPlaceRepository, WorkPlaceRepository>();
 builder.Services.AddScoped<ICompetenceRepository, CompetenceRepository>();
 builder.Services.AddScoped<IGuestMessageRepository, GuestMessageRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<ICVRepository, CVRepository>();
+builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
+builder.Services.AddScoped<IWorkPlaceRepository, WorkPlaceRepository>();
 
 var app = builder.Build();
 

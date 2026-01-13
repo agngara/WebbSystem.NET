@@ -14,9 +14,9 @@ namespace MVC.Models.Projects
         [StringLength(2000)]
         public string Description { get; set; }
         
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
 
-        public IFormFile ImageFile {  get; set; }
+        public IFormFile? ImageFile {  get; set; }
     }
 
     
