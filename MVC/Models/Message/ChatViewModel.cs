@@ -22,7 +22,8 @@ namespace MVC.Models.Message
         public string? OtherUserProfileImageUrl { get; set; }
         public DateTime? LastMessageAt { get; set; }
         [Required]
-        public string? NewMessageText { get; set; }
+        [StringLength(1000)]
+        public string NewMessageText { get; set; }
         public int UnreadMessage { get; set; }
 
         public List<MessageBubbleViewModel> Messages { get; set; } = new();
