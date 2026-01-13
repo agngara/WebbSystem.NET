@@ -71,7 +71,7 @@ namespace MVC.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    return Json(ModelStateErrorResponse("Invalid project creation :("));
+                    return Json(ModelStateErrorResponse("Invalid or empty fields."));
                 }
 
                 //Here follows code regarding the project image.
@@ -184,7 +184,7 @@ namespace MVC.Controllers
 
                     if (!ModelState.IsValid)
                     {
-                        return Json(ModelStateErrorResponse("Invalid changes, computer says no :("));
+                        return Json(ModelStateErrorResponse("Invalid or empty fields."));
                     }
 
 
