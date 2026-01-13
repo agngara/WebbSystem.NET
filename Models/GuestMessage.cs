@@ -20,6 +20,8 @@ namespace Models
 
         public bool IsRead { get; set; }
 
+        public bool IsDeleteed { get; set; }
+
         public DateTime? ReadAt { get; set; }
     }
 }
