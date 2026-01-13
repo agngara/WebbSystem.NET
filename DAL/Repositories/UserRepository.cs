@@ -99,7 +99,7 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
     }
 
 
-    public async Task<List<ScoredResult<User>>> FindRelevantUsersForCv(int cvId, List<string> excludeUserIds, int limit = 5)
+    public async Task<List<ScoredResult<User>>> FindRelevantUsersForCv(int cvId, List<string> excludeUserIds, bool isUserLoggedIn, int limit = 5)
     {
         Console.WriteLine($"=== FindRelevantUsersForCv ===");
         Console.WriteLine($"CV ID: {cvId}");
@@ -119,7 +119,7 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
                          $"Competences: {cvData.CompetenceNames.Count}");
 
         // 2. Hämta kandidatanvändare (exkludera alla användare i listan)
-        var candidateUsers = await GetCandidateUsers(cvData.UserId, excludeUserIds, limit * 5);
+        var candidateUsers = await GetCandidateUsers(cvData.UserId, excludeUserIds, limit * 5, isUserLoggedIn);
         Console.WriteLine($"Found {candidateUsers.Count} candidate users");
 
         // 3. Beräkna poäng för varje användare
@@ -176,7 +176,7 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
                cvData.CompetenceNames.Any();
     }
 
-    private async Task<List<User>> GetCandidateUsers(string cvOwnerUserId, List<string> excludeUserIds, int takeCount)
+    private async Task<List<User>> GetCandidateUsers(string cvOwnerUserId, List<string> excludeUserIds, int takeCount, bool isUserLoggedIn)
     {
         // Lägg till CV-ägaren i exkluderingslistan också
         var allExcludedIds = excludeUserIds
@@ -195,7 +195,9 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
                 .ThenInclude(c => c.Competences)
             .Where(u => !allExcludedIds.Contains(u.Id) &&
                         u.IsActive &&
-                        u.Cv != null)
+                        u.Cv != null &&
+                        // Om användaren inte är inloggad, filtrera bort privata användare
+                        (isUserLoggedIn || u.IsPrivate == false))
             .Take(takeCount)
             .ToListAsync();
     }

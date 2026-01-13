@@ -90,10 +90,12 @@ namespace MVC.Controllers
                     {
                         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                         currentUserId = currentUserId ?? "";
+                        bool isLoggedIn = User.Identity != null && User.Identity.IsAuthenticated;
 
                         relevantProfiles = await _searchService.SearchRelevantProfiles(
                             currentUserId: currentUserId,
-                            profileUserId: id
+                            profileUserId: id,
+                            isLoggedIn
                         );
 
                         relevantProfiles = relevantProfiles

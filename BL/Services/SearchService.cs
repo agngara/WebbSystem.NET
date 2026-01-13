@@ -128,7 +128,7 @@ public class SearchService : ISearchService
             .ToList();
     }
 
-    public async Task<List<RelevantProfileDto>> SearchRelevantProfiles(string currentUserId, string profileUserId)
+    public async Task<List<RelevantProfileDto>> SearchRelevantProfiles(string currentUserId, string profileUserId, bool isLoggedIn)
     {
         Console.WriteLine($"=== SearchRelevantProfiles ===");
         Console.WriteLine($"Current user (logged in): {currentUserId}");
@@ -153,6 +153,7 @@ public class SearchService : ISearchService
             var relevantUsers = await _userRepo.FindRelevantUsersForCv(
                 cvId: profileUser.CvId.Value,
                 excludeUserIds: new List<string> { currentUserId, profileUserId },
+                isLoggedIn,
                 limit: limit);
 
             Console.WriteLine($"Found {relevantUsers.Count} relevant users");
