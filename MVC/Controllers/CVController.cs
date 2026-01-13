@@ -11,6 +11,7 @@ using DAL.Repositories.Interfaces;
 using MVC.Models.CVs;
 using BL.Interfaces;
 using BL.DTOs;
+using DAL.Repositories;
 
 
 namespace MVC.Controllers
@@ -25,10 +26,12 @@ namespace MVC.Controllers
 
         private readonly IProjectRepository _projectRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ICVRepository _cvRepository;
+        private readonly IInstitutionRepository _institutionRepository;
         private readonly IWorkPlaceRepository _workplaceRepository;
-        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment, 
-            IProjectRepository projectRepository, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository, 
-            ISearchService searchService)
+        public CVController(AppDbContext context, UserManager<User> userManager, IWebHostEnvironment environment,
+            IProjectRepository projectRepository, IUserRepository userRepository, IWorkPlaceRepository workPlaceRepository,
+            ISearchService searchService, ICVRepository cVRepository, IInstitutionRepository institutionRepository)
 
         {
             _context = context;
@@ -36,6 +39,8 @@ namespace MVC.Controllers
             _environment = environment;
             _projectRepository = projectRepository;
             _userRepository = userRepository;
+            _cvRepository = cVRepository;
+            _institutionRepository = institutionRepository;
             _workplaceRepository = workPlaceRepository;
             _searchService = searchService;
 
@@ -46,20 +51,7 @@ namespace MVC.Controllers
         {
             try
             {
-                var user = await _context.Users
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.Competences)
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.Educations)
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.WorkExperiences)
-                        .ThenInclude(we => we.WorkPlace)
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.Educations)
-                        .ThenInclude(e => e.Institution)
-                    .Include(u => u.ProjectUsers)
-                        .ThenInclude(pu => pu.Project)
-                    .FirstOrDefaultAsync(u => u.Id == id);
+                var user = await _userRepository.GetUserForCV(id);
 
                 if (user == null)
                 {
@@ -116,7 +108,7 @@ namespace MVC.Controllers
                 ViewBag.RelevantProfiles = relevantProfiles;
                 ViewBag.HasRelevantProfiles = relevantProfiles.Any();
 
-                
+
                 List<Project> createdProjects = await _projectRepository.GetProjectsByCreator(user.Id);
 
 
@@ -139,16 +131,8 @@ namespace MVC.Controllers
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var user = await _context.Users
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.Competences)
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.Educations).ThenInclude(e => e.Institution)
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.WorkExperiences).ThenInclude(W => W.WorkPlace)
-                    .Include(u => u.ProjectUsers)
-                        .ThenInclude(pu => pu.Project)
-                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                var user = await _userRepository.GetUserForCV(userId);
 
                 if (user == null)
                 {
@@ -207,15 +191,7 @@ namespace MVC.Controllers
         {
             try
             {
-                CV? cv = _context.CVs
-                                .Include(c => c.Competences)
-                                .Include(c => c.WorkExperiences)
-                                .ThenInclude(w => w.WorkPlace)
-                                .Include(c => c.Educations)
-                                .ThenInclude(e => e.Institution)
-                                .Include(c => c.User)
-                                .FirstOrDefault(c => c.Id == cvId);
-
+                CV? cv = await _cvRepository.GetCVForCV(cvId);
                 User? user = await _userRepository.GetUserById(cv.UserId);
 
                 if (user == null || cv == null)
@@ -314,7 +290,7 @@ namespace MVC.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var allProjects = await _context.Projects.ToListAsync();
+                    var allProjects = await _projectRepository.GetAllAsync();
                     model.AvailableProjects = allProjects.Select(p => new ProjectOptionViewModel
                     {
                         Id = p.Id,
@@ -327,16 +303,7 @@ namespace MVC.Controllers
                 }
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var user = await _context.Users
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.Competences)
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.Educations)
-                    .Include(u => u.Cv)
-                        .ThenInclude(cv => cv!.WorkExperiences)
-                    .Include(u => u.ProjectUsers)
-                    .FirstOrDefaultAsync(u => u.Id == userId);
-
+                var user = await _userRepository.GetUserForCV(userId);
                 if (user == null)
                 {
                     return NotFound();
@@ -353,7 +320,7 @@ namespace MVC.Controllers
                             ? "/pfp/standard.png"
                             : await SaveBase64ImageAsync(model.ProfileImageBase64)
                     };
-                    _context.CVs.Add(user.Cv);
+                    await _cvRepository.Add(user.Cv);
                 }
                 else
                 {
@@ -382,13 +349,12 @@ namespace MVC.Controllers
                     Institution? institution = null;
                     if (!string.IsNullOrWhiteSpace(edu.InstitutionName))
                     {
-                        institution = await _context.Institutions
-                            .FirstOrDefaultAsync(i => i.Name.ToLower() == edu.InstitutionName.Trim().ToLower());
+                        institution = await _institutionRepository.GetByNameAsync(edu.InstitutionName);
 
                         if (institution == null)
                         {
                             institution = new Institution { Name = edu.InstitutionName.Trim() };
-                            _context.Institutions.Add(institution);
+                            await _institutionRepository.AddAsync(institution);
                         }
                     }
 
@@ -410,13 +376,12 @@ namespace MVC.Controllers
                     WorkPlace? workPlace = null;
                     if (!string.IsNullOrWhiteSpace(work.CompanyName))
                     {
-                        workPlace = await _context.WorkPlaces
-                            .FirstOrDefaultAsync(wp => wp.Name.ToLower() == work.CompanyName.Trim().ToLower());
+                        workPlace = await _workplaceRepository.GetByNameAsync(work.CompanyName);
 
                         if (workPlace == null)
                         {
                             workPlace = new WorkPlace { Name = work.CompanyName.Trim() };
-                            _context.WorkPlaces.Add(workPlace);
+                            await _workplaceRepository.AddAsync(workPlace);
                         }
                     }
 
@@ -432,21 +397,23 @@ namespace MVC.Controllers
                     });
                 }
 
-                user.ProjectUsers.Clear();
-                if (model.SelectedProjects != null)
-                {
-                    foreach (var selectedProject in model.SelectedProjects.Where(sp => sp.IsSelected))
-                    {
-                        user.ProjectUsers.Add(new ProjectUser
-                        {
-                            UserId = userId,
-                            ProjectId = selectedProject.ProjectId,
-                            User = user,
-                            Project = await _context.Projects.FindAsync(selectedProject.ProjectId)
-                        });
-                    }
-                }
-                await _context.SaveChangesAsync();
+                // user.ProjectUsers.Clear();
+                // if (model.SelectedProjects != null)
+                // {
+                //     foreach (var selectedProject in model.SelectedProjects.Where(sp => sp.IsSelected))
+                //     {
+                //         var project = await _projectRepository.GetProjectAsync(selectedProject.ProjectId);
+                //         user.ProjectUsers.Add(new ProjectUser
+                //         {
+                //             UserId = userId,
+                //             ProjectId = selectedProject.ProjectId,
+                //             User = user,
+                //             Project = project
+                //         });
+                //     }
+                // }
+
+                await _cvRepository.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "CV har uppdaterats!";
                 return RedirectToAction("MyCV");

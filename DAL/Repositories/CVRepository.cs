@@ -1,17 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace DAL.Repositories
 {
-    public class CVRepository
+    public class CVRepository : SqlServerRepository<CV>, ICVRepository
     {
         private readonly AppDbContext _context;
 
-        public CVRepository(AppDbContext appDbContext) {
+        public CVRepository(AppDbContext appDbContext) : base(appDbContext)
+        {
             _context = appDbContext;
+        }
+
+        public async Task<CV> Add(CV entity)
+        {
+            await _context.CVs.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
         }
 
         /// <summary>
@@ -40,7 +46,7 @@ namespace DAL.Repositories
                         .OrderByDescending(c => c.ProfileViews)
                         .Take(20)
                         .ToListAsync();
-            
+
         }
 
         public async Task<List<CV>> GetTop20PublicCVs()
@@ -54,10 +60,23 @@ namespace DAL.Repositories
             .Take(20)
             .ToListAsync();
         }
+
+
+        public async Task<CV> GetCVForCV(int cvId)
+        {
+            return _context.CVs
+                            .Include(c => c.Competences)
+                            .Include(c => c.WorkExperiences)
+                            .ThenInclude(w => w.WorkPlace)
+                            .Include(c => c.Educations)
+                            .ThenInclude(e => e.Institution)
+                            .Include(c => c.User)
+                            .FirstOrDefault(c => c.Id == cvId);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
-
-
-    
-
-
 }

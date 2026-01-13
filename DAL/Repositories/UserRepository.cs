@@ -24,6 +24,24 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
         return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
 
+    public async Task<User> GetUserForCV(string id)
+    {
+        return await _context.Users
+            .Include(u => u.Cv)
+                .ThenInclude(cv => cv!.Competences)
+            .Include(u => u.Cv)
+                .ThenInclude(cv => cv!.Educations)
+            .Include(u => u.Cv)
+                .ThenInclude(cv => cv!.WorkExperiences)
+                .ThenInclude(we => we.WorkPlace)
+            .Include(u => u.Cv)
+                .ThenInclude(cv => cv!.Educations)
+                .ThenInclude(e => e.Institution)
+            .Include(u => u.ProjectUsers)
+                .ThenInclude(pu => pu.Project)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
 
     public async Task<List<ScoredResult<User>>> SearchByNameOrUsername(string query, int limit, bool isAuthenticated)
 
@@ -162,7 +180,7 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
     {
         // Lägg till CV-ägaren i exkluderingslistan också
         var allExcludedIds = excludeUserIds
-            .Append(cvOwnerUserId) // ⭐ Se till att exkludera CV-ägaren också!
+            .Append(cvOwnerUserId)
             .Distinct()
             .ToList();
 
@@ -175,7 +193,7 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
                 .ThenInclude(c => c.Educations).ThenInclude(e => e.Institution)
             .Include(u => u.Cv)
                 .ThenInclude(c => c.Competences)
-            .Where(u => !allExcludedIds.Contains(u.Id) && // ⭐ Exkludera alla
+            .Where(u => !allExcludedIds.Contains(u.Id) &&
                         u.IsActive &&
                         u.Cv != null)
             .Take(takeCount)
