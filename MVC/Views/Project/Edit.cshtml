@@ -15,12 +15,11 @@
     <form id="edit-form" asp-action="Edit" method="post" enctype="multipart/form-data" asp-route-id="@Model.ProjectId">
         <div class="mb-3">
             <label for="Name" class="form-label">Project Name</label>
-            <input type="text" class="form-control" id="Name" asp-for="Name" placeholder="@Model.Name">
+            <input type="text" class="form-control" id="Name" asp-for="Name">
         </div>
         <div class="mb-3">
             <label for="Description" class="form-label">Description</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="Description"
-                placeholder="@Model.Description"></textarea>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="Description"></textarea>
         </div>
         <div class="mb-3">
             <label for="image" class="form-label">Replace image</label>

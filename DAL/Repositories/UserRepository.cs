@@ -311,10 +311,12 @@ public class UserRepository : SqlServerRepository<User>, IUserRepository
         searchTerm = searchTerm.Trim();
 
         return await _context.Users
-            .Where(u =>
+            .Where(u => u.IsActive &&
+            (
                 (u.Email != null && u.Email.Contains(searchTerm)) ||
                 (u.UserName != null && u.UserName.Contains(searchTerm)) ||
-                (u.Name != null && u.Name.Contains(searchTerm)))
+                (u.Name != null && u.Name.Contains(searchTerm))
+             ))
             .OrderBy(u => u.Name ?? u.Email ?? u.UserName)
 
             .ToListAsync();

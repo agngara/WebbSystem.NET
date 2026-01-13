@@ -56,7 +56,7 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine("An error occurd when loading the projects catalog: " + ex);
                 return StatusCode(500);
             }
 
@@ -71,7 +71,7 @@ namespace MVC.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    return Json(ModelStateErrorResponse("Invalid project creation :("));
+                    return Json(ModelStateErrorResponse("Invalid or empty fields."));
                 }
 
                 //Here follows code regarding the project image.
@@ -124,7 +124,7 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine("An error occured when creating the project: " + ex);
                 return StatusCode(500);
             }
         }
@@ -163,7 +163,7 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine("An error occured when editing the project: " + ex);
                 return StatusCode(500);
             }
         }
@@ -184,7 +184,7 @@ namespace MVC.Controllers
 
                     if (!ModelState.IsValid)
                     {
-                        return Json(ModelStateErrorResponse("Invalid changes, computer says no :("));
+                        return Json(ModelStateErrorResponse("Invalid or empty fields."));
                     }
 
 
@@ -271,7 +271,7 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine("An error occured when deleting the project: " + ex);
                 return StatusCode(500);
 
             }
@@ -306,7 +306,7 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine("An error occured when adding the user to the project: " + ex);
                 return StatusCode(500);
             }
         }
@@ -334,7 +334,7 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine("An error occured when removing the user from the project: " + ex);
                 return StatusCode(500);
             }
         }
@@ -378,7 +378,7 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine("An error occured when fetching the project details page: " + ex);
                 return StatusCode(500);
             }
         }
