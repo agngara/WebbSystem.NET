@@ -55,7 +55,8 @@ public class MessageRepository : SqlServerRepository<Message>, IMessageRepositor
         var unreadMessages = await _context.Messages
             .Where(m => m.Conversation.Participants.Any(p => p.UserId == userId)
                         && m.SenderId != userId
-                        && !m.IsRead)
+                        && !m.IsRead
+                        && m.Sender.IsActive == true)
             .CountAsync();
 
         var unreadGuestMessages = await _context.GuestMessages
