@@ -253,10 +253,6 @@ namespace MVC.Controllers
                 if (project.ImageUrl != "/Assets/UI-Images/project_placeholder_image.jpg")
                 {
                     bool imageRemovalStatus = FileService.DeleteFile("Assets/UserUploads/ProjectImages", Path.GetFileName(project.ImageUrl));
-                    if (!imageRemovalStatus)
-                    {
-                        return StatusCode(500);
-                    }
                 }
 
                 _projectRepository.DeleteProject(id);
