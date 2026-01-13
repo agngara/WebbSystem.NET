@@ -337,7 +337,7 @@ namespace MVC.Controllers
 
 
 
-                return RedirectToAction(nameof(Chat));
+                return RedirectToAction("Conversation");
 
             }
 
