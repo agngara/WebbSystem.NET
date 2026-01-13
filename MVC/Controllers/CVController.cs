@@ -12,6 +12,7 @@ using MVC.Models.CVs;
 using BL.Interfaces;
 using BL.DTOs;
 using DAL.Repositories;
+using System.Text.Json;
 
 
 namespace MVC.Controllers

@@ -415,24 +415,22 @@
 
             // Update work experiences
             document.querySelectorAll('.work-experience-row').forEach((row, index) => {
-                const inputs = row.querySelectorAll('input, textarea');
-                if (inputs[0]) inputs[0].name = `WorkExperiences[${index}].Id`;
-                if (inputs[1]) inputs[1].name = `WorkExperiences[${index}].Title`;
-                if (inputs[2]) inputs[2].name = `WorkExperiences[${index}].CompanyName`;
-                if (inputs[3]) inputs[3].name = `WorkExperiences[${index}].StartDate`;
-                if (inputs[4]) inputs[4].name = `WorkExperiences[${index}].EndDate`;
-                if (inputs[5]) inputs[5].name = `WorkExperiences[${index}].Description`;
+                row.querySelector('input[name$=".Id"]')?.setAttribute('name', `WorkExperiences[${index}].Id`);
+    row.querySelector('input[name$=".Title"]')?.setAttribute('name', `WorkExperiences[${index}].Title`);
+    row.querySelector('input[name$=".CompanyName"]')?.setAttribute('name', `WorkExperiences[${index}].CompanyName`);
+    row.querySelector('input[name$=".StartDate"]')?.setAttribute('name', `WorkExperiences[${index}].StartDate`);
+    row.querySelector('input[name$=".EndDate"]')?.setAttribute('name', `WorkExperiences[${index}].EndDate`);
+    row.querySelector('textarea[name$=".Description"]')?.setAttribute('name', `WorkExperiences[${index}].Description`);
             });
 
             // Update education
             document.querySelectorAll('.education-row').forEach((row, index) => {
-                const inputs = row.querySelectorAll('input, textarea');
-                if (inputs[0]) inputs[0].name = `Educations[${index}].Id`;
-                if (inputs[1]) inputs[1].name = `Educations[${index}].ProgramOrCourseName`;
-                if (inputs[2]) inputs[2].name = `Educations[${index}].InstitutionName`;
-                if (inputs[3]) inputs[3].name = `Educations[${index}].StartDate`;
-                if (inputs[4]) inputs[4].name = `Educations[${index}].EndDate`;
-                if (inputs[5]) inputs[5].name = `Educations[${index}].Description`;
+                  row.querySelector('input[name$=".Id"]')?.setAttribute('name', `Educations[${index}].Id`);
+    row.querySelector('input[name$=".ProgramOrCourseName"]')?.setAttribute('name', `Educations[${index}].ProgramOrCourseName`);
+    row.querySelector('input[name$=".InstitutionName"]')?.setAttribute('name', `Educations[${index}].InstitutionName`);
+    row.querySelector('input[name$=".StartDate"]')?.setAttribute('name', `Educations[${index}].StartDate`);
+    row.querySelector('input[name$=".EndDate"]')?.setAttribute('name', `Educations[${index}].EndDate`);
+    row.querySelector('textarea[name$=".Description"]')?.setAttribute('name', `Educations[${index}].Description`);
             });
         }
 
