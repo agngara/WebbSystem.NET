@@ -45,6 +45,17 @@ namespace MVC.Controllers
 
                 List<Project> allProjects = await _projectRepository.GetAllAsync();
 
+                foreach (Project project in allProjects)
+                {
+                    if (project.Creator.IsActive == false)
+                    {
+                        project.Creator = new User
+                        {
+                            Name = "Deactivated User"
+                        };
+                    }
+                }
+
                 CatalogViewModel catalogViewModel = new CatalogViewModel
                 {
                     AllProjects = allProjects,
@@ -358,6 +369,14 @@ namespace MVC.Controllers
                 Project project = await _projectRepository.GetProjectAsync(projectId);
 
                 User creator = await _userRepository.GetUserById(project.CreatorId);
+
+                if (creator.IsActive == false)
+                {
+                    creator = new User()
+                    {
+                        Name = "Deactivated User"
+                    };
+                }
 
                 ProjectViewModel viewModel = new ProjectViewModel
                 {
